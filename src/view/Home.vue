@@ -35,7 +35,8 @@
         <h2>新刊</h2>
         <v-row>
             <v-col
-                cols="3"
+                cols="12"
+                sm="3"
             >
                 <BookCard
                     id="9784091282637"
@@ -44,7 +45,8 @@
                 </BookCard>
             </v-col>
             <v-col
-                cols="3"
+                cols="12"
+                sm="3"
             >
                 <BookCard
                     id="9784091282637"
@@ -53,7 +55,8 @@
                 </BookCard>
             </v-col>
             <v-col
-                cols="3"
+                cols="12"
+                sm="3"
             >
                 <BookCard
                     id="9784091282637"
@@ -62,7 +65,8 @@
                 </BookCard>
             </v-col>
             <v-col
-                cols="3"
+                cols="12"
+                sm="3"
             >
                 <BookCard
                     id="9784091282637"
