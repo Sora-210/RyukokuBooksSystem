@@ -18,7 +18,7 @@
           </v-list-item-title>
         </v-list-item>
       </router-link>
-      <router-link to="/search">
+      <!-- <router-link to="/search">
         <v-list-item
           link
         >
@@ -29,7 +29,7 @@
             検索
           </v-list-item-title>
         </v-list-item>
-      </router-link>
+      </router-link> -->
       <router-link to="/request">
         <v-list-item
           link
@@ -44,6 +44,18 @@
       </router-link>
       <v-divider>
       </v-divider>
+      <router-link to="/admin">
+        <v-list-item
+          link
+        >
+          <v-list-item-icon>
+            <v-icon>fas fa-users-cog</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>
+            管理ページ
+          </v-list-item-title>
+        </v-list-item>
+      </router-link>
     </v-list>
     </v-navigation-drawer>
     <v-app-bar
