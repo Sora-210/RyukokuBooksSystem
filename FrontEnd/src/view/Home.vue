@@ -1,0 +1,88 @@
+<template>
+    <div>
+        <v-parallax
+            dark
+            src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg">
+            <v-row
+                align="center"
+                justify="center">
+                <v-col
+                    class="text-center"
+                    cols="12">
+                    <h1 class="display-1 font-weight-thin mb-4">岡山龍谷高等学校図書委員会</h1>
+                    <h4 class="subheading">RyukokuBooksRoom</h4>
+                </v-col>
+            </v-row>
+        </v-parallax>
+        <v-row>
+            <v-col
+                cols="6"
+            >
+                <div
+                    style="height:500px;background-color:red;"
+                >
+                </div>
+            </v-col>
+            <v-col
+                cols="6"
+            >
+                <div
+                    style="height:500px;background-color:blue;"
+                >
+                </div>
+            </v-col>
+        </v-row>
+        <h2>新刊</h2>
+        <v-row>
+            <v-col
+                cols="12"
+                sm="3"
+            >
+                <BookCard
+                    id="9784091282637"
+                    style="margin:10px;"
+                >
+                </BookCard>
+            </v-col>
+            <v-col
+                cols="12"
+                sm="3"
+            >
+                <BookCard
+                    id="9784091282637"
+                    style="margin:10px;"
+                >
+                </BookCard>
+            </v-col>
+            <v-col
+                cols="12"
+                sm="3"
+            >
+                <BookCard
+                    id="9784091282637"
+                    style="margin:10px;"
+                >
+                </BookCard>
+            </v-col>
+            <v-col
+                cols="12"
+                sm="3"
+            >
+                <BookCard
+                    id="9784091282637"
+                    style="margin:10px;"
+                >
+                </BookCard>
+            </v-col>
+        </v-row>
+    </div>
+</template>
+<script>
+import BookCard from '../components/BooksCard.vue'
+export default {
+    name: "Home",
+    components: {
+        BookCard
+    }
+}
+</script>
