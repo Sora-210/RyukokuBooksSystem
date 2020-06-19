@@ -36,7 +36,7 @@
         <v-row>
             <v-col
                 cols="12"
-                sm="3"
+                sm="2"
             >
                 <BookCard
                     id="9784844336389"
@@ -46,7 +46,7 @@
             </v-col>
             <v-col
                 cols="12"
-                sm="3"
+                sm="2"
             >
                 <BookCard
                     id="9784844336778"
@@ -56,7 +56,7 @@
             </v-col>
             <v-col
                 cols="12"
-                sm="3"
+                sm="2"
             >
                 <BookCard
                     id="9784844333937"
@@ -66,10 +66,30 @@
             </v-col>
             <v-col
                 cols="12"
-                sm="3"
+                sm="2"
             >
                 <BookCard
                     id="9784798155302"
+                    style="margin:10px;"
+                >
+                </BookCard>
+            </v-col>
+            <v-col
+                cols="12"
+                sm="2"
+            >
+                <BookCard
+                    id="9784040652108"
+                    style="margin:10px;"
+                >
+                </BookCard>
+            </v-col>
+            <v-col
+                cols="12"
+                sm="2"
+            >
+                <BookCard
+                    id="9784297109134"
                     style="margin:10px;"
                 >
                 </BookCard>
