@@ -27,20 +27,20 @@
 			label="リクエストの種類"
 			outlined
 			append-icon="fas fa-caret-down"
-			v-model="SendData.select">
+			v-model="SendData.genre">
 		</v-select>
-		<div v-if="SendData.select === 0">
+		<div v-if="SendData.genre === 0">
 			<v-text-field
 				outlined
 				label="タイトル名"
-				v-model="SendData.content.title">
+				v-model="SendData.content">
 			</v-text-field>
 		</div>
-		<div v-else-if="SendData.select === 1">
+		<div v-else-if="SendData.genre === 1">
 			<v-textarea
 				outlined 
 				label="リクエスト内容"
-				v-model="SendData.content.message">
+				v-model="SendData.content">
 			</v-textarea>
 		</div>
 		<div
@@ -55,9 +55,8 @@
 				送信
 			</v-btn>
 		</div>
-		{{ SendData.select }} <br>
-		{{ SendData.content.title }} <br>
-		{{ SendData.content.message }} <br>
+		{{ SendData.genre }} <br>
+		{{ SendData.content}} <br>
 	</div>
 </template>
 <script>
@@ -79,24 +78,21 @@ export default {
 				}
 			],
 			SendData: {
-				select: "",
-				content: {
-					title:"",
-					message:""
-				}
+				genre: "",
+				content: ""
 			}
 		};
 	},
 	methods: {
 		SendRequest: function() {
 			this.sendStatus = true
-			this.axios.post('http://192.168.1.43:3000/',this.SendData)
+			this.axios.post('http://192.168.1.4/request',this.SendData)
 				.then((res) => {
 					console.log(res.data)
 					if (res.data.status === "success") {
 						this.sendStatus = false
 						this.alert = true
-						this.SendData = {select:"",content:{title:"",message:""}}
+						this.SendData = {genre:"",content:""}
 						setTimeout(() => {
 							this.alert = false
 						},"4000")
