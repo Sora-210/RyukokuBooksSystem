@@ -1,36 +1,25 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Lends', {
+    return queryInterface.createTable('Collections', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      status: {
-        type: Sequelize.INTEGER
+      isbn: {
+        type: Sequelize.BIGINT
       },
-      year: {
-        type: Sequelize.INTEGER
+      uuid: {
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4
       },
-      school_year: {
-        type: Sequelize.INTEGER
+      registrationData: {
+        type: Sequelize.DATEONLY
       },
-      class: {
-        type: Sequelize.INTEGER
-      },
-      number: {
-        type: Sequelize.INTEGER
-      },
-      BC_uuid: {
+      note: {
         type: Sequelize.STRING
-      },
-      start_date: {
-        type: Sequelize.DATEONLY
-      },
-      end_date: {
-        type: Sequelize.DATEONLY
       },
       createdAt: {
         allowNull: false,
@@ -43,6 +32,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Lends');
+    return queryInterface.dropTable('Collections');
   }
 };

@@ -1,24 +1,18 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Collections', {
+    return queryInterface.createTable('Requests', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      data_store_fron: {
+      genre: {
         type: Sequelize.INTEGER
       },
-      from_id: {
-        type: Sequelize.BIGINT
-      },
-      uuid: {
+      content: {
         type: Sequelize.STRING
-      },
-      NCD: {
-        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,
@@ -31,6 +25,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Collections');
+    return queryInterface.dropTable('Requests');
   }
 };
