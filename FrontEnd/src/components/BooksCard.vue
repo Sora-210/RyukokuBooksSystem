@@ -8,7 +8,9 @@
                 {{ title }}
             </v-card-title>
             <v-card-text>
-                {{ author }}
+                <p v-for="author in this.authors" :key="author.index">
+                    {{ author }} / 著
+                </p>
             </v-card-text>
             <v-card-actions>
                 <v-btn>
@@ -25,7 +27,8 @@ export default {
     data: function() {
         return {
             "title":"",
-            "author":""
+            "authors":"",
+            "imgId":""
         }
     },
     props:[
@@ -33,17 +36,18 @@ export default {
     ],
     computed: {
         bookImgUrl: function() {
-            return 'https://cover.openbd.jp/' + this.id + '.jpg'
+            return "https://books.google.com/books/content/images/frontcover/" + this.imgId + "?fife=w800-h1200"
         },
         bookUrl: function() {
-            return '/book/' + this.id
+            return '/collection/' + "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
         }
     },
     mounted: function() {
-        this.axios('https://api.openbd.jp/v1/get?isbn=' + this.id)
+        this.axios('https://www.googleapis.com/books/v1/volumes?q=isbn:' + this.id)
             .then((res) => {
-                this.title = res.data[0].summary.title
-                this.author = res.data[0].summary.author
+                this.title = res.data.items[0].volumeInfo.title
+                this.authors = res.data.items[0].volumeInfo.authors
+                this.imgId = res.data.items[0].id
             })
             .catch((err) => {
                 alert('Bookデータの取得中にエラーが発生しました')

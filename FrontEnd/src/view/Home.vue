@@ -37,59 +37,10 @@
             <v-col
                 cols="12"
                 sm="2"
+                v-for="id in newBooksList" :key="id.index"
             >
                 <BookCard
-                    id="9784844336389"
-                    style="margin:10px;"
-                >
-                </BookCard>
-            </v-col>
-            <v-col
-                cols="12"
-                sm="2"
-            >
-                <BookCard
-                    id="9784844336778"
-                    style="margin:10px;"
-                >
-                </BookCard>
-            </v-col>
-            <v-col
-                cols="12"
-                sm="2"
-            >
-                <BookCard
-                    id="9784844333937"
-                    style="margin:10px;"
-                >
-                </BookCard>
-            </v-col>
-            <v-col
-                cols="12"
-                sm="2"
-            >
-                <BookCard
-                    id="9784798155302"
-                    style="margin:10px;"
-                >
-                </BookCard>
-            </v-col>
-            <v-col
-                cols="12"
-                sm="2"
-            >
-                <BookCard
-                    id="9784040652108"
-                    style="margin:10px;"
-                >
-                </BookCard>
-            </v-col>
-            <v-col
-                cols="12"
-                sm="2"
-            >
-                <BookCard
-                    id="9784297109134"
+                    :id="id"
                     style="margin:10px;"
                 >
                 </BookCard>
@@ -103,6 +54,17 @@ export default {
     name: "Home",
     components: {
         BookCard
+    },
+    data: function() {
+        return {
+            newBooksList:[
+                "9784844336389",
+                "9784844336778",
+                "9784844333937",
+                "9784798155302",
+                "9784535788770"
+            ]
+        }
     }
 }
 </script>
