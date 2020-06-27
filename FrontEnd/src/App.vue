@@ -18,7 +18,7 @@
           </v-list-item-title>
         </v-list-item>
       </router-link>
-      <router-link to="/ncdlist">
+      <!-- <router-link to="/ncdlist">
         <v-list-item
           link
         >
@@ -29,13 +29,37 @@
             NCD分類リスト
           </v-list-item-title>
         </v-list-item>
+      </router-link> -->
+      <router-link to="/search">
+        <v-list-item
+          link
+        >
+          <v-list-item-icon>
+            <v-icon>fas fa-search</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>
+            検索
+          </v-list-item-title>
+        </v-list-item>
+      </router-link>
+      <router-link to="/qrcodereader">
+        <v-list-item
+          link
+        >
+          <v-list-item-icon>
+            <v-icon>fas fa-qrcode</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>
+            QRCodeReader
+          </v-list-item-title>
+        </v-list-item>
       </router-link>
       <router-link to="/request">
         <v-list-item
           link
         >
           <v-list-item-icon>
-            <v-icon>fas fa-envelope-open-text</v-icon>
+            <v-icon>fas fa-envelope</v-icon>
           </v-list-item-icon>
           <v-list-item-title>
             リクエスト
@@ -44,7 +68,7 @@
       </router-link>
       <v-divider>
       </v-divider>
-      <router-link to="/lending">
+      <router-link to="/admin/lending">
         <v-list-item
           link
         >
@@ -56,7 +80,7 @@
           </v-list-item-title>
         </v-list-item>
       </router-link>
-      <router-link to="/ncd">
+      <!-- <router-link to="/ncd">
         <v-list-item
           link
         >
@@ -67,8 +91,8 @@
             NCD管理
           </v-list-item-title>
         </v-list-item>
-      </router-link>
-      <router-link to="/collection">
+      </router-link> -->
+      <router-link to="/admin/collections">
         <v-list-item
           link
         >
@@ -77,6 +101,18 @@
           </v-list-item-icon>
           <v-list-item-title>
             蔵書管理
+          </v-list-item-title>
+        </v-list-item>
+      </router-link>
+      <router-link to="/admin/requests">
+        <v-list-item
+          link
+        >
+          <v-list-item-icon>
+            <v-icon>fas fa-envelope-open-text</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>
+            リクエスト管理
           </v-list-item-title>
         </v-list-item>
       </router-link>
