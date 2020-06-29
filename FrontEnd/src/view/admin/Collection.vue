@@ -1,5 +1,14 @@
 <template>
     <div>
+        <v-alert
+            border="left"
+            colored-border
+            color="deep-purple accent-4"
+            elevation="2"
+        >
+            データの取得をしていません。
+            デザインのみ作成
+        </v-alert>
         <v-btn
             color="success"
         >
