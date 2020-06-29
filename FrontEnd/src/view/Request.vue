@@ -86,7 +86,7 @@ export default {
 	methods: {
 		SendRequest: function() {
 			this.sendStatus = true
-			this.axios.post('http://192.168.1.4/request',this.SendData)
+			this.axios.post('http://localhost/requests',this.SendData)
 				.then((res) => {
 					console.log(res.data)
 					if (res.data.status === "success") {
