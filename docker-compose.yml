@@ -1,0 +1,24 @@
+version: '2.1'
+services:
+    frontend:
+        build: ./FrontEnd/.
+        ports:
+            - 80:80
+        networks:
+            - RyukokuBooksSystem
+    # ManagementApi:
+    #     build: ./ManagementApi/.
+    #     ports:
+    #         - 80:80
+    management-db:
+        image: mysql:8.0.20
+        environment:
+            MYSQL_ROOT_PASSWORD: password
+        volumes:
+            - ./Data/DB:/var/lib/mysql
+        networks:
+            - RyukokuBooksSystem
+
+networks:
+    RyukokuBooksSystem:
+        driver: bridge
