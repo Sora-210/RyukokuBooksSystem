@@ -17,9 +17,9 @@
   },
   "production": {
     "username": "root",
-    "password": "pass",
-    "database": "Dev",
-    "host": "localhost",
+    "password": "password",
+    "database": "ManagementApi_DB",
+    "host": "management-db",
     "dialect": "mysql",
     "operatorsAliases": false
   }
