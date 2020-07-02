@@ -6,66 +6,14 @@
       app
     >
     <v-list>
-      <router-link to="/">
-        <v-list-item
-          link
+      <div v-for="nav in this.navList" :key="nav.item">
+        <NavItem
+          :name="nav.name"
+          :url="nav.url"
+          :icon="nav.icon"
         >
-          <v-list-item-icon>
-            <v-icon>fas fa-home</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>
-            Home
-          </v-list-item-title>
-        </v-list-item>
-      </router-link>
-      <!-- <router-link to="/ncdlist">
-        <v-list-item
-          link
-        >
-          <v-list-item-icon>
-            <v-icon>fas fa-list</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>
-            NCD分類リスト
-          </v-list-item-title>
-        </v-list-item>
-      </router-link> -->
-      <router-link to="/search">
-        <v-list-item
-          link
-        >
-          <v-list-item-icon>
-            <v-icon>fas fa-search</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>
-            検索
-          </v-list-item-title>
-        </v-list-item>
-      </router-link>
-      <router-link to="/qrcodereader">
-        <v-list-item
-          link
-        >
-          <v-list-item-icon>
-            <v-icon>fas fa-qrcode</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>
-            QRCodeReader
-          </v-list-item-title>
-        </v-list-item>
-      </router-link>
-      <router-link to="/request">
-        <v-list-item
-          link
-        >
-          <v-list-item-icon>
-            <v-icon>fas fa-envelope</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>
-            リクエスト
-          </v-list-item-title>
-        </v-list-item>
-      </router-link>
+        </NavItem>
+      </div>
       <v-divider>
       </v-divider>
       <router-link to="/admin/lending">
@@ -182,16 +130,43 @@
       dark
       app
     >
-      @2020 sora210.dev 
+      @2020 岡山龍谷高等学校図書委員会
     </v-footer>
   </v-app>
 </template>
 
 <script>
+import NavItem from "./components/NavItem.vue";
+
 export default {
   name: 'App',
+  components: {
+    NavItem
+  },
   data: () => ({
-    navDrawer : true
+    navDrawer : true,
+    navList: [
+      {
+        name:"Home",
+        url:"/",
+        icon:"fas fa-home"
+      },
+      {
+        name:"検索",
+        url:"/search",
+        icon:"fas fa-search"
+      },
+      {
+        name:"QR",
+        url:"/qrcodereader",
+        icon:"fas fa-qrcode"
+      },
+      {
+        name:"リクエスト",
+        url:"/request",
+        icon:"fas fa-envelope"
+      }
+    ]
   }),
 };
 </script>
