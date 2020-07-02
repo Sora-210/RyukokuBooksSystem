@@ -1,89 +1,74 @@
 <template>
     <div>
-        <v-alert
-            border="left"
-            colored-border
-            color="deep-purple accent-4"
-            elevation="2"
-        >
-            データの取得をしていません。
-            デザインのみ作成
-        </v-alert>
-        <table>
-            <tr class="colName">
-                <th>
-                    ステータス
-                </th>
-                <th>
-                    UUID
-                </th>
-                <th>
-                    タイトル
-                </th>
-                <th>
-                    貸出開始日
-                </th>
-                <th>
-                    返却予定日
-                </th>
-            </tr>
-            <tr class="row-item">
-                <td>
-                    〇
-                </td>
-                <td>
-                    9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
-                </td>
-                <td>
-                    貸出中のタイトル
-                </td>
-                <td>
-                    0000/00/00
-                </td>
-                <td>
-                    0000/00/00
-                </td>
-            </tr>
-            <tr class="row-item">
-                <td>
-                    延滞
-                </td>
-                <td>
-                    9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
-                </td>
-                <td>
-                    貸出中のタイトル
-                </td>
-                <td>
-                    0000/00/00
-                </td>
-                <td>
-                    0000/00/00
-                </td>
-            </tr>
-            <tr class="row-item">
-                <td>
-                    〇
-                </td>
-                <td>
-                    9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
-                </td>
-                <td>
-                    貸出中のタイトル
-                </td>
-                <td>
-                    0000/00/00
-                </td>
-                <td>
-                    0000/00/00
-                </td>
-            </tr>
-        </table>
+        <div class="sp-row-scroll mt-7 mx-1">
+            <table>
+                <tr class="colName">
+                    <th>
+                        レンタルID
+                    </th>
+                    <th>
+                        ステータス
+                    </th>
+                    <th>
+                        UUID
+                    </th>
+                    <th>
+                        タイトル
+                    </th>
+                    <th>
+                        貸出開始日
+                    </th>
+                    <th>
+                        返却日
+                    </th>
+                </tr>
+                <tr class="row-item" v-for="item in this.rentalsList" :key="item.index">
+                    <td>
+                        {{ item.id }}
+                    </td>
+                    <td v-if="item.return_day === null">
+                        <span style="color:blue;">貸出中</span>
+                    </td>
+                    <td v-else>
+                        <span style="color:green;">返却済み</span>
+                    </td>
+                    <td>
+                        {{ item.uuid}}
+                    </td>
+                    <td>
+                        タイトル
+                    </td>
+                    <td>
+                        {{ item.start_day }}
+                    </td>
+                    <td v-if="item.return_day === null">
+                        -
+                    </td>
+                    <td v-else>
+                        {{ item.return_day}}
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
 </template>
 <script>
 export default {
-    
+    data: function() {
+        return {
+            rentalsList:[]
+        }
+    },
+    mounted: function() {
+        this.axios.get('http://localhost/rentals')
+            .then((res) => {
+                console.log(res)
+                this.rentalsList = res.data.data
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+    }
 }
 </script>
 
