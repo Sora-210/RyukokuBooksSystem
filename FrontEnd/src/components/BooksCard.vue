@@ -12,11 +12,6 @@
                     {{ author }} / 著
                 </p>
             </v-card-text>
-            <v-card-actions>
-                <v-btn>
-                    借りる
-                </v-btn>
-            </v-card-actions>
         </v-card>
     </div>
 </template>

@@ -12,7 +12,7 @@ import CodeReader from '../view/CodeReader.vue'
 //Admin View Component
 import AdminLending from '../view/admin/AdminLending.vue'
 import AdminCollection from '../view/admin/Collection.vue'
-
+import AdminRequest from '../view/admin/Request.vue'
 
 Vue.use(Router)
 
@@ -49,6 +49,10 @@ const routes = [
     {
         path: '/admin/collections',
         component: AdminCollection
+    },
+    {
+        path: '/admin/requests',
+        component: AdminRequest
     },
     //Error Routing
     {
