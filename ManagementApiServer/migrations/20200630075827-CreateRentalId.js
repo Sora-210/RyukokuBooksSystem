@@ -1,5 +1,7 @@
 'use strict';
 
+const { query } = require("express");
+
 module.exports = {
   up: (queryInterface, Sequelize) => {
     /*
@@ -9,7 +11,7 @@ module.exports = {
       Example:
       return queryInterface.createTable('users', { id: Sequelize.INTEGER });
     */
-    return queryInterface.addColumn('Collections', 'ncd', Sequelize.STRING)
+    return queryInterface.addColumn('Collections','rentalId',Sequelize.INTEGER)
   },
 
   down: (queryInterface, Sequelize) => {

@@ -5,7 +5,9 @@ module.exports = (sequelize, DataTypes) => {
     uuid: DataTypes.UUID,
     registrationData: DataTypes.DATEONLY,
     note: DataTypes.STRING,
-    ncd: DataTypes.STRING
+    ncd: DataTypes.STRING,
+    rentalStatus: DataTypes.BOOLEAN,
+    rentalId:DataTypes.INTEGER
   }, {});
   Collection.associate = function(models) {
     // associations can be defined here
