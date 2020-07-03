@@ -4,7 +4,6 @@ require('date-utils')
 
 const collectionsRouter = express.Router()
 const DB = require('../models/index')
-const db = require('../models/index')
 /*
 ################################
 Collection処理
@@ -150,7 +149,7 @@ collectionsRouter.get('/', async(req, res) => {
 collectionsRouter.get('/:uuid', async(req, res) => {
     console.debug(2)
     try {
-        const DBres = await db.Collection.findAll({
+        const DBres = await DB.Collection.findAll({
             where:{
                 uuid: req.params.uuid
             }
@@ -214,7 +213,7 @@ collectionsRouter.get('/:uuid', async(req, res) => {
 collectionsRouter.get('/isbn/:isbn', async(req, res) => {
     console.debug(3)
     try {
-        const DBres = await db.Collection.findAll({
+        const DBres = await DB.Collection.findAll({
             where:{
                 isbn: req.params.isbn
             }
