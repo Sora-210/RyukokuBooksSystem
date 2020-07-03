@@ -13,6 +13,7 @@
     "body-parser": "^1.19.0",
     "date-utils": "^1.2.21",
     "express": "^4.17.1",
+    "log4js": "^6.3.0",
     "mysql2": "^2.1.0",
     "node-uuid": "^1.4.8",
     "sequelize": "^5.21.13",
