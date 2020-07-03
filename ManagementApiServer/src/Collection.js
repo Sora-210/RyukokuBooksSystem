@@ -348,12 +348,12 @@ collectionsRouter.patch('/:uuid/rental', async(req, res) => {
             const rentalObject = await DB.Rental.create(rentalSend,{transaction:T})
             const updateObject = {rentalStatus:false,rentalId:rentalObject.rentalId}
             const collection = await DB.Collection.update(updateObject,{where:{uuid:req.params.uuid},transaction:T})
-            T.commit()
+            await T.commit()
             return res.status(201).json({rentalObject:rentalObject,collection:collection})
         } catch(e) {
             console.debug("Error:2")
             console.debug(e)
-            T.rollback()
+            await T.rollback()
             return res.status(500).json()
         }
     } else {
@@ -428,12 +428,12 @@ collectionsRouter.patch('/:uuid/return', async(req, res) => {
         try {
             const collectionObject = await DB.Collection.update({rentalStatus:true,rentalId:null},{where:{uuid:req.params.uuid},transaction:T})
             const rentalObject = await DB.Rental.update({return_day:GetToday()},{where:{id:rentalId},transaction:T})
-            T.commit()
+            await T.commit()
             return res.status(201).json({collection:collectionObject,rental:rentalObject})
         } catch(e) {
             console.debug("Error:2")
             console.debug(e)
-            T.rollback()
+            await T.rollback()
             return res.status(500).json()
         }
     } else {
@@ -489,10 +489,10 @@ collectionsRouter.delete('/:uuid', async(req, res) => {
         if (DBres === 0) {
             throw new CustomError('Nothing')
         }
-        T.commit()
+        await T.commit()
         return res.status(204).json()
     } catch(e) {
-        T.rollback()
+        await T.rollback()
         switch(e.name) {
             case 'Nothing':
                 return res.status(404).json()
