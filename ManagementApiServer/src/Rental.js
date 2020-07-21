@@ -2,15 +2,13 @@ const express = require('express')
 require('date-utils')
 
 const rentalRouter = express.Router()
+const { CheckAuth } = require('./func/Auth.js')
 const DB = require('../models/index')
 /*
 ################################
 Rental処理
-GET /
-GET /:id
-
-：メモ：
-エラー処理抜けあり
+[AUTH] GET /
+[AUTH] GET /:id
 ################################
 */
 
@@ -18,8 +16,11 @@ function CustomError(name,message) {
     this.name = name
     this.message = message
 }
+//#######################################################
+//以下認証が必要
+rentalRouter.use(CheckAuth)
 
-// [GET] /
+// (AUTH)[GET] /
 rentalRouter.get('/', async(req, res) => {
     try {
         const DBres = await DB.Rental.findAll()
@@ -36,32 +37,7 @@ rentalRouter.get('/', async(req, res) => {
     }
 })
 
-// app.get('/rentals', (req,res) => {
-//     db.Rental.findAll()
-//         .then((data) => {
-//             if (data.length === 0) {
-//                 res.json({
-//                     status: "error",
-//                     message: "Noting Request"
-//                 })
-//             } else {
-//                 res.json({
-//                     status: "success",
-//                     message: "Getting Requests",
-//                     data: data
-//                 })
-//             }
-//         })
-//         .catch((err) => {
-//             res.json({
-//                 status: "error",
-//                 message: "Unknown error",
-//                 data: err
-//             })
-//         })
-// })
-
-// [GET] /:rentalId
+// (AUTH)[GET] /:rentalId
 rentalRouter.get('/:rentalId', async(req, res) => {
     try {
         const DBres = await DB.Rental.findAll({where:{id:req.params.rentalId}})
@@ -78,7 +54,6 @@ rentalRouter.get('/:rentalId', async(req, res) => {
     }
 })
 
-// app.get('/rentals/:uuid', (req,res) => {
-
-// })
-module.exports = rentalRouter
+module.exports = {
+    rentalRouter
+}

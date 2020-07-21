@@ -3,16 +3,14 @@ require('date-utils')
 
 const requestRouter = express.Router()
 const DB = require('../models/index')
+const { CheckAuth } = require('./func/Auth.js')
 /*
 ################################
 Request処理
-GET /
-GET /:id
 POST /
-DELETE /;id
-
-：メモ：
-エラー処理抜けあり
+[AUTH] GET /
+[AUTH] GET /:id
+[AUTH] DELETE /;id
 ################################
 */
 
@@ -39,99 +37,6 @@ const CheckRequest = (object) => {
     return ReturnObject
 }
 
-
-// [GET] /
-requestRouter.get('/', async(req, res) => {
-    try {
-        const DBres = await DB.Request.findAll()
-        if (DBres.length === 0) {
-            throw new CustomError('Nothing')
-        }
-        res.status(200).json(DBres)
-    } catch(e) {
-        switch(e.name) {
-            case 'Nothing':
-                return res.status(404).json()
-        }
-        return res.status(500).json()
-    }
-})
-
-// app.get('/requests', (req, res) => {
-//     db.Request.findAll()
-//         .then((data) => {
-//             if (data.length === 0) {
-//                 res.json({
-//                     status: "error",
-//                     message: "Noting Request"
-//                 })
-//             } else {
-//                 res.json({
-//                     status: "success",
-//                     message: "Getting Requests",
-//                     data: data
-//                 })
-//             }
-//         })
-//         .catch((err) => {
-//             res.json({
-//                 status: "error",
-//                 message: "Unknown error",
-//                 data: err
-//             })
-//         })
-// })
-
-
-// [GET] /:id
-requestRouter.get('/:requestId', async(req, res) => {
-    try {
-        const DBres = await DB.Request.findAll({where:{id:req.params.requestId}})
-        if (DBres.length === 0) {
-            throw new CustomError('Nothing')
-        }
-        return res.status(200).json(DBres[0])
-    } catch(e) {
-        switch(e.name) {
-            case 'Nothing':
-                return res.status(404).json()
-        }
-        return res.status(500).json()
-    }
-})
-
-// app.get('/requests/:id', (req, res) => {
-//     db.Request.findAll(
-//         {
-//             where: {
-//                 id: req.params.id
-//             }
-//         }
-//     )
-//         .then((data) => {
-//             if (data.length === 0) {
-//                 res.json({
-//                     status: "error",
-//                     message: "Noting Request"
-//                 })
-//             } else {
-//                 res.json({
-//                     status: "success",
-//                     message: "Getting Request",
-//                     data: data
-//                 })
-//             }
-//         })
-//         .catch((err) => {
-//             res.json({
-//                 status: "error",
-//                 message: "Unknown error",
-//                 data: err
-//             })
-//         })
-// })
-
-
 // [POST] /
 requestRouter.post('/', async(req, res) => {
     const requestSend = CheckRequest(req.body)
@@ -152,38 +57,45 @@ requestRouter.post('/', async(req, res) => {
     }
 })
 
-// app.post('/requests', (req, res) => {
-//     if (requestCheck({"genre":req.body.genre,"content":req.body.content})) {
-//         db.Request.create(
-//             {
-//                 "genre": req.body.genre,
-//                 "content": req.body.content
-//             }
-//         )
-//             .then((data) => {
-//                 res.json({
-//                     status: "success",
-//                     message: "Send Request",
-//                     data: data
-//                 })
-//             })
-//             .catch((err) => {
-//                 res.json({
-//                     status: "error",
-//                     message: "Unknown error",
-//                     data: err
-//                 })
-//             })
-//     } else {
-//         res.json({
-//             status: "error",
-//             message: "Incomplete data"
-//         })
-//     }
-// })
+//####################################################################
+//以下認証が必要
+requestRouter.use(CheckAuth)
 
+//(AUTH)[GET] /
+requestRouter.get('/', async(req, res) => {
+    try {
+        const DBres = await DB.Request.findAll()
+        if (DBres.length === 0) {
+            throw new CustomError('Nothing')
+        }
+        res.status(200).json(DBres)
+    } catch(e) {
+        switch(e.name) {
+            case 'Nothing':
+                return res.status(404).json({"name":"NotFound","message":""})
+        }
+        return res.status(500).json()
+    }
+})
 
-// [DELETE] /:id
+//(AUTH)[GET] /:id
+requestRouter.get('/:requestId', async(req, res) => {
+    try {
+        const DBres = await DB.Request.findAll({where:{id:req.params.requestId}})
+        if (DBres.length === 0) {
+            throw new CustomError('Nothing')
+        }
+        return res.status(200).json(DBres[0])
+    } catch(e) {
+        switch(e.name) {
+            case 'Nothing':
+                return res.status(404).json({"name":"NotFound","message":""})
+        }
+        return res.status(500).json()
+    }
+})
+
+//(AUTH)[DELETE] /:id
 requestRouter.delete('/:requestId', async(req, res) => {
     const T = await DB.sequelize.transaction()
     try {
@@ -197,40 +109,12 @@ requestRouter.delete('/:requestId', async(req, res) => {
         await T.rollback()
         switch(e.name) {
             case 'Nothing':
-                return res.status(404).json()
+                return res.status(404).json({"name":"NotFound","message":""})
         }
         return res.status(500).json()
     }
 })
-// app.delete('/requests/:id', (req, res) => {
-//     db.Request.destroy({
-//         where:{
-//             id: req.params.id
-//         }
-//     })
-//         .then((data) => {
-//             if (data === 0) {
-//                 res.json({
-//                     status: "error",
-//                     message: "Noting Request"
-//                 })
-//             } else if (data === 1) {
-//                 res.json({
-//                     status: "success",
-//                     message: "Deleted Request",
-//                     data: {
-//                         id: req.params.id
-//                     }
-//                 })
-//             }
-//         })
-//         .catch((err) => {
-//             res.json({
-//                 status: "error",
-//                 message: "Unknown error",
-//                 data: err
-//             })
-//         })
-// })
 
-module.exports = requestRouter
+module.exports = {
+    requestRouter
+}
