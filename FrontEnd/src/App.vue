@@ -2,99 +2,47 @@
   <v-app>
     <v-navigation-drawer
       id="nav"
-      v-model="navDrawer"
+      v-model="isNavDrawer"
       app
     >
     <v-list>
-      <div v-for="nav in this.navList" :key="nav.item">
+      <div v-for="navItem in this.navList" :key="navItem.item">
         <NavItem
-          :name="nav.name"
-          :url="nav.url"
-          :icon="nav.icon"
+          :name="navItem.name"
+          :url="navItem.url"
+          :icon="navItem.icon"
         >
         </NavItem>
       </div>
       <v-divider>
       </v-divider>
-      <router-link to="/admin/lending">
-        <v-list-item
-          link
-        >
-          <v-list-item-icon>
-            <v-icon>fas fa-users-cog</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>
-            貸出管理
-          </v-list-item-title>
-        </v-list-item>
-      </router-link>
-      <!-- <router-link to="/ncd">
-        <v-list-item
-          link
-        >
-          <v-list-item-icon>
-            <v-icon>fas fa-tags</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>
-            NCD管理
-          </v-list-item-title>
-        </v-list-item>
-      </router-link> -->
-      <router-link to="/admin/collections">
-        <v-list-item
-          link
-        >
-          <v-list-item-icon>
-            <v-icon>fas fa-book</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>
-            蔵書管理
-          </v-list-item-title>
-        </v-list-item>
-      </router-link>
-      <router-link to="/admin/requests">
-        <v-list-item
-          link
-        >
-          <v-list-item-icon>
-            <v-icon>fas fa-envelope-open-text</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>
-            リクエスト管理
-          </v-list-item-title>
-        </v-list-item>
-      </router-link>
-      <router-link to="/statistics">
-        <v-list-item
-          link
-        >
-          <v-list-item-icon>
-            <v-icon>fas fa-chart-pie</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>
-            統計
-          </v-list-item-title>
-        </v-list-item>
-      </router-link>
-      <router-link to="/setting">
-        <v-list-item
-          link
-        >
-          <v-list-item-icon>
-            <v-icon>fas fa-cog</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>
-            設定
-          </v-list-item-title>
-        </v-list-item>
-      </router-link>
+      <div v-if="token">
+        <div v-for="adminNavItem in this.adminNavList" :key="adminNavItem.item">
+          <NavItem
+            :name="adminNavItem.name"
+            :url="adminNavItem.url"
+            :icon="adminNavItem.icon"
+          >
+          </NavItem>
+        </div>
+      </div>
       <v-divider>
       </v-divider>
       <v-list-item>
         <v-btn
           color="success"
+          v-if="!token"
+          @click="login"
         >
           管理者Login<v-icon>fas fa-sign-in-alt</v-icon>
+        </v-btn>
+        <v-btn
+          color="red"
+          dark
+          v-else
+          @click="logout"
+        >
+          Logout<v-icon>fas fa-sign-in-alt</v-icon>
         </v-btn>
       </v-list-item>
     </v-list>
@@ -105,7 +53,7 @@
       dark
     >
       <v-app-bar-nav-icon
-        @click="navDrawer = !navDrawer"
+        @click="isNavDrawer = !isNavDrawer"
       >
         <v-icon>
           fas fa-bars
@@ -143,8 +91,24 @@ export default {
   components: {
     NavItem
   },
+  computed: {
+    token: function() {
+      return this.$store.getters.token
+    }
+  },
+  methods: {
+    login: function() {
+      this.$router.push('/login')
+    },
+    logout: function() {
+      this.$store.commit('removeToken')
+      alert("ログアウトしました")
+      this.$router.push('/')
+    }
+  },
   data: () => ({
-    navDrawer : true,
+    isNavDrawer:true,
+    isTest:true,
     navList: [
       {
         name:"Home",
@@ -166,6 +130,33 @@ export default {
         url:"/request",
         icon:"fas fa-envelope"
       }
+    ],
+    adminNavList: [
+      {
+        name:"貸出管理",
+        url:"/admin/rentals",
+        icon:"fas fa-users-cog"
+      },
+      {
+        name:"蔵書管理",
+        url:"/admin/collections",
+        icon:"fas fa-book"
+      },
+      {
+        name:"リクエスト管理",
+        url:"/admin/requests",
+        icon:"fas fa-envelope-open-text"
+      },
+      {
+        name:"統計",
+        url:"/admin/statistics",
+        icon:"fas fa-chart-pie"
+      },
+      {
+        name:"設定",
+        url:"/admin/setting",
+        icon:"fas fa-cog"
+      },
     ]
   }),
 };
