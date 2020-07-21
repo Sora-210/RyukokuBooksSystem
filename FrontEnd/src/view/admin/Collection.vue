@@ -1,63 +1,47 @@
 <template>
     <div>
-        <v-alert
-            border="left"
-            colored-border
-            color="deep-purple accent-4"
-            elevation="2"
-        >
-            蔵書の登録出来ません
-        </v-alert>
-        <v-btn
-            color="success"
-            @click="registerDialog = !registerDialog"
-        >
-            蔵書登録
-        </v-btn>
-        <div class="sp-row-scroll mt-7 mx-1">
-            <table>
-                <tr class="colName">
-                    <th>
-                        UUID
-                    </th>
-                    <th>
-                        ISBN
-                    </th>
-                    <th>
-                        タイトル
-                    </th>
-                    <th>
-                        NCD
-                    </th>
-                    <th>
-                        登録日
-                    </th>
-                    <th>
-                        備考
-                    </th>
-                </tr>
-                <tr class="row-item" v-for="item in this.collectionsList" :key="item.index">
-                    <td>
-                        {{ item.uuid }}
-                    </td>
-                    <td>
-                        {{ item.isbn }}
-                    </td>
-                    <td>
-                        タイトル
-                    </td>
-                    <td>
-                        {{ item.ncd }}
-                    </td>
-                    <td>
-                        {{ item.registrationData }}
-                    </td>
-                    <td>
-                        {{ item.note }}
-                    </td>
-                </tr>
-            </table>
-        </div>
+        <v-card>
+            <v-card-title>
+                蔵書一覧
+            </v-card-title>
+            <v-btn
+                class="ml-8"
+                color="success"
+                @click="registerDialog = !registerDialog"
+            >
+                蔵書登録
+            </v-btn>
+            <div class="table mt-7 mx-1 sp-row-scroll">
+                <table>
+                    <tr class="tableTitle">
+                        <th>UUID</th>
+                        <th>ISBN</th>
+                        <th>タイトル</th>
+                        <th>NCD</th>
+                        <th>登録日</th>
+                        <th>備考</th>
+                    </tr>
+                    <tr class="tableItem" v-for="item in this.collectionsList" :key="item.index">
+                        <td><router-link :to="`/collection/` + item.uuid">{{ item.uuid}}</router-link></td>
+                        <td>
+                            {{ item.isbn }}
+                        </td>
+                        <td>
+                            タイトル
+                        </td>
+                        <td>
+                            {{ item.ncd }}
+                        </td>
+                        <td>
+                            {{ item.registrationData }}
+                        </td>
+                        <td>
+                            {{ item.note }}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </v-card>
         <v-dialog v-model="registerDialog" width="70%" persistent>
             <v-stepper v-model="registerDialogTurn">
                 <v-stepper-header>
@@ -109,7 +93,7 @@
                         class="mb-12"
                         height="200px"
                     >
-                        <v-img style="width:50px;margin:auto;" src="https://icons8.com/vue-static/landings/animated-icons/icons/book/book.gif"></v-img>
+                        <v-img style="width:50px;margin:auto;" src="../../assets/book.gif"></v-img>
                         <p style="text-align:center;">Lodding Now...</p>
                     </div>
                 </v-stepper-content>
@@ -160,7 +144,7 @@
                         class="mb-12"
                         height="200px"
                     >
-                        <v-img style="width:50px;margin:auto;" src="https://icons8.com/vue-static/landings/animated-icons/icons/book/book.gif"></v-img>
+                        <v-img style="width:50px;margin:auto;" src="../../assets/book.gif"></v-img>
                         <p style="text-align:center;">登録中...</p>
                     </div>
                 </v-stepper-content>
@@ -216,24 +200,22 @@ export default {
         }
     },
     mounted: function() {
-        this.axios.get('http://localhost/collections')
-            .then((res) => {
-                console.log(res)
-                this.collectionsList = res.data.data
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+        this.reload()
     },
     methods: {
         reload() {
-            this.axios.get('http://localhost/collections')
+            const options = {
+                headers: {
+                    token: this.$store.getters.token
+                }
+            }
+            this.axios.get('http://localhost/collections', options)
                 .then((res) => {
                     console.log(res)
-                    this.collectionsList = res.data.data
+                    this.collectionsList = res.data
                 })
-                .catch((err) => {
-                    console.log(err)
+                .catch((e) => {
+                    alert("Err:"+e)
                 })
         },
         reset() {
@@ -263,23 +245,28 @@ export default {
         },
         registerSecond() {
             this.registerDialogTurn = 4
-            this.axios.post('http://localhost/collections', this.registerData)
+            const options = {
+                headers: {
+                    token: this.$store.getters.token
+                }
+            }
+            this.axios.post('http://localhost/collections', this.registerData, options)
                 .then((res) => {
-                    if (res.data.data.status === "error") {
+                    if (res.data.status === "error") {
                         this.registerDialogMessage = "登録に失敗しました"
                         this.registerDialogTurn = 1
                     } else {
                         this.reload()
                         setTimeout(()=>{
                             console.log(res)
-                            console.log(res.data.data)
-                            this.registeredData = res.data.data
+                            console.log(res.data)
+                            this.registeredData = res.data
                             this.registerDialogTurn = 5
                         },2500)
                     }
                 })
                 .catch((err) => {
-                    console.log(err)
+                    alert("Error:"+err)
                     this.registerDialogMessage = "想定外のエラーが発生しました"
                     this.registerDialogTurn = 1
                 })
@@ -299,18 +286,20 @@ table {
     border-collapse: collapse;
     width:100%;
 }
-th {
-    padding: 10px 20px 10px 20px;
-}
+th,
 td {
-    padding :10px 20px 10px 20px;
+    padding: 7px 20px 7px 20px;
 }
-.colName {
-    background-color:#d6d6d6;
+.tableTitle {
+    background-color:#e9e9e9;
     border-top: solid 1px#000000;
     border-bottom: solid 1px#000000;
 }
-.row-item {
-    text-align: center;
+.tableItem {
+    text-align: left;
+    border-bottom: solid 0.5px #e6e6e6;
+}
+.tableItem:hover {
+    background-color:#f1f1f1;
 }
 </style>

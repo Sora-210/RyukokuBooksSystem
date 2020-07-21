@@ -1,136 +1,139 @@
 <template>
     <div pa-6 ma-4>
-        <div v-if="this.resStatus">
-            <v-row>
-                <v-col
-                    cols=12
-                    sm=3
+        <v-alert
+            border="left"
+            colored-border
+            color="deep-purple accent-4"
+            elevation="2"
+        >
+            データ取得元の影響により画質が悪いです
+        </v-alert>
+        <v-row>
+            <v-col
+                cols=12
+                sm=3
+            >
+                <v-img
+                    :src=this.BookData.imgUrl
                 >
-                    <v-img
-                        :src=this.data.img
-                    >
-                    </v-img>
-                </v-col>
-                <v-col
-                    cols=0
-                    sm=1
+                </v-img>
+            </v-col>
+            <v-col
+                cols=0
+                sm=1
+            >
+            </v-col>
+            <v-col
+                cols=12
+                sm=8
+            >
+                <h1>
+                    {{ this.BookData.title }}
+                </h1>
+                <h2>
+                    |
+                    <span v-for="author in this.BookData.authors" :key="author.index">
+                        {{ author }} |
+                    </span>
+                </h2>
+                <table
+                    class="rentalInfo mt-4"
                 >
-                </v-col>
-                <v-col
-                    cols=12
-                    sm=8
+                    <tr>
+                        <th>
+                            貸出情報
+                        </th>
+                        <th>
+                            <i v-if="rentalStatus" class="far fa-circle" style="color:green;"> (貸出可)</i>
+                            <i v-else class="fas fa-times" style="color:red;"> (貸出中)</i>
+                        </th>
+                    </tr>
+                </table>
+                <br>
+                <v-btn
+                    v-if="rentalStatus"
+                    large
+                    color="success"
+                    @click="rentalDialog.status = true"
                 >
-                    <h1>
-                        {{ this.data.title }}
-                    </h1>
-                    <h2>
-                        |
-                        <span v-for="author in this.data.authors" :key="author.index">
-                            {{ author }} |
-                        </span>
-                    </h2>
-                    <table
-                        class="rentalInfo mt-4"
-                    >
+                    借りる
+                </v-btn>
+                <v-btn
+                    v-if="!rentalStatus"
+                    dark
+                    large
+                    color="red"
+                    @click="returnDialog.status = true"
+                >
+                    返す
+                </v-btn>
+            </v-col>
+        </v-row>
+        <v-divider>
+        </v-divider>
+        <v-row>
+            <v-col>
+                <p style="font-size:20px;">
+                    - CollectionInfo
+                </p>
+                <v-simple-table>
+                    <tbody>
                         <tr>
-                            <th>
-                                貸出情報
-                            </th>
-                            <th>
-                                <i v-if="rentalStatus" class="far fa-circle" style="color:green;"> (貸出可)</i>
-                                <i v-if="!rentalStatus" class="fas fa-times" style="color:red;"> (貸出中)</i>
-                            </th>
+                            <td>UUID</td>
+                            <td>{{ this.CollectionData.uuid }}</td>
                         </tr>
-                    </table>
-                    <br>
-                    <v-btn
-                        v-if="rentalStatus"
-                        large
-                        color="success"
-                        @click="rentalDialog.status = true"
-                    >
-                        借りる
-                    </v-btn>
-                    <v-btn
-                        v-if="!rentalStatus"
-                        dark
-                        large
-                        color="red"
-                        @click="returnDialog.status = true"
-                    >
-                        返す
-                    </v-btn>
-                </v-col>
-            </v-row>
-            <v-divider>
-            </v-divider>
-            <v-row>
-                <v-col>
-                    <p style="font-size:20px;">
-                        - CollectionInfo
-                    </p>
-                    <v-simple-table>
-                        <tbody>
-                            <tr>
-                                <td>UUID</td>
-                                <td>{{ this.data.uuid }}</td>
-                            </tr>
-                            <tr>
-                                <td>NCD</td>
-                                <td>{{ this.data.ncd }}</td>
-                            </tr>
-                            <tr>
-                                <td>登録日</td>
-                                <td>{{ this.data.registrationData }}</td>
-                            </tr>
-                            <tr>
-                                <td>備考</td>
-                                <td>{{ this.data.note }}</td>
-                            </tr>
-                        </tbody>
-                    </v-simple-table>
-                </v-col>
-            </v-row>
-            <v-row>
-                <v-col>
-                    <p style="font-size:20px;">
-                        - BookInfo
-                    </p>
-                    <v-simple-table>
-                        <tbody>
-                            <tr>
-                                <td>タイトル</td>
-                                <td>{{ this.data.title }}</td>
-                            </tr>
-                            <tr>
-                                <td>著作</td>
-                                <td>
-                                    |
-                                    <span v-for="author in this.data.authors" :key="author.index">
-                                        {{ author }} |
-                                    </span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>ISBN</td>
-                                <td>{{ this.data.isbn }}</td>
-                            </tr>
-                            <tr>
-                                <td>出版社</td>
-                                <td>{{ this.data.publisher }}</td>
-                            </tr>
-                            <tr>
-                                <td>発売日時</td>
-                                <td>{{ this.data.publishedDate }}</td>
-                            </tr>
-                        </tbody>
-                    </v-simple-table>
-                </v-col>
-            </v-row>
-        </div>
-        <div v-else>
-            <h2> 404 NotFount </h2>
-        </div>
+                        <tr>
+                            <td>NCD</td>
+                            <td>{{ this.CollectionData.ncd }}</td>
+                        </tr>
+                        <tr>
+                            <td>登録日</td>
+                            <td>{{ this.CollectionData.registrationData }}</td>
+                        </tr>
+                        <tr>
+                            <td>備考</td>
+                            <td>{{ this.CollectionData.note }}</td>
+                        </tr>
+                    </tbody>
+                </v-simple-table>
+            </v-col>
+        </v-row>
+        <v-row>
+            <v-col>
+                <p style="font-size:20px;">
+                    - BookInfo
+                </p>
+                <v-simple-table>
+                    <tbody>
+                        <tr>
+                            <td>タイトル</td>
+                            <td>{{ this.BookData.title }}</td>
+                        </tr>
+                        <tr>
+                            <td>著作</td>
+                            <td>
+                                |
+                                <span v-for="author in this.BookData.authors" :key="author.index">
+                                    {{ author }} |
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ISBN</td>
+                            <td>{{ this.CollectionData.isbn }}</td>
+                        </tr>
+                        <tr>
+                            <td>出版社</td>
+                            <td>{{ this.CollectionData.publisher }}</td>
+                        </tr>
+                        <tr>
+                            <td>発売日時</td>
+                            <td>{{ this.CollectionData.publishedDate }}</td>
+                        </tr>
+                    </tbody>
+                </v-simple-table>
+            </v-col>
+        </v-row>
         <v-dialog v-model="rentalDialog.status" width="70%" persistent>
             <v-stepper v-model="rentalDialog.turn">
                 <v-stepper-header>
@@ -146,27 +149,20 @@
                         <div
                             class="pt-2 mb-4"
                         >
-                            <!-- <v-alert
-                                v-if="this.registerDialogMessage !== ''"
-                                icon="fas fa-exclamation-triangle"
-                                dense
-                                outlined
-                                type="error"
-                            >
-                                {{ registerDialogMessage }}
-                            </v-alert> -->
                             <v-select
-                                :items="schoolGradeLists"
+                                :items="selectLists.schoolGradeList"
                                 append-icon="fas fa-caret-down"
                                 label="学年"
                                 outlined
                                 v-model="formData.grade"
                             ></v-select>
-                            <v-text-field
-                                v-model="formData.class"
+                            <v-select
+                                :items="selectLists.ClassList"
+                                append-icon="fas fa-caret-down"
                                 label="クラス"
                                 outlined
-                            ></v-text-field>
+                                v-model="formData.class"
+                            ></v-select>
                             <v-text-field
                                 v-model="formData.number"
                                 label="番号"
@@ -234,15 +230,6 @@
                         <div
                             class="pt-2 mb-4"
                         >
-                            <!-- <v-alert
-                                v-if="this.registerDialogMessage !== ''"
-                                icon="fas fa-exclamation-triangle"
-                                dense
-                                outlined
-                                type="error"
-                            >
-                                {{ registerDialogMessage }}
-                            </v-alert> -->
                         </div>
                         <v-btn
                             color="success"
@@ -284,13 +271,21 @@
                 </v-stepper-items>
             </v-stepper>
         </v-dialog>
+        <v-overlay :value="isLoading">
+            <img src="https://icons8.com/vue-static/landings/animated-icons/icons/book/book.gif">
+        </v-overlay>
     </div>
 </template>
 
 <script>
+require('date-utils')
+const DateNow = new Date();
+
 export default {
     data: function() {
         return {
+            isLoading:true,
+            url:'http://localhost/',
             resStatus:false,
             rentalStatus:false,
             rentalDialog: {
@@ -302,14 +297,16 @@ export default {
                 status:false,
                 turn:1
             },
-            data:{
-                uuid:"",
+            BookData:{
                 title:"",
                 authors:"",
-                isbn:"",
-                img:"",
+                imgUrl:"",
                 publisher:"",
                 publishedDate:"",
+            },
+            CollectionData: {
+                uuid:"",
+                isbn:"",
                 note:"",
                 registrationData:"",
                 ncd:""
@@ -320,65 +317,67 @@ export default {
                 number:"",
                 name:""
             },
-            schoolGradeLists:[
-                {text:"中等部 1年",value:11},
-                {text:"中等部 2年",value:12},
-                {text:"中等部 3年",value:13},
-                {text:"高等部 1年",value:21},
-                {text:"高等部 2年",value:22},
-                {text:"高等部 3年",value:23},
-            ]
+            selectLists: {
+                schoolGradeList:[
+                    {text:"中等部 1年",value:11},
+                    {text:"中等部 2年",value:12},
+                    {text:"中等部 3年",value:13},
+                    {text:"高等部 1年",value:21},
+                    {text:"高等部 2年",value:22},
+                    {text:"高等部 3年",value:23},
+                ],
+                ClassList:[
+                    {text:"A",value:1},
+                    {text:"B",value:2},
+                    {text:"C",value:3},
+                    {text:"D",value:4},
+                    {text:"E",value:5},
+                    {text:"F",value:6},
+                    {text:"G",value:7},
+                    {text:"Z・V・S",value:8},
+                ]
+            }
         }
     },
-    mounted: function() {
-        this.data.uuid = this.$route.params.uuid
-        this.axios('http://localhost/collection/' + this.data.uuid)
-            .then((res) => {
-                console.log(res.data.data[0])
-                this.data.note = res.data.data[0].note
-                this.data.registrationData = res.data.data[0].registrationData
-                this.data.ncd = res.data.data[0].ncd
-                this.data.isbn = res.data.data[0].isbn
-                this.rentalStatus = res.data.data[0].rentalStatus
-                this.axios('https://www.googleapis.com/books/v1/volumes?q=isbn:' + this.data.isbn)
-                    .then((res) => {
-                        this.resStatus = true
-                        const ResData = res.data.items[0]
-                        this.data.title = ResData.volumeInfo.title
-                        this.data.authors = ResData.volumeInfo.authors
-                        this.data.img = "https://books.google.com/books/content/images/frontcover/" + ResData.id + "?fife=w800-h1200"
-                        this.data.publisher = ResData.volumeInfo.publisher
-                        this.data.publishedDate = ResData.volumeInfo.publishedDate
-                        console.log(this.data)
-                    })
-                    .catch((err) => {
-                        this.resStatus = false
-                        alert('Bookデータの取得中にエラーが発生しました')
-                        console.log(err)
-                    })
-            })
-            .catch((err) => {
-                this.resStatus = false
-                alert('Bookデータの取得中にエラーが発生しました')
-                console.log(err)
-            })
+    mounted: async function() {
+        await this.getBookData()
     },
     methods: {
+        getBookData: async function() {
+            try {
+                this.BookData.uuid = this.$route.params.uuid
+                const apiRes = await this.axios.get(this.url + 'collections/' + this.BookData.uuid)
+                console.log(apiRes)
+                this.BookData = apiRes.data.BookData
+                this.CollectionData = apiRes.data.CollectionData
+                this.rentalStatus = apiRes.data.CollectionData.rentalStatus
+                this.isLoading = false
+            } catch(e) {
+                switch(e.response.status) {
+                    case 404:
+                        this.$router.push('/404')
+                        break;
+                    case 500:
+                        this.$router.push('/500')
+                }
+            }
+        },
         rentalRequest: function() {
             console.log('rentalRequest')
             this.rentalDialog.turn = 2
             let sendObject = this.formData
+            console.log(sendObject)
             this.axios.patch('http://localhost/collections/' + this.$route.params.uuid + '/rental',sendObject)
                 .then((response) => {
                     console.log(response)
-                    this.reloadCollectionData()
-                    this.rentalDialog.returnDate = "2020/00/00"
+                    this.getBookData()
+                    this.rentalDialog.returnDate = DateNow.addWeeks(2).toFormat('YYYY年MM月DD日')
                     setTimeout(()=>{
                         this.rentalDialog.turn = 3
                     },2500)
                 })
                 .catch((err) => {
-                    console.log(err)
+                    alert('Error:'+err)
                     this.rentalReset()
                 })
             
@@ -392,53 +391,20 @@ export default {
             this.returnDialog.turn = 2
             this.axios.patch('http://localhost/collections/' + this.$route.params.uuid + '/return')
                 .then((res) => {
-                    this.reloadCollectionData()
+                    this.getBookData()
                     console.log(res)
                     setTimeout(()=>{
                         this.returnDialog.turn = 3
                     },2500)
                 })
                 .catch((err) => {
-                    console.log(err)
+                    alert("Error:" + err)
                     this.returnReset()
                 })
         },
         returnReset: function() {
             this.returnDialog = {status:false,turn:1}
         },
-        reloadCollectionData: function() {
-            this.data.uuid = this.$route.params.uuid
-            this.axios('http://localhost/collection/' + this.data.uuid)
-                .then((res) => {
-                    console.log(res.data.data[0])
-                    this.data.note = res.data.data[0].note
-                    this.data.registrationData = res.data.data[0].registrationData
-                    this.data.ncd = res.data.data[0].ncd
-                    this.data.isbn = res.data.data[0].isbn
-                    this.rentalStatus = res.data.data[0].rentalStatus
-                    this.axios('https://www.googleapis.com/books/v1/volumes?q=isbn:' + this.data.isbn)
-                        .then((res) => {
-                            this.resStatus = true
-                            const ResData = res.data.items[0]
-                            this.data.title = ResData.volumeInfo.title
-                            this.data.authors = ResData.volumeInfo.authors
-                            this.data.img = "https://books.google.com/books/content/images/frontcover/" + ResData.id + "?fife=w800-h1200"
-                            this.data.publisher = ResData.volumeInfo.publisher
-                            this.data.publishedDate = ResData.volumeInfo.publishedDate
-                            console.log(this.data)
-                        })
-                        .catch((err) => {
-                            this.resStatus = false
-                            alert('Bookデータの取得中にエラーが発生しました')
-                            console.log(err)
-                        })
-            })
-            .catch((err) => {
-                this.resStatus = false
-                alert('Bookデータの取得中にエラーが発生しました')
-                console.log(err)
-            })
-        }
     }
 }
 </script>
