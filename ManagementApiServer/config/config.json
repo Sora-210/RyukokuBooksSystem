@@ -3,7 +3,7 @@
     "username": "root",
     "password": "pass",
     "database": "Dev",
-    "host": "127.0.0.1",
+    "host": "management-db",
     "dialect": "mysql",
     "operatorsAliases": false
   },
@@ -11,14 +11,14 @@
     "username": "root",
     "password": "pass",
     "database": "Dev",
-    "host": "localhost",
+    "host": "management-db",
     "dialect": "mysql",
     "operatorsAliases": false
   },
   "production": {
     "username": "root",
-    "password": "password",
-    "database": "ManagementApi_DB",
+    "password": "pass",
+    "database": "Dev",
     "host": "management-db",
     "dialect": "mysql",
     "operatorsAliases": false
