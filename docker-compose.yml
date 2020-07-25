@@ -1,24 +1,35 @@
-version: '2.1'
+version: '2.2'
 services:
-    frontend:
-        build: ./FrontEnd/.
-        ports:
-            - 80:80
-        networks:
-            - RyukokuBooksSystem
-    # ManagementApi:
-    #     build: ./ManagementApi/.
-    #     ports:
-    #         - 80:80
     management-db:
         image: mysql:8.0.20
         environment:
-            MYSQL_ROOT_PASSWORD: password
+            MYSQL_ROOT_PASSWORD: pass
+            MYSQL_DATABASE: Management
+        ports:
+            - 3306:3306
         volumes:
             - ./Data/DB:/var/lib/mysql
         networks:
-            - RyukokuBooksSystem
+            RyukokuBooksSystem:
+                ipv4_address: 172.0.1.3
+    # frontend:
+    #     build: ./FrontEnd/.
+    #     ports:
+    #         - 80:80
+    #     networks:
+    #         - RyukokuBooksSystem
+    management-api:
+        build: ./ManagementApiServer/.
+        ports:
+            - 80:80
+        networks:
+            RyukokuBooksSystem:
+                ipv4_address: 172.0.1.4
 
 networks:
     RyukokuBooksSystem:
         driver: bridge
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.0.1.0/24
