@@ -4,6 +4,7 @@ services:
         build: ./Proxy/.
         ports:
             - 80:80
+            - 443:443
         networks:
             RyukokuBooksSystem:
                 ipv4_address: 172.0.1.6
