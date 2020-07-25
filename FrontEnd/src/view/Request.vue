@@ -55,8 +55,6 @@
 				送信
 			</v-btn>
 		</div>
-		{{ SendData.genre }} <br>
-		{{ SendData.content}} <br>
 	</div>
 </template>
 <script>
@@ -86,10 +84,10 @@ export default {
 	methods: {
 		SendRequest: function() {
 			this.sendStatus = true
-			this.axios.post('http://localhost/requests',this.SendData)
+			this.axios.post(this.$store.getters.apiEndpoint + '/requests/',this.SendData)
 				.then((res) => {
-					console.log(res.data)
-					if (res.data.status === "success") {
+					console.log(res)
+					if (res.status === 201) {
 						this.sendStatus = false
 						this.alert = true
 						this.SendData = {genre:"",content:""}

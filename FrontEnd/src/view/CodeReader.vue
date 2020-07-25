@@ -28,7 +28,7 @@
                             >
                                 <v-img
                                     class="pa-1"
-                                    :src="this.collectionData.img"
+                                    :src="this.collectionData.imgUrl"
                                 >
                                 </v-img>
                             </v-col>
@@ -59,6 +59,9 @@
                 <p v-if="this.access.type === 'success'">{{ this.collectionData }}</p>
             </v-col>
         </v-row>
+        <v-overlay :value="isLoading">
+            <img src="https://icons8.com/vue-static/landings/animated-icons/icons/qr-code/qr-code.gif" style="width:100px;height:100px;">
+        </v-overlay>
     </div>
 </template>
 <script>
@@ -68,14 +71,16 @@ export default {
     name:"CodeReader",
     data: function() {
         return {
+            isLoading: false,
+            historyUuid:"",
+            resultUuid:"",
+
             access :{
                 type:"",
                 message:"",
                 icon:""
             },
             accessStatus:"",
-            historyResult:"",
-            result:"",
             collectionData:{
                 uuid:"",
                 title:"",
@@ -91,54 +96,30 @@ export default {
         QrcodeStream,
     },
     methods: {
-        onDecode (result) {
-            if (this.historyResult !== result) {
-                this.historyResult = result
-                this.result = result
-                this.access = {type:"",message:"",icon:""}
-                this.collectionData = {uuid:"",title:"",authors:"",isbn:"",img:"",publisher:"",url:""}
-                this.axios.get('http://localhost/collection/' + result)
-                    .then((data) => {
-                        console.log(data)
-                        if (data.data.status !== "error") {
-                            this.access.type = "success"
-                            this.access.message = "蔵書が見つかりました!"
-                            this.access.icon = "fas fa-check-circle"
-                            this.collectionData.isbn = data.data.data[0].isbn
-                            this.collectionData.uuid = data.data.data[0].uuid
-                            this.axios.get('https://www.googleapis.com/books/v1/volumes?q=isbn:' + this.collectionData.isbn)
-                                .then((res) => {
-                                    const ResData = res.data.items[0]
-                                    this.collectionData.title = ResData.volumeInfo.title
-                                    this.collectionData.authors = ResData.volumeInfo.authors
-                                    this.collectionData.img = "https://books.google.com/books/content/images/frontcover/" + ResData.id + "?fife=w800-h1200"
-                                    this.collectionData.publisher = ResData.volumeInfo.publisher
-                                    this.collectionData.url = "/collection/" + this.collectionData.uuid
-                                })
-                                .catch((err) => {
-                                    console.log(err)
-                                })
-                        } else {
-                            this.access.type = "warning"
-                            this.access.icon = "fas fa-exclamation-circle"
-                            if (data.data.message === 'Noting Collection') {
-                                this.access.message = '読み込んだUUIDが登録された蔵書は見つかりませんでした'
-                            } else {
-                                this.access.message = data.data.message
-                            }
-                        }
-                    })
-                    .catch((err) => {
-                        this.access.type = "error"
-                        this.access.icon = "fas fa-ban"
-                        this.historyResult = ""
-                        if (err.response === undefined) {
-                            this.access.message = '管理サーバーと通信ができません'
-                        } else {
-                            this.access.message = err
-                        }
-                    })
+        reset() {
+            this.access = {type:"",message:"",icon:""}
+            this.collectionData = {uuid:"",title:"",authors:"",isbn:"",img:"",publisher:"",url:""}
+        },
+        async onDecode (resultUuid) {
+            this.isLoading = true
+            if (this.historyUuid !== resultUuid) {
+                this.historyUuid = resultUuid
+                this.resultUuid = resultUuid
+                try {
+                    const apiRes = await this.axios.get(this.$store.getters.apiEndpoint + '/collections/' + resultUuid)
+                    console.log(apiRes)
+                    this.collectionData = apiRes.data.CollectionData
+                    this.collectionData = apiRes.data.BookData
+                    console.log(this.collectionData)
+                    this.access.type = "success"
+                } catch(e) {
+                    console.log(e)
+                }
+                
             }
+            setTimeout(()=> {
+                this.isLoading = false
+            }, 1500)
         },
         async onInit (promise) {
             try {
@@ -146,18 +127,14 @@ export default {
             } catch (error) {
                 this.access.type = "error"
                 this.access.icon = "fas fa-ban"
+                console.log("Error:")
+                console.log(error)
                 if (error.name === 'NotAllowedError') {
                     this.access.message = "SYSTEM-ERROR: カメラへのアクセス権限が必用です"
-                } else if (error.name === 'NotFoundError') {
-                    this.access.message = "ERROR: no camera on this device"
-                } else if (error.name === 'NotSupportedError') {
-                    this.access.message = "ERROR: secure context required (HTTPS, localhost)"
-                } else if (error.name === 'NotReadableError') {
-                    this.access.message = "ERROR: is the camera already in use?"
-                } else if (error.name === 'OverconstrainedError') {
-                    this.access.message = "ERROR: installed cameras are not suitable"
-                } else if (error.name === 'StreamApiNotSupportedError') {
-                    this.access.message = "ERROR: Stream API is not supported in this browser"
+                } else if (error.name === 'InsecureContextError') {
+                    this.access.message = "SYSTEM-ERROR: 通信が暗号化されていません"
+                } else {
+                    this.access.message = "ERROR: " + error.name
                 }
             }
         }

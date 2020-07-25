@@ -1,23 +1,27 @@
 <template>
-    <div>
-        <span class="topText">
+    <div class="mt-10">
+        <v-icon size="100">
+            fas fa-exclamation-triangle
+        </v-icon>
+        <h3 class="topText">
             404 NotFound
-        </span>
+        </h3>
         <br>
-        <span class="subText">
+        <p class="subText">
             ページが見つかりませんでした
-        </span>
+        </p>
     </div>
 </template>
 
 <script>
 export default {
-    name: "ErrorNotFound"
+    name: "Error404",
 }
 </script>
 <style scoped>
 div {
     text-align:center;
+    color:#757575;
 }
 .topText {
     font-size: 63px;
