@@ -20,5 +20,10 @@ pnpm-debug.log*
 *.sln
 *.sw?
 
-/Data/DB
-api_rsa
+ManagementApiServer/config/api_rsa
+##docke-compose
+Data/DB/*
+Data/Qrcode/*
+
+
+log
