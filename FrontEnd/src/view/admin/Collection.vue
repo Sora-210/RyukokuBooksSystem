@@ -215,7 +215,7 @@ export default {
                     token: this.$store.getters.token
                 }
             }
-            this.axios.get('http://localhost/collections', options)
+            this.axios.get(this.$store.getters.apiEndpoint + '/collections', options)
                 .then((res) => {
                     res.data.forEach(el => {
                         this.collectionItems.push({
@@ -269,7 +269,7 @@ export default {
                     token: this.$store.getters.token
                 }
             }
-            this.axios.post('http://localhost/collections', this.registerData, options)
+            this.axios.post(this.$store.getters.apiEndpoint + '/collections', this.registerData, options)
                 .then((res) => {
                     if (res.data.status === "error") {
                         this.registerDialogMessage = "登録に失敗しました"

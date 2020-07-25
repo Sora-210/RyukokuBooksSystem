@@ -59,7 +59,7 @@ export default {
                         token: this.$store.getters.token
                     }
                 }
-                this.axios.delete('http://localhost/requests/' + id, options)
+                this.axios.delete(this.$store.getters.apiEndpoint + '/requests/' + id, options)
                     .then((res) => {
                         console.log(res)
                         this.getRequests()
@@ -77,7 +77,7 @@ export default {
                     token: this.$store.getters.token
                 }
             }
-            this.axios.get('http://localhost/requests', options)
+            this.axios.get(this.$store.getters.apiEndpoint + '/requests', options)
                 .then((res) => {
                     console.log(res)
                     res.data.forEach(el => {

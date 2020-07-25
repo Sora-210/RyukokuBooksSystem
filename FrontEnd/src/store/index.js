@@ -6,11 +6,15 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    token: ""
+    token: "",
+    apiEndpoint: "",
   },
   getters: {
     token: (state) => {
       return state.token
+    },
+    apiEndpoint:(state) => {
+      return state.apiEndpoint
     }
   },
   mutations: {
@@ -19,6 +23,9 @@ export default new Vuex.Store({
     },
     removeToken(state) {
       state.token = ""
+    },
+    setApiEndpoint(state, endpoint) {
+      state.apiEndpoint = endpoint
     }
   },
   actions: {

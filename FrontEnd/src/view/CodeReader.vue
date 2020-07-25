@@ -106,7 +106,7 @@ export default {
                 this.historyUuid = resultUuid
                 this.resultUuid = resultUuid
                 try {
-                    const apiRes = await this.axios.get('http://localhost/collections/' + resultUuid)
+                    const apiRes = await this.axios.get(this.$store.getters.apiEndpoint + '/collections/' + resultUuid)
                     console.log(apiRes)
                     this.collectionData = apiRes.data.CollectionData
                     this.collectionData = apiRes.data.BookData

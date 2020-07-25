@@ -84,7 +84,7 @@ export default {
 	methods: {
 		SendRequest: function() {
 			this.sendStatus = true
-			this.axios.post('http://localhost/requests/',this.SendData)
+			this.axios.post(this.$store.getters.apiEndpoint + '/requests/',this.SendData)
 				.then((res) => {
 					console.log(res)
 					if (res.status === 201) {

@@ -64,7 +64,7 @@ export default {
                     token: this.$store.getters.token
                 }
             }
-            this.axios.get('http://localhost/rentals', options)
+            this.axios.get(this.$store.getters.apiEndpoint + '/rentals', options)
                 .then((res) => {
                     this.rentalsList = res.data
                 })

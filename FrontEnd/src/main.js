@@ -14,6 +14,9 @@ Vue.config.productionTip = false
 
 Vue.use(VueAxios, axios)
 
+store.commit('setApiEndpoint', process.env.VUE_APP_API_ENDPOINT)
+console.log(store.getters.apiEndpoint)
+
 new Vue({
   vuetify,
   router,

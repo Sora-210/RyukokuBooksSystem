@@ -346,7 +346,7 @@ export default {
         getBookData: async function() {
             try {
                 this.BookData.uuid = this.$route.params.uuid
-                const apiRes = await this.axios.get(this.url + 'collections/' + this.BookData.uuid)
+                const apiRes = await this.axios.get(this.$store.getters.apiEndpoint + '/collections/' + this.BookData.uuid)
                 console.log(apiRes)
                 this.BookData = apiRes.data.BookData
                 this.CollectionData = apiRes.data.CollectionData
@@ -372,7 +372,7 @@ export default {
             this.rentalDialog.turn = 2
             let sendObject = this.formData
             console.log(sendObject)
-            this.axios.patch('http://localhost/collections/' + this.$route.params.uuid + '/rental',sendObject)
+            this.axios.patch(this.$store.getters.apiEndpoint + '/collections/' + this.$route.params.uuid + '/rental',sendObject)
                 .then((response) => {
                     console.log(response)
                     this.getBookData()
@@ -394,7 +394,7 @@ export default {
         returnRequest: function() {
             console.log('returnRequest')
             this.returnDialog.turn = 2
-            this.axios.patch('http://localhost/collections/' + this.$route.params.uuid + '/return')
+            this.axios.patch(this.$store.getters.apiEndpoint + '/collections/' + this.$route.params.uuid + '/return')
                 .then((res) => {
                     this.getBookData()
                     console.log(res)
