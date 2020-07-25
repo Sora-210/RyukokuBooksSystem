@@ -4,52 +4,44 @@
             <v-card-title>
                 リクエスト一覧
             </v-card-title>
-            <div class="table mt-7 mx-1 sp-row-scroll">
-                <table>
-                    <tr class="tableTitle">
-                        <th>
-                            id
-                        </th>
-                        <th>
-                            ジャンル
-                        </th>
-                        <th>
-                            内容
-                        </th>
-                        <th>
-                        </th>
-                    </tr>
-                    <tr class="tableItem" v-for="item in this.requestsList" :key="item.index">
-                        <td>
-                            {{ item.id }}
-                        </td>
-                        <td>
-                            {{ requestGenre[item.genre] }}
-                        </td>
-                        <td>
-                            {{ item.content}}
-                        </td>
-                        <td>
-                            <v-btn
-                                text
-                                color="red"
-                                @click="deleteRequest(item.id)"
-                            >
-                                <v-icon>far fa-trash-alt</v-icon>
-                            </v-btn>
-                        </td>
-                    </tr>
-                </table>
-            </div>
+            <Table
+                :columnNames=listNames
+                :listItems=requestLists
+                @Delete="deleteRequest"
+            >
+            </Table>
         </v-card>
     </div>
 </template>
 <script>
+import Table from '../../components/Table.vue'
+
 export default {
     name:"Request",
+    components: {
+        Table
+    },
     data: function() {
         return {
-            requestsList:[],
+            listNames:[
+                {
+                    title:"リクエストID",
+                    variableName:"id"
+                },
+                {
+                    title:"genre",
+                    variableName:"genre"
+                },
+                {
+                    title:"内容",
+                    variableName:"content"
+                },
+                {
+                    title:"削除",
+                    variableName:"delete"
+                }
+            ],
+            requestLists:[],
             requestGenre:{
                 1:'図書リクエスト',
                 2:'その他',
@@ -79,6 +71,7 @@ export default {
             }
         },
         getRequests: function() {
+            this.requestLists = []
             const options = {
                 headers: {
                     token: this.$store.getters.token
@@ -87,7 +80,18 @@ export default {
             this.axios.get('http://localhost/requests', options)
                 .then((res) => {
                     console.log(res)
-                    this.requestsList = res.data
+                    res.data.forEach(el => {
+                        this.requestLists.push({
+                            id:el.id,
+                            genre:this.requestGenre[el.genre],
+                            content:el.content,
+                            delete:{
+                                text:"削除",
+                                emitName:"Delete",
+                                emitVariable:el.id
+                            }
+                        })
+                    });
                 })
                 .catch((err) => {
                     alert("エラーが発生しました:" + err)

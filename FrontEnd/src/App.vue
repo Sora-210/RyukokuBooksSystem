@@ -69,7 +69,7 @@
 
     <v-main>
       <v-container>
-        <router-view></router-view>
+        <router-view @Error="onErrorDialog"></router-view>
       </v-container>
     </v-main>
 
@@ -80,6 +80,16 @@
     >
       @2020 岡山龍谷高等学校図書委員会
     </v-footer>
+    <v-dialog v-model="errorDialog.status" width="70%">
+      <v-card>
+        <v-card-title id="errorTitle">
+          <v-icon color=red>fas fa-exclamation-circle</v-icon>ERROR
+        </v-card-title>
+        <v-card-text>
+          {{ errorDialog.message}}
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
@@ -104,9 +114,17 @@ export default {
       this.$store.commit('removeToken')
       alert("ログアウトしました")
       this.$router.push('/')
+    },
+    onErrorDialog: function(message) {
+      this.errorDialog.status = true
+      this.errorDialog.message = message
     }
   },
   data: () => ({
+    errorDialog:{
+      status:false,
+      message:"エラーが発生しました"
+    },
     isNavDrawer:true,
     isTest:true,
     navList: [
@@ -168,5 +186,10 @@ export default {
 }
 a {
   text-decoration: none;
+}
+</style>
+<style scoped>
+#errorTitle {
+  color:red;
 }
 </style>

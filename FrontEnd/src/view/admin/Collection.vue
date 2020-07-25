@@ -11,36 +11,12 @@
             >
                 蔵書登録
             </v-btn>
-            <div class="table mt-7 mx-1 sp-row-scroll">
-                <table>
-                    <tr class="tableTitle">
-                        <th>UUID</th>
-                        <th>ISBN</th>
-                        <th>タイトル</th>
-                        <th>NCD</th>
-                        <th>登録日</th>
-                        <th>備考</th>
-                    </tr>
-                    <tr class="tableItem" v-for="item in this.collectionsList" :key="item.index">
-                        <td><router-link :to="`/collection/` + item.uuid">{{ item.uuid}}</router-link></td>
-                        <td>
-                            {{ item.isbn }}
-                        </td>
-                        <td>
-                            タイトル
-                        </td>
-                        <td>
-                            {{ item.ncd }}
-                        </td>
-                        <td>
-                            {{ item.registrationData }}
-                        </td>
-                        <td>
-                            {{ item.note }}
-                        </td>
-                    </tr>
-                </table>
-            </div>
+            <Table
+                :columnNames=collectionColumnNames
+                :listItems=collectionItems
+                @Edit="edit"
+            >
+            </Table>
         </v-card>
         <v-dialog v-model="registerDialog" width="70%" persistent>
             <v-stepper v-model="registerDialogTurn">
@@ -173,10 +149,40 @@
     </div>
 </template>
 <script>
+import Table from '../../components/Table.vue'
 export default {
+    components: {
+        Table
+    },
     data: function() {
         return {
-            collectionsList:[],
+            collectionColumnNames:[
+                {
+                    title:"UUID",
+                    variableName:"uuid"
+                },
+                {
+                    title:"ISBN",
+                    variableName:"isbn"
+                },
+                {
+                    title:"NCD",
+                    variableName:"ncd"
+                },
+                {
+                    title:"登録日",
+                    variableName:"registrationData"
+                },
+                {
+                    title:"備考",
+                    variableName:"note"
+                },
+                {
+                    title:"編集",
+                    variableName:"edit"
+                }
+            ],
+            collectionItems:[],
             registerDialog:false,
             registerDialogMessage:"",
             registerDialogTurn : 1,
@@ -200,10 +206,10 @@ export default {
         }
     },
     mounted: function() {
-        this.reload()
+        this.getCollections()
     },
     methods: {
-        reload() {
+        getCollections() {
             const options = {
                 headers: {
                     token: this.$store.getters.token
@@ -211,8 +217,21 @@ export default {
             }
             this.axios.get('http://localhost/collections', options)
                 .then((res) => {
-                    console.log(res)
-                    this.collectionsList = res.data
+                    res.data.forEach(el => {
+                        this.collectionItems.push({
+                            uuid: el.uuid,
+                            isbn: el.isbn,
+                            ncd: el.ncd,
+                            registrationData: el.registrationData,
+                            note: el.note,
+                            edit: {
+                                text:"編集",
+                                emitName:"Edit",
+                                emitVariable:el.uuid
+                            }
+                        })
+                    });
+                    console.log(this.collectionItems)
                 })
                 .catch((e) => {
                     alert("Err:"+e)
@@ -270,6 +289,9 @@ export default {
                     this.registerDialogMessage = "想定外のエラーが発生しました"
                     this.registerDialogTurn = 1
                 })
+        },
+        edit(isbn) {
+            this.$router.push('/collection/'+isbn)
         }
     }
 }

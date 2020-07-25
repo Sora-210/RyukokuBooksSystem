@@ -358,7 +358,12 @@ export default {
                         this.$router.push('/404')
                         break;
                     case 500:
+                        this.$emit("Error",e)
                         this.$router.push('/500')
+                        break;
+                    default:
+                        this.$emit("Error",e)
+                        break;
                 }
             }
         },
