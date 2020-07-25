@@ -4,7 +4,8 @@ RUN NODE_ENV=production &&\
     export NODE_ENV &&\
     apk update &&\
     apk upgrade &&\
-    apk add --no-cache --virtual .buildtools python pkgconfig giflib-dev cairo-dev jpeg-dev pango-dev make g++ &&\
+    apk add --no-cache --virtual .buildtools python make g++ &&\
+    apk add netcat-openbsd cairo-dev pkgconfig giflib-dev jpeg-dev pango-dev &&\
     mkdir /home/ManagementAPI
 
 COPY ./ /home/ManagementAPI/

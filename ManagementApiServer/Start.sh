@@ -1,14 +1,29 @@
 # /bin/sh
 
-/bin/ping 172.0.0.3 -c 1 >> /dev/null
-while [$? == 1]
+IP="172.0.1.3"
+PORT="3306"
+WAITSET="2"
+
+
+sleep 10
+nc -vz ${IP} ${PORT} >> /dev/null
+while :
 do
-    /bin/ping 172.0.0.3 -c 1 >> /dev/null
+    if [ "$?" = "0" ]; then
+        echo "OK"
+        break
+    else
+        echo "NG"
+        echo "Waiting ${WAITSEC} seconds..."
+        sleep ${WAITSEC}
+        nc -vz ${IP} ${PORT}  >> /dev/null
+    fi
 done
 
-
+echo "Connection"
 sequelize db:create
+echo "Migration"
 sequelize db:migrate
 
-
+echo "Start Application"
 npm start
