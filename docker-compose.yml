@@ -12,19 +12,22 @@ services:
         networks:
             RyukokuBooksSystem:
                 ipv4_address: 172.0.1.3
-    # frontend:
-    #     build: ./FrontEnd/.
-    #     ports:
-    #         - 80:80
-    #     networks:
-    #         - RyukokuBooksSystem
-    management-api:
-        build: ./ManagementApiServer/.
+    frontend:
+        build: ./FrontEnd/.
         ports:
             - 80:80
         networks:
+            - RyukokuBooksSystem
+        networks:
             RyukokuBooksSystem:
                 ipv4_address: 172.0.1.4
+    management-api:
+        build: ./ManagementApiServer/.
+        ports:
+            - 88:80
+        networks:
+            RyukokuBooksSystem:
+                ipv4_address: 172.0.1.5
 
 networks:
     RyukokuBooksSystem:
