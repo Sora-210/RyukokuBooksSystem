@@ -4,6 +4,8 @@ require('date-utils')
 
 const collectionsRouter = express.Router()
 const DB = require('../models/index')
+const sequelize = require('sequelize')
+const  DBOP = sequelize.Op
 
 const { CreateQrcode } = require('./func/CreateQrcode.js')
 const { GetBook } = require('./func/GetBooks.js')
@@ -92,9 +94,36 @@ const CheckRental = (object,collectionUuid) => {
 
 // [GET] /collections/
 collectionsRouter.get('/', async(req, res) => {
-    console.debug(1)
     try {
-        const DBres = await DB.Collection.findAll({})
+        const options = {where:{}}
+        // uuid関連処理
+        if (req.query.uuid !== undefined && req.query.uuid !== "") {
+            options.where.uuid = req.query.uuid
+        }
+        // NCD関連検索
+        if (req.query.ncd !== undefined && req.query.ncd !== "") {
+            options.where.ncd = req.query.ncd
+        }
+        // 備考関連処理
+        if (req.query.note !== undefined && req.query.note !== "") {
+            options.where.note = {[DBOP.like]:"%" + req.query.note + "%"}
+        }
+        const Count = await DB.Collection.count(options)
+        // ソート関連処理
+        if (req.query.sortRow !== undefined && req.query.sortRow !== "") {
+            if (req.query.sortDirection !== undefined && req.query.sortDirection != 1) {
+                options.order = [[req.query.sortRow, "DESC"]]
+            } else {
+                options.order = [[req.query.sortRow, "ASC"]]
+            }
+        }
+        // ページ関連処理
+        if (req.query.page !== undefined && req.query.page !== "") {
+            options.limit = 20
+            options.offset = (req.query.page - 1) * 20
+        }
+        // 本データの取得
+        const DBres = await DB.Collection.findAll(options)
             .then((DBres) => {
                 return DBres
             })
@@ -102,7 +131,7 @@ collectionsRouter.get('/', async(req, res) => {
                 throw new CustomError('Unknown', err)
             })
         if (DBres.length !== 0) {
-            return res.status(200).json(DBres)
+            return res.status(200).json({count:Count,Collections:DBres})
         } else {
             throw new CustomError('Nothing', DBres)
         }
