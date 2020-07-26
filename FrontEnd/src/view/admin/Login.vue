@@ -33,7 +33,7 @@ export default {
                     this.$router.push('/')
                 })
                 .catch((e) => {
-                    alert('Error:'+e)
+                    this.$emit('Error',e)
                 })
         }
     }
