@@ -189,7 +189,7 @@
                             class="mb-12"
                             height="200px"
                         >
-                            <v-img style="width:50px;margin:auto;" src="https://icons8.com/vue-static/landings/animated-icons/icons/book/book.gif"></v-img>
+                            <v-img style="width:50px;margin:auto;" src="../assets/book.gif"></v-img>
                             <p style="text-align:center;">貸出登録中... 少しお待ちください</p>
                         </div>
                     </v-stepper-content>
@@ -246,7 +246,7 @@
                             class="mb-12"
                             height="200px"
                         >
-                            <v-img style="width:50px;margin:auto;" src="https://icons8.com/vue-static/landings/animated-icons/icons/book/book.gif"></v-img>
+                            <v-img style="width:50px;margin:auto;" src="../assets/book.gif"></v-img>
                             <p style="text-align:center;">返却中... 少しお待ちください</p>
                         </div>
                     </v-stepper-content>
@@ -272,7 +272,7 @@
             </v-stepper>
         </v-dialog>
         <v-overlay :value="isLoading">
-            <img src="https://icons8.com/vue-static/landings/animated-icons/icons/book/book.gif">
+            <img src="../assets/book.gif">
         </v-overlay>
     </div>
 </template>
