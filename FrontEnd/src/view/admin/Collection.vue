@@ -5,11 +5,15 @@
                 蔵書一覧
             </v-card-title>
             <v-btn
-                class="ml-8"
+                class="ml-8 mb-5"
                 color="success"
                 @click="registerDialog = !registerDialog"
             >
                 蔵書登録
+            </v-btn>
+            <v-divider></v-divider>
+            <v-btn text color="purple darken-3" class="ml-1 mb-3" @click="isSelectSortDialog = !isSelectSortDialog">
+                    絞り込み | 並べ替え
             </v-btn>
             <Table
                 :columnNames=collectionColumnNames
@@ -17,7 +21,76 @@
                 @Edit="edit"
             >
             </Table>
+            <v-divider></v-divider>
+            <v-card-actions>
+                <div class="text-right">
+                    <v-pagination
+                    v-model="searchConditions.page"
+                    next-icon="fas fa-caret-right"
+                    prev-icon="fas fa-caret-left"
+                    :length="collectionPages"
+                    ></v-pagination>
+                </div>
+            </v-card-actions>
         </v-card>
+        <v-dialog v-model="isSelectSortDialog" width="70%">
+            <v-card>
+                <v-card-title>
+                    絞り込み | 並び替え
+                </v-card-title>
+                <v-divider></v-divider>
+                <v-card-text>
+                    <v-container>
+                        <v-row>
+                            <v-col cols="12" sm="6">
+                                <v-text-field
+                                    label="UUID"
+                                    append-icon="fas fa-qrcode"
+                                    @click:append="QRDialog"
+                                    v-model="searchConditions.uuid"
+                                ></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6">
+                                <v-text-field
+                                    label="備考"
+                                    v-model="searchConditions.note"
+                                ></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6">
+                                <v-text-field
+                                    label="NCD"
+                                    v-model="searchConditions.ncd"
+                                ></v-text-field>
+                            </v-col>
+                        </v-row>
+                        <v-divider></v-divider>
+                        <v-row>
+                            <v-col class="d-flex" cols="12" sm="6">
+                                <v-select
+                                    append-icon="fas fa-caret-down"
+                                    :items="[{text:'UUID',value:'uuid'},{text:'登録日',value:'registrationData'}]"
+                                    v-model="searchConditions.sortRow"
+                                    label="並び替え"
+                                ></v-select>
+                            </v-col>
+                            <v-col class="d-flex" cols="12" sm="6">
+                                <v-select
+                                    append-icon="fas fa-caret-down"
+                                    :items="[{text:'降順',value:0},{text:'昇順',value:1}]"
+                                    v-model="searchConditions.sortDirection"
+                                    label="順番"
+                                ></v-select>
+                            </v-col>
+                        </v-row>
+                    </v-container>
+                </v-card-text>
+                <v-divider></v-divider>
+                <v-card-actions>
+                        <v-btn color="warning" @click="searchReset">リセット</v-btn>
+                        <v-btn color="success" @click="search">検索</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
         <v-dialog v-model="registerDialog" width="70%" persistent>
             <v-stepper v-model="registerDialogTurn">
                 <v-stepper-header>
@@ -146,13 +219,31 @@
                 </v-stepper-items>
             </v-stepper>
         </v-dialog>
+        <v-dialog v-model="isQrDialog" fullscreen hide-overlay transition="dialog-bottom-transition">
+            <v-card>
+                <v-toolbar dark color="primary">
+                    <v-btn icon dark @click="isQrDialog = false">
+                    <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                    <v-toolbar-title>QRコードリーダー</v-toolbar-title>
+                </v-toolbar>
+                <v-row class="d-flex justify-center">
+                    <v-col cols="12" sm="6">
+                        <qrcode-stream @decode="onDecode" @init="onInit"></qrcode-stream>
+                    </v-col>
+                </v-row>
+            </v-card>
+        </v-dialog>
     </div>
 </template>
 <script>
 import Table from '../../components/Table.vue'
+import { QrcodeStream } from 'vue-qrcode-reader'
+
 export default {
     components: {
-        Table
+        Table,
+        QrcodeStream
     },
     data: function() {
         return {
@@ -202,6 +293,18 @@ export default {
                     v => !!v || 'NCDは必須です',
                     v => /\d{3}/.test(v) || 'NCD形式に一致しません'
                 ]
+            },
+            isSelectSortDialog: false,
+            isRentalDeteilDialog: false,
+            isQrDialog: false,
+            collectionPages:1,
+            searchConditions: {
+                sortRow:"uuid",
+                sortDirection:0,
+                uuid:"",
+                ncd:"",
+                note:"",
+                page:1
             }
         }
     },
@@ -210,14 +313,17 @@ export default {
     },
     methods: {
         getCollections() {
+            const query = "?sortRow=" + this.searchConditions.sortRow + "&sortDirection=" + this.searchConditions.sortDirection + "&ncd=" + this.searchConditions.ncd + "&note=" + this.searchConditions.note + "&uuid=" + this.searchConditions.uuid + "&page=" + this.searchConditions.page
             const options = {
                 headers: {
                     token: this.$store.getters.token
                 }
             }
-            this.axios.get(this.$store.getters.apiEndpoint + '/collections', options)
+            this.collectionItems = []
+            this.axios.get(this.$store.getters.apiEndpoint + '/collections' + query, options)
                 .then((res) => {
-                    res.data.forEach(el => {
+                    this.collectionPages = Math.ceil(res.data.count / 20)
+                    res.data.Collections.forEach(el => {
                         this.collectionItems.push({
                             uuid: el.uuid,
                             isbn: el.isbn,
@@ -234,7 +340,7 @@ export default {
                     console.log(this.collectionItems)
                 })
                 .catch((e) => {
-                    alert("Err:"+e)
+                    this.$emit('Error',e)
                 })
         },
         reset() {
@@ -284,14 +390,57 @@ export default {
                         },2500)
                     }
                 })
-                .catch((err) => {
-                    alert("Error:"+err)
+                .catch((e) => {
+                    this.$emit('Error',e)
                     this.registerDialogMessage = "想定外のエラーが発生しました"
                     this.registerDialogTurn = 1
                 })
         },
         edit(isbn) {
             this.$router.push('/collection/'+isbn)
+        },
+        search: function() {
+            this.searchConditions.page = 1
+            this.isSelectSortDialog = false
+            this.getCollections()
+        },
+        searchReset: function() {
+            this.searchConditions = {
+                sortRow:"uuid",
+                sortDirection:0,
+                ncd:"",
+                note:"",
+                page:1
+            }
+        },
+        QRDialog: function() {
+            this.isQrDialog = !this.isQrDialog
+        },
+        async onDecode (resultUuid) {
+            this.searchConditions.uuid = resultUuid
+            this.isQrDialog = false
+        },
+        async onInit (promise) {
+            try {
+                await promise
+            } catch (error) {
+                this.access.type = "error"
+                this.access.icon = "fas fa-ban"
+                console.log("Error:")
+                console.log(error)
+                if (error.name === 'NotAllowedError') {
+                    this.access.message = "SYSTEM-ERROR: カメラへのアクセス権限が必用です"
+                } else if (error.name === 'InsecureContextError') {
+                    this.access.message = "SYSTEM-ERROR: 通信が暗号化されていません"
+                } else {
+                    this.access.message = "ERROR: " + error.name
+                }
+            }
+        }
+    },
+    watch: {
+        'searchConditions.page' : function() {
+            this.getCollections()
         }
     }
 }
