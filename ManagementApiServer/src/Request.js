@@ -64,11 +64,33 @@ requestRouter.use(CheckAuth)
 //(AUTH)[GET] /
 requestRouter.get('/', async(req, res) => {
     try {
-        const DBres = await DB.Request.findAll()
+        const options = {where:{}}
+        // ジャンル関連処理
+        if (req.query.genre !== undefined && req.query.genre !== "") {
+            if (req.query.genre == 1 || req.query.genre == 2) {
+                options.where.genre = req.query.genre
+            }
+        }
+        const Count = await DB.Request.count(options)
+        // ソート関連処理
+        if (req.query.sortRow !== undefined && req.query.sortRow !== "") {
+            if (req.query.sortDirection !== undefined && req.query.sortDirection != 1) {
+                options.order = [[req.query.sortRow, "DESC"]]
+            } else {
+                options.order = [[req.query.sortRow, "ASC"]]
+            }
+        }
+        // ページ関連処理
+        if (req.query.page !== undefined && req.query.page !== "") {
+            options.limit = 20
+            options.offset = (req.query.page - 1) * 20
+        }
+        // 本データの取得
+        const DBres = await DB.Request.findAll(options)
         if (DBres.length === 0) {
             throw new CustomError('Nothing')
         }
-        res.status(200).json(DBres)
+        res.status(200).json({count:Count,Requests:DBres})
     } catch(e) {
         switch(e.name) {
             case 'Nothing':
