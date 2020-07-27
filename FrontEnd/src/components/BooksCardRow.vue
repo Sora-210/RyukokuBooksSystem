@@ -1,24 +1,31 @@
 <template>
     <div>
-        <v-card @click="Link">
-            <v-img
-                :src="bookImgUrl"
-            ></v-img>
-            <v-card-title>
-                {{ title }}
-            </v-card-title>
-            <v-card-text>
-                <p v-for="author in this.authors" :key="author.index">
-                    {{ author }} / 著
-                </p>
-            </v-card-text>
+        <v-card @click="Link" class="d-flex .justify-start">
+            <v-row>
+                <v-col cols=5 sm=4 md=2>
+                    <v-img
+                        :src="bookImgUrl"
+                        class="ma-2"
+                    ></v-img>
+                </v-col>
+                <v-col cols=7 sm=8 md=10>
+                    <v-card-title class="title">
+                        {{ title }}
+                    </v-card-title>
+                    <v-card-text class="author">
+                        <p v-for="author in this.authors" :key="author.index">
+                            {{ author }} / 著
+                        </p>
+                    </v-card-text>
+                </v-col>
+            </v-row>
         </v-card>
     </div>
 </template>
 
 <script>
 export default {
-    name:'BooksCard',
+    name:'BooksCardRow',
     data: function() {
         return {
             "title":"",

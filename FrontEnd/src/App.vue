@@ -69,7 +69,7 @@
 
     <v-main>
       <v-container>
-        <router-view @Error="onErrorDialog"></router-view>
+        <router-view @Error="onErrorDialog" @Success="onSuccessDialog"></router-view>
       </v-container>
     </v-main>
 
@@ -87,6 +87,16 @@
         </v-card-title>
         <v-card-text>
           {{ errorDialog.message}}
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="successDialog.status" width="70%">
+      <v-card>
+        <v-card-title id="successTitle">
+          <v-icon color=success>fas fa-exclamation-circle</v-icon>SUCCESS
+        </v-card-title>
+        <v-card-text>
+          {{ successDialog.message}}
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -112,8 +122,12 @@ export default {
     },
     logout: function() {
       this.$store.commit('removeToken')
-      alert("ログアウトしました")
+      this.onSuccessDialog('ログアウトしました')
       this.$router.push('/')
+    },
+    onSuccessDialog: function(message) {
+      this.successDialog.status = true
+      this.successDialog.message = message
     },
     onErrorDialog: function(message) {
       this.errorDialog.status = true
@@ -121,6 +135,10 @@ export default {
     }
   },
   data: () => ({
+    successDialog:{
+      status:false,
+      message:"処理が完了しました"
+    },
     errorDialog:{
       status:false,
       message:"エラーが発生しました"
@@ -191,5 +209,8 @@ a {
 <style scoped>
 #errorTitle {
   color:red;
+}
+#successTitle {
+  color:green;
 }
 </style>

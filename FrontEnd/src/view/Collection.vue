@@ -271,7 +271,7 @@
                 </v-stepper-items>
             </v-stepper>
         </v-dialog>
-        <v-overlay :value="isLoading">
+        <v-overlay :value="isLoading" color="white" opacity=1>
             <img src="../assets/book.gif">
         </v-overlay>
     </div>
@@ -285,7 +285,6 @@ export default {
     data: function() {
         return {
             isLoading:true,
-            url:'http://localhost/',
             resStatus:false,
             rentalStatus:false,
             rentalDialog: {

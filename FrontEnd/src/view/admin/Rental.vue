@@ -13,7 +13,6 @@
                         <th>レンタルID</th>
                         <th>ステータス</th>
                         <th>UUID</th>
-                        <th>タイトル</th>
                         <th>貸出日</th>
                         <th>返却日</th>
                         <th></th>
@@ -29,7 +28,6 @@
                         </td>
 
                         <td><router-link :to="`/collection/` + item.uuid">{{ item.uuid}}</router-link></td>
-                        <td>タイトル</td>
                         <td>{{ item.start_day }}</td>
 
                         <td v-if="item.return_day === null">
@@ -40,8 +38,8 @@
                         </td>
                         
                         <td>
-                            <v-btn size="small" color="success" text @click="detailDialog(item.id)">
-                                <v-icon>far fa-edit</v-icon>
+                            <v-btn size="small" color="primary" text @click="detailDialog(item.id)">
+                                <v-icon>fas fa-info</v-icon>
                             </v-btn>
                         </td>
                     </tr>
@@ -72,7 +70,7 @@
                                 <v-text-field
                                     label="UUID"
                                     append-icon="fas fa-qrcode"
-                                    @click:append="QRDialog"
+                                    @click:append="isQrDialog = true"
                                     v-model="searchConditions.uuid"
                                 ></v-text-field>
                             </v-col>
@@ -120,7 +118,19 @@
                 </v-card-title>
                 <v-divider></v-divider>
                 <v-card-text>
-                    {{ this.RentalDeteilData }}
+                    <h3>レンタルID</h3>
+                    <p>{{ this.RentalDeteilData.id }}</p>
+                    <h3>UUID</h3>
+                    <p>{{ this.RentalDeteilData.uuid }}</p>
+                    <h3>年</h3>
+                    <p>{{ this.RentalDeteilData.year }}</p>
+                    <h3>借りた人</h3>
+                    <p>{{ this.selectLists.schoolGradeList[this.RentalDeteilData.grade] }}/{{ this.selectLists.ClassList[this.RentalDeteilData.class]}}組/{{ this.RentalDeteilData.number}}番</p>
+                    <p>{{ this.RentalDeteilData.name }}</p>
+                    <h3>貸出日</h3>
+                    <p>{{ this.RentalDeteilData.start_day }}</p>
+                    <h3>返却日</h3>
+                    <p>{{ this.RentalDeteilData.return_day }}</p>
                 </v-card-text>
                 <v-divider></v-divider>
                 <v-card-actions>
@@ -128,29 +138,16 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
-        <v-dialog v-model="isQrDialog" fullscreen hide-overlay transition="dialog-bottom-transition">
-            <v-card>
-                <v-toolbar dark color="primary">
-                    <v-btn icon dark @click="isQrDialog = false">
-                    <v-icon>mdi-close</v-icon>
-                    </v-btn>
-                    <v-toolbar-title>QRコードリーダー</v-toolbar-title>
-                </v-toolbar>
-                <v-row class="d-flex justify-center">
-                    <v-col cols="12" sm="6">
-                        <qrcode-stream @decode="onDecode" @init="onInit"></qrcode-stream>
-                    </v-col>
-                </v-row>
-            </v-card>
-        </v-dialog>
+        <QRreader :isQrDialog="isQrDialog" @dataUp="QrResult" @close="isQrDialog = false" @Error="Error">
+        </QRreader>
     </div>
 </template>
 <script>
-import { QrcodeStream } from 'vue-qrcode-reader'
+import QRreader from '../../components/QRreader.vue'
 
 export default {
     components: {
-        QrcodeStream,
+        QRreader,
     },
     data: function() {
         return {
@@ -166,6 +163,26 @@ export default {
                 uuid:"",
                 status:"",
                 page:1
+            },
+            selectLists: {
+                schoolGradeList:{
+                    11:"中等部 1年",
+                    12:"中等部 2年",
+                    13:"中等部 3年",
+                    21:"高等部 1年",
+                    22:"高等部 2年",
+                    23:"高等部 3年",
+                },
+                ClassList:{
+                    1:"A",
+                    2:"B",
+                    3:"C",
+                    4:"D",
+                    5:"E",
+                    6:"F",
+                    7:"G",
+                    8:"Z・V・S",
+                }
             }
         }
     },
@@ -217,29 +234,12 @@ export default {
                 this.$emit('Error', e)
             }
         },
-        QRDialog: function() {
-            this.isQrDialog = !this.isQrDialog
-        },
-        async onDecode (resultUuid) {
-            this.searchConditions.uuid = resultUuid
+        QrResult: function(result) {
             this.isQrDialog = false
+            this.searchConditions.uuid = result
         },
-        async onInit (promise) {
-            try {
-                await promise
-            } catch (error) {
-                this.access.type = "error"
-                this.access.icon = "fas fa-ban"
-                console.log("Error:")
-                console.log(error)
-                if (error.name === 'NotAllowedError') {
-                    this.access.message = "SYSTEM-ERROR: カメラへのアクセス権限が必用です"
-                } else if (error.name === 'InsecureContextError') {
-                    this.access.message = "SYSTEM-ERROR: 通信が暗号化されていません"
-                } else {
-                    this.access.message = "ERROR: " + error.name
-                }
-            }
+        Error: function(message) {
+            this.$emit('Error', message)
         }
     },
     watch: {
@@ -276,5 +276,15 @@ td {
 }
 .tableItem:hover {
     background-color:#f1f1f1;
+}
+
+
+.dialog {
+    width:70%;
+}
+@media screen and (max-width: 600px){
+    .dialog {
+        width:100%;
+    }
 }
 </style>
