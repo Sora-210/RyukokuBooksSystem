@@ -13,7 +13,6 @@
                         <th>レンタルID</th>
                         <th>ステータス</th>
                         <th>UUID</th>
-                        <th>タイトル</th>
                         <th>貸出日</th>
                         <th>返却日</th>
                         <th></th>
@@ -29,7 +28,6 @@
                         </td>
 
                         <td><router-link :to="`/collection/` + item.uuid">{{ item.uuid}}</router-link></td>
-                        <td>タイトル</td>
                         <td>{{ item.start_day }}</td>
 
                         <td v-if="item.return_day === null">
@@ -40,8 +38,8 @@
                         </td>
                         
                         <td>
-                            <v-btn size="small" color="success" text @click="detailDialog(item.id)">
-                                <v-icon>far fa-edit</v-icon>
+                            <v-btn size="small" color="primary" text @click="detailDialog(item.id)">
+                                <v-icon>fas fa-info</v-icon>
                             </v-btn>
                         </td>
                     </tr>
@@ -120,7 +118,19 @@
                 </v-card-title>
                 <v-divider></v-divider>
                 <v-card-text>
-                    {{ this.RentalDeteilData }}
+                    <h3>レンタルID</h3>
+                    <p>{{ this.RentalDeteilData.id }}</p>
+                    <h3>UUID</h3>
+                    <p>{{ this.RentalDeteilData.uuid }}</p>
+                    <h3>年</h3>
+                    <p>{{ this.RentalDeteilData.year }}</p>
+                    <h3>借りた人</h3>
+                    <p>{{ this.selectLists.schoolGradeList[this.RentalDeteilData.grade] }}/{{ this.selectLists.ClassList[this.RentalDeteilData.class]}}組/{{ this.RentalDeteilData.number}}番</p>
+                    <p>{{ this.RentalDeteilData.name }}</p>
+                    <h3>貸出日</h3>
+                    <p>{{ this.RentalDeteilData.start_day }}</p>
+                    <h3>返却日</h3>
+                    <p>{{ this.RentalDeteilData.return_day }}</p>
                 </v-card-text>
                 <v-divider></v-divider>
                 <v-card-actions>
@@ -153,6 +163,26 @@ export default {
                 uuid:"",
                 status:"",
                 page:1
+            },
+            selectLists: {
+                schoolGradeList:{
+                    11:"中等部 1年",
+                    12:"中等部 2年",
+                    13:"中等部 3年",
+                    21:"高等部 1年",
+                    22:"高等部 2年",
+                    23:"高等部 3年",
+                },
+                ClassList:{
+                    1:"A",
+                    2:"B",
+                    3:"C",
+                    4:"D",
+                    5:"E",
+                    6:"F",
+                    7:"G",
+                    8:"Z・V・S",
+                }
             }
         }
     },
@@ -246,5 +276,15 @@ td {
 }
 .tableItem:hover {
     background-color:#f1f1f1;
+}
+
+
+.dialog {
+    width:70%;
+}
+@media screen and (max-width: 600px){
+    .dialog {
+        width:100%;
+    }
 }
 </style>
