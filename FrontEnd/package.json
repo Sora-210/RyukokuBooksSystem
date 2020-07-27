@@ -10,10 +10,12 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.13.0",
     "axios": "^0.19.2",
+    "chart.js": "^2.9.3",
     "core-js": "^3.6.5",
     "date-utils": "^1.2.21",
     "vue": "^2.6.11",
     "vue-axios": "^2.1.5",
+    "vue-chartjs": "^3.5.0",
     "vue-qrcode-reader": "^2.3.0",
     "vue-router": "^3.3.4",
     "vuetify": "^2.3.1",
