@@ -72,7 +72,7 @@
                                 <v-text-field
                                     label="UUID"
                                     append-icon="fas fa-qrcode"
-                                    @click:append="QRDialog"
+                                    @click:append="isQrDialog = true"
                                     v-model="searchConditions.uuid"
                                 ></v-text-field>
                             </v-col>
