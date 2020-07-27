@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-card>
+        <v-card @click="Link">
             <v-img
                 :src="bookImgUrl"
             ></v-img>
@@ -27,7 +27,8 @@ export default {
         }
     },
     props:[
-        'id'
+        'id',
+        'uuid'
     ],
     computed: {
         bookImgUrl: function() {
@@ -45,9 +46,14 @@ export default {
                 this.imgId = res.data.items[0].id
             })
             .catch((err) => {
-                alert('Bookデータの取得中にエラーが発生しました')
+                this.$emit('Error','書籍データ取得に失敗しました')
                 console.log(err)
             })
+    },
+    methods: {
+        Link() {
+            this.$router.push('/collection/' + this.uuid)
+        }
     }
 }
 </script>
