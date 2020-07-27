@@ -65,10 +65,12 @@ loginRouter.post('/', async (req, res) => {
         switch(e.name) {
             // Userの存在チェックを防ぐために不認可で送る?
             case "NoUser":
-                res.status(401).json({message:"Unauthorized"})
+                return res.status(401).json({message:"Unauthorized"})
             case "NotMatchPassword":
-                res.status(401).json({message:"Unauthorized"})
+                return res.status(401).json({message:"Unauthorized"})
         }
+        console.log(e)
+        return res.status(500).json({message:e})
     }
 })
 

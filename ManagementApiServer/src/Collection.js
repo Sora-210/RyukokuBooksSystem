@@ -317,7 +317,7 @@ collectionsRouter.post('/', async(req, res) => {
             const collection = await DB.Collection.create(sendObject,{transaction:T})
             await T.commit();
             CreateQrcode(collection.uuid)
-            return res.status(201).json(collection)
+            return res.status(201).json({collection:collection})
         } catch(e) {
             console.debug("Error:")
             console.debug(e)
