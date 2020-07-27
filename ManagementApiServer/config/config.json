@@ -3,7 +3,7 @@
     "username": "root",
     "password": "pass",
     "database": "Dev",
-    "host": "management-db",
+    "host": "localhost",
     "dialect": "mysql",
     "operatorsAliases": false
   },
