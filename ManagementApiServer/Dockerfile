@@ -6,7 +6,8 @@ RUN NODE_ENV=production &&\
     apk upgrade &&\
     apk add --no-cache --virtual .buildtools python make g++ &&\
     apk add netcat-openbsd cairo-dev pkgconfig giflib-dev jpeg-dev pango-dev &&\
-    mkdir /home/ManagementAPI
+    mkdir /home/ManagementAPI &&\
+    mkdir /home/ManagementAPI/Qrcode
 
 COPY ./ /home/ManagementAPI/
 

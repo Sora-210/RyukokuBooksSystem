@@ -8,6 +8,13 @@ services:
         networks:
             RyukokuBooksSystem:
                 ipv4_address: 172.0.1.6
+    file:
+        build: ./FileServer/.
+        volumes:
+            - ./Data/Qrcode:/opt/Qrcode
+        networks:
+            RyukokuBooksSystem:
+                ipv4_address: 172.0.1.7
     management-db:
         image: mysql:8.0.20
         environment:
@@ -27,6 +34,8 @@ services:
                 ipv4_address: 172.0.1.4
     management-api:
         build: ./ManagementApiServer/.
+        volumes:
+            - ./Data/Qrcode:/home/ManagementAPI/Qrcode
         networks:
             RyukokuBooksSystem:
                 ipv4_address: 172.0.1.5

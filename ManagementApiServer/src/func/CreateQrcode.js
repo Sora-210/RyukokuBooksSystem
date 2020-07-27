@@ -4,7 +4,7 @@ const fs = require('fs')
 const SystemLog = require('../Log.js').getLogger('system')
 SystemLog.level = "info"
 
-const CreateQrcode = (uuid, path = "../Data/Qrcode/") => {
+const CreateQrcode = (uuid, path = "./Qrcode/") => {
     const canvas = createCanvas(300, 300);
     const segment = [
         { data:uuid, mode:"text"}
