@@ -46,7 +46,7 @@
                                 <v-text-field
                                     label="UUID"
                                     append-icon="fas fa-qrcode"
-                                    @click:append="QRDialog"
+                                    @click:append="isQrDialog = true"
                                     v-model="searchConditions.uuid"
                                 ></v-text-field>
                             </v-col>
@@ -219,31 +219,18 @@
                 </v-stepper-items>
             </v-stepper>
         </v-dialog>
-        <v-dialog v-model="isQrDialog" fullscreen hide-overlay transition="dialog-bottom-transition">
-            <v-card>
-                <v-toolbar dark color="primary">
-                    <v-btn icon dark @click="isQrDialog = false">
-                    <v-icon>mdi-close</v-icon>
-                    </v-btn>
-                    <v-toolbar-title>QRコードリーダー</v-toolbar-title>
-                </v-toolbar>
-                <v-row class="d-flex justify-center">
-                    <v-col cols="12" sm="6">
-                        <qrcode-stream @decode="onDecode" @init="onInit"></qrcode-stream>
-                    </v-col>
-                </v-row>
-            </v-card>
-        </v-dialog>
+        <QRreader :isQrDialog="isQrDialog" @dataUp="QrResult" @close="isQrDialog = false" @Error="Error">
+        </QRreader>
     </div>
 </template>
 <script>
 import Table from '../../components/Table.vue'
-import { QrcodeStream } from 'vue-qrcode-reader'
+import QRreader from '../../components/QRreader.vue'
 
 export default {
     components: {
         Table,
-        QrcodeStream
+        QRreader
     },
     data: function() {
         return {
@@ -413,29 +400,12 @@ export default {
                 page:1
             }
         },
-        QRDialog: function() {
-            this.isQrDialog = !this.isQrDialog
-        },
-        async onDecode (resultUuid) {
-            this.searchConditions.uuid = resultUuid
+        QrResult: function(result) {
             this.isQrDialog = false
+            this.searchConditions.uuid = result
         },
-        async onInit (promise) {
-            try {
-                await promise
-            } catch (error) {
-                this.access.type = "error"
-                this.access.icon = "fas fa-ban"
-                console.log("Error:")
-                console.log(error)
-                if (error.name === 'NotAllowedError') {
-                    this.access.message = "SYSTEM-ERROR: カメラへのアクセス権限が必用です"
-                } else if (error.name === 'InsecureContextError') {
-                    this.access.message = "SYSTEM-ERROR: 通信が暗号化されていません"
-                } else {
-                    this.access.message = "ERROR: " + error.name
-                }
-            }
+        Error: function(message) {
+            this.$emit('Error', message)
         }
     },
     watch: {
