@@ -140,7 +140,7 @@
                 <v-stepper-content step="2">
                     <div
                         class="mb-12"
-                        height="200px"
+                        height="300px"
                     >
                         <v-img style="width:50px;margin:auto;" src="../../assets/book.gif"></v-img>
                         <p style="text-align:center;">Lodding Now...</p>
@@ -191,7 +191,7 @@
                 <v-stepper-content step="4">
                     <div
                         class="mb-12"
-                        height="200px"
+                        height="300px"
                     >
                         <v-img style="width:50px;margin:auto;" src="../../assets/book.gif"></v-img>
                         <p style="text-align:center;">登録中...</p>
@@ -200,18 +200,61 @@
                 <v-stepper-content step="5">
                     <v-card
                         class="mb-12"
-                        height="200px"
                     >
                         <v-card-title>
                             登録完了
                         </v-card-title>
-                        <p>
-                            {{ registeredData }}
-                        </p>
+                        <v-container>
+                            <v-row>
+                                <v-col cols=12 sm=8>
+                                    <v-text-field
+                                        outlined
+                                        disabled
+                                        label="登録日"
+                                        v-model="registeredData.collection.registrationData"
+                                    >
+                                    </v-text-field>
+                                    <v-text-field
+                                        outlined
+                                        disabled
+                                        label="UUID"
+                                        v-model="registeredData.collection.uuid"
+                                    >
+                                    </v-text-field>
+                                    <v-text-field
+                                        outlined
+                                        disabled
+                                        label="ISBN"
+                                        v-model="registeredData.collection.isbn"
+                                    >
+                                    </v-text-field>
+                                    <v-text-field
+                                        outlined
+                                        disabled
+                                        label="NDC"
+                                        v-model="registeredData.collection.ncd"
+                                    >
+                                    </v-text-field>
+                                    <v-text-field
+                                        outlined
+                                        disabled
+                                        label="備考"
+                                        v-model="registeredData.collection.note"
+                                    >
+                                    </v-text-field>
+                                </v-col>
+                                <v-col cols=12 sm=4>
+                                    <v-img
+                                        :src="this.$store.getters.fileEndpoint + '/' + this.registeredData.collection.uuid + '.png'"
+                                    >
+                                    </v-img>
+                                </v-col>
+                            </v-row>
+                        </v-container>
                     </v-card>
                     <v-btn
                         color="primary"
-                        @click="reset"
+                        @click="this.registerDialog = false"
                     >
                     閉じる
                     </v-btn>
@@ -219,17 +262,29 @@
                 </v-stepper-items>
             </v-stepper>
         </v-dialog>
-        <QRreader :isQrDialog="isQrDialog" @dataUp="QrResult" @close="isQrDialog = false" @Error="Error">
+        <collection-dialog
+            :isCollectionDialog="isCollectionDialog"
+            :collectionUuid="collectionDialogUuid"
+            @close="isCollectionDialog = false"
+            @Error = "Error">
+        </collection-dialog>
+        <QRreader
+            :isQrDialog="isQrDialog"
+            @dataUp="QrResult"
+            @close="isQrDialog = false"
+            @Error = "Error">
         </QRreader>
     </div>
 </template>
 <script>
 import Table from '../../components/Table.vue'
 import QRreader from '../../components/QRreader.vue'
+import CollectionDialog from '../../components/Admin/CollectionDialog.vue'
 
 export default {
     components: {
         Table,
+        CollectionDialog,
         QRreader
     },
     data: function() {
@@ -270,7 +325,7 @@ export default {
                 ncd:"",
                 note:""
             },
-            registeredData:{},
+            registeredData:{collection:{uuid:null}},
             rules: {
                 isbn:[
                     v => !!v || 'ISBNは必須です',
@@ -292,7 +347,9 @@ export default {
                 ncd:"",
                 note:"",
                 page:1
-            }
+            },
+            isCollectionDialog:false,
+            collectionDialogUuid:""
         }
     },
     mounted: function() {
@@ -368,7 +425,7 @@ export default {
                         this.registerDialogMessage = "登録に失敗しました"
                         this.registerDialogTurn = 1
                     } else {
-                        this.reload()
+                        this.getCollections()
                         setTimeout(()=>{
                             console.log(res)
                             console.log(res.data)
@@ -383,8 +440,9 @@ export default {
                     this.registerDialogTurn = 1
                 })
         },
-        edit(isbn) {
-            this.$router.push('/collection/'+isbn)
+        edit(uuid) {
+            this.collectionDialogUuid = uuid
+            this.isCollectionDialog = true
         },
         search: function() {
             this.searchConditions.page = 1
@@ -411,36 +469,7 @@ export default {
     watch: {
         'searchConditions.page' : function() {
             this.getCollections()
-        }
+        },
     }
 }
 </script>
-
-<style scoped>
-.sp-row-scroll {
-    display: block;
-    overflow-x: scroll;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-}
-table {
-    border-collapse: collapse;
-    width:100%;
-}
-th,
-td {
-    padding: 7px 20px 7px 20px;
-}
-.tableTitle {
-    background-color:#e9e9e9;
-    border-top: solid 1px#000000;
-    border-bottom: solid 1px#000000;
-}
-.tableItem {
-    text-align: left;
-    border-bottom: solid 0.5px #e6e6e6;
-}
-.tableItem:hover {
-    background-color:#f1f1f1;
-}
-</style>
