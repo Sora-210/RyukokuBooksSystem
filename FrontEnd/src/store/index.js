@@ -6,8 +6,9 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    token: "",
-    apiEndpoint: "",
+    token: null,
+    apiEndpoint: null,
+    fileEndpoint: null
   },
   getters: {
     token: (state) => {
@@ -15,6 +16,9 @@ export default new Vuex.Store({
     },
     apiEndpoint:(state) => {
       return state.apiEndpoint
+    },
+    fileEndpoint:(state) => {
+      return state.fileEndpoint
     }
   },
   mutations: {
@@ -22,10 +26,13 @@ export default new Vuex.Store({
       state.token = token
     },
     removeToken(state) {
-      state.token = ""
+      state.token = null
     },
     setApiEndpoint(state, endpoint) {
       state.apiEndpoint = endpoint
+    },
+    setFileEndpoint(state, endpoint) {
+      state.fileEndpoint = endpoint
     }
   },
   actions: {

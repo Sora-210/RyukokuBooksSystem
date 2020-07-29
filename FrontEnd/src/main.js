@@ -14,8 +14,10 @@ Vue.config.productionTip = false
 
 Vue.use(VueAxios, axios)
 
+store.commit('setFileEndpoint', process.env.VUE_APP_FILE_ENDPOINT)
 store.commit('setApiEndpoint', process.env.VUE_APP_API_ENDPOINT)
 console.log(store.getters.apiEndpoint)
+console.log(store.getters.fileEndpoint)
 
 new Vue({
   vuetify,
