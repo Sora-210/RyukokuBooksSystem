@@ -65,7 +65,7 @@
                     </v-container>
                 </v-card-text>
                 <v-divider></v-divider>
-                <v-card-actions>
+                <v-card-actions class="d-flex justify-end">
                         <v-btn color="warning" @click="searchReset">リセット</v-btn>
                         <v-btn color="success" @click="search">検索</v-btn>
                 </v-card-actions>

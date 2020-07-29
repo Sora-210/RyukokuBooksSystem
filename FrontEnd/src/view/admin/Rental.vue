@@ -21,7 +21,8 @@
                         <td>{{ item.id }}</td>
 
                         <td v-if="item.return_day === null">
-                            <span style="color:blue;">貸出中</span>
+                            <span v-if="new Date(item.start_day) <= today" style="color:red;">未返却-期限切れ</span>
+                            <span v-else style="color:blue;">貸出中</span>
                         </td>
                         <td v-else>
                             <span style="color:green;">返却済</span>
@@ -105,7 +106,7 @@
                     </v-container>
                 </v-card-text>
                 <v-divider></v-divider>
-                <v-card-actions>
+                <v-card-actions class="d-flex justify-end">
                         <v-btn color="warning" @click="searchReset">リセット</v-btn>
                         <v-btn color="success" @click="search">検索</v-btn>
                 </v-card-actions>
@@ -133,7 +134,7 @@
                     <p>{{ this.RentalDeteilData.return_day }}</p>
                 </v-card-text>
                 <v-divider></v-divider>
-                <v-card-actions>
+                <v-card-actions  class="d-flex justify-end">
                     <v-btn color="success" @click="isRentalDeteilDialog = false">閉じる</v-btn>
                 </v-card-actions>
             </v-card>
@@ -144,6 +145,8 @@
 </template>
 <script>
 import QRreader from '../../components/QRreader.vue'
+require('date-utils')
+const DateNow = new Date();
 
 export default {
     components: {
@@ -183,11 +186,13 @@ export default {
                     7:"G",
                     8:"Z・V・S",
                 }
-            }
+            },
+            today:null
         }
     },
     mounted: function() {
         this.requestApi()
+        this.today = DateNow.addWeeks(-2)
     },
     methods: {
         requestApi: function() {

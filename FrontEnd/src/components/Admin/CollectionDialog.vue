@@ -71,7 +71,7 @@
                     </v-container>
                 </v-card-text>
                 <v-divider></v-divider>
-                <v-card-actions>
+                <v-card-actions  class="d-flex justify-end">
                         <v-btn color="warning" @click="Close">閉じる</v-btn>
                         <v-btn color="error" @click="Delete">削除</v-btn>
                         <v-btn color="success" @click="Updata">更新</v-btn>

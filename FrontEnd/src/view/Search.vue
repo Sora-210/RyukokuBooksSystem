@@ -1,13 +1,5 @@
 <template>
     <div>
-        <v-alert
-            border="left"
-            colored-border
-            color="deep-purple accent-4"
-            elevation="2"
-        >
-            検索できません
-        </v-alert>
         <v-card>
             <v-card-title>
                 蔵書一覧 | 検索
@@ -51,7 +43,7 @@
                     </v-row>
                 </v-container>
             </v-card-actions>
-            <v-card-actions>
+            <v-card-actions class="d-flex justify-end">
                 <v-btn color="warning" @click="searchReset">リセット</v-btn>
                 <v-btn color="success" @click="search">検索</v-btn>
             </v-card-actions>

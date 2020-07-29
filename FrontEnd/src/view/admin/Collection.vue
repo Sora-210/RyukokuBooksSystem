@@ -85,7 +85,7 @@
                     </v-container>
                 </v-card-text>
                 <v-divider></v-divider>
-                <v-card-actions>
+                <v-card-actions class="d-flex justify-end">
                         <v-btn color="warning" @click="searchReset">リセット</v-btn>
                         <v-btn color="success" @click="search">検索</v-btn>
                 </v-card-actions>
@@ -110,32 +110,36 @@
                     <div
                         class="pt-2 mb-4"
                     >
-                        <v-alert
-                            v-if="this.registerDialogMessage !== ''"
-                            icon="fas fa-exclamation-triangle"
-                            dense
-                            outlined
-                            type="error"
-                        >
-                            {{ registerDialogMessage }}
-                        </v-alert>
-                        <v-text-field
-                            outlined
-                            label="ISBN"
-                            v-model="registerData.isbn"
-                            :rules="rules.isbn"
-                        >
-                        </v-text-field>
+                        <div>
+                            <v-alert
+                                v-if="this.registerDialogMessage !== ''"
+                                icon="fas fa-exclamation-triangle"
+                                dense
+                                outlined
+                                type="error"
+                            >
+                                {{ registerDialogMessage }}
+                            </v-alert>
+                            <v-text-field
+                                outlined
+                                label="ISBN"
+                                v-model="registerData.isbn"
+                                :rules="rules.isbn"
+                            >
+                            </v-text-field>
+                        </div>
+                        <div class="d-flex justify-end">
+                            <v-btn
+                                color="primary"
+                                @click="registerFirst"
+                            >
+                            次へ
+                            </v-btn>
+                            <v-btn text @click="reset">
+                                キャンセル
+                            </v-btn>
+                        </div>
                     </div>
-                    <v-btn
-                        color="primary"
-                        @click="registerFirst"
-                    >
-                    次へ
-                    </v-btn>
-                    <v-btn text @click="reset">
-                        キャンセル
-                    </v-btn>
                 </v-stepper-content>
                 <v-stepper-content step="2">
                     <div
@@ -150,43 +154,47 @@
                     <div
                         class="pt-2 mb-4"
                     >
-                        <v-text-field
-                            outlined
-                            disabled
-                            label="タイトル"
-                            v-model="registerData.title"
-                        >
-                        </v-text-field>
-                        <v-text-field
-                            outlined
-                            disabled
-                            label="ISBN"
-                            v-model="registerData.isbn"
-                        >
-                        </v-text-field>
-                        <v-text-field
-                            outlined
-                            label="NCD"
-                            v-model="registerData.ncd"
-                            :rules="rules.ncd"
-                        >
-                        </v-text-field>
-                        <v-text-field
-                            outlined
-                            label="備考"
-                            v-model="registerData.note"
-                        >
-                        </v-text-field>
+                        <div>
+                            <v-text-field
+                                outlined
+                                disabled
+                                label="タイトル"
+                                v-model="registerData.title"
+                            >
+                            </v-text-field>
+                            <v-text-field
+                                outlined
+                                disabled
+                                label="ISBN"
+                                v-model="registerData.isbn"
+                            >
+                            </v-text-field>
+                            <v-text-field
+                                outlined
+                                label="NCD"
+                                v-model="registerData.ncd"
+                                :rules="rules.ncd"
+                            >
+                            </v-text-field>
+                            <v-text-field
+                                outlined
+                                label="備考"
+                                v-model="registerData.note"
+                            >
+                            </v-text-field>
+                        </div>
+                        <div class="d-flex justify-end">
+                            <v-btn
+                                color="primary"
+                                @click="registerSecond"
+                            >
+                                登録する
+                            </v-btn>
+                            <v-btn text @click="reset">
+                                キャンセル
+                            </v-btn>
+                        </div>
                     </div>
-                    <v-btn
-                        color="primary"
-                        @click="registerSecond"
-                    >
-                        登録する
-                    </v-btn>
-                    <v-btn text @click="reset">
-                        キャンセル
-                    </v-btn>
                 </v-stepper-content>
                 <v-stepper-content step="4">
                     <div
@@ -251,13 +259,16 @@
                                 </v-col>
                             </v-row>
                         </v-container>
+                        <v-divider></v-divider>
+                        <v-card-actions class="d-flex justify-end">
+                            <v-btn
+                                color="primary"
+                                @click="registerDialog = false"
+                            >
+                            閉じる
+                            </v-btn>
+                        </v-card-actions>
                     </v-card>
-                    <v-btn
-                        color="primary"
-                        @click="this.registerDialog = false"
-                    >
-                    閉じる
-                    </v-btn>
                 </v-stepper-content>
                 </v-stepper-items>
             </v-stepper>
