@@ -133,7 +133,7 @@ export default {
                 .catch((e) => {
                     this.$emit('Error',e)
                 })
-            // this.getStatus = true
+            this.getStatus = true
         },
         Updata: function() {
             console.log("")
