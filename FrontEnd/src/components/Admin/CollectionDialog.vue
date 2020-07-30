@@ -74,7 +74,7 @@
                 <v-card-actions  class="d-flex justify-end">
                         <v-btn color="warning" @click="Close">閉じる</v-btn>
                         <v-btn color="error" @click="Delete">削除</v-btn>
-                        <v-btn color="success" @click="Updata">更新</v-btn>
+                        <v-btn color="success" @click="Updata" disabled>更新</v-btn>
                 </v-card-actions>
             </div>
             <div v-else>
@@ -138,8 +138,24 @@ export default {
         Updata: function() {
             console.log("")
         },
-        Delete: function() {
-            console.log("")
+        Delete: async function() {
+            const options = {
+                headers: {
+                    token: this.$store.getters.token
+                }
+            }
+            if (window.confirm('uuid:' + this.CollectionData.uuid + 'を削除してよろしいですか?')) {
+                try {
+                    await this.axios.delete(this.$store.getters.apiEndpoint + '/collections/' + this.CollectionData.uuid, options)
+                    this.Close()
+                    this.Reload()
+                } catch(e) {
+                    this.$emit('Error')
+                }
+            }
+        },
+        Reload: function() {
+            this.$emit('reload')
         },
         Close: function() {
             this.$emit('close')
