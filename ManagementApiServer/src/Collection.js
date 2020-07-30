@@ -301,6 +301,28 @@ collectionsRouter.patch('/:uuid/return', async(req, res) => {
     }
 })
 
+// [GET] /collections/new
+// collectionsRouter.get('/new', async(req, res) => {
+//     try {
+//         const options = {where:{uuid: req.params.uuid}}
+//         const DBres = await DB.Collection.findAll(options)
+//         if (DBres.length === 0) {
+//             throw new CustomError('Nothing', DBres)
+//         }
+
+//         console.log(BookData)
+//         return res.status(200).json({"NewCollections":BookData})
+//     } catch(e) {
+//         console.debug("Error:" + e.name)
+//         switch(e.name){
+//             case 'Nothing':
+//                 return res.status(404).json()
+//             case 'Unknown':
+//                 return res.status(500).json(e.message)
+//         }
+//     }
+// })
+
 
 //####################################
 //以下認証が必要
@@ -344,8 +366,9 @@ collectionsRouter.delete('/:uuid', async(req, res) => {
         switch(e.name) {
             case 'Nothing':
                 return res.status(404).json()
+            default:
+                return res.status(500).json()
         }
-        return res.status(500).json()
     }
 })
 
