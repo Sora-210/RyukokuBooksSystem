@@ -46,10 +46,10 @@ const CheckCollection = (object) => {
     }
     ReturnObject.isbn = object.isbn
     
-    if (object.ncd === undefined || object.ncd === "") {
+    if (object.ndc === undefined || object.ndc === "") {
         return false
     }
-    ReturnObject.ncd = object.ncd
+    ReturnObject.ndc = object.ndc
 
     if (object.note !== undefined || object.note !== "") {
         ReturnObject.note = object.note
@@ -100,9 +100,9 @@ collectionsRouter.get('/', async(req, res) => {
         if (req.query.uuid !== undefined && req.query.uuid !== "") {
             options.where.uuid = req.query.uuid
         }
-        // NCD関連検索
-        if (req.query.ncd !== undefined && req.query.ncd !== "") {
-            options.where.ncd = req.query.ncd
+        // ndc関連検索
+        if (req.query.ndc !== undefined && req.query.ndc !== "") {
+            options.where.ndc = req.query.ndc
         }
         // 備考関連処理
         if (req.query.note !== undefined && req.query.note !== "") {
