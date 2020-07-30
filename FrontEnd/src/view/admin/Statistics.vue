@@ -46,7 +46,7 @@ export default {
     data () {
         return {
             rentalDatas: null,
-            returnDatas: null
+            returnDatas: null,
         }
     },
     mounted () {
@@ -61,7 +61,8 @@ export default {
                     {
                         label: '貸出冊数',
                         borderColor: '#f87979',
-                        data: [7,3,9,5,2,4]
+                        data: [7,3,9,5,2,4],
+                        lineTension:0
                     }
                 ]
             }
@@ -73,7 +74,8 @@ export default {
                     {
                         label: '返却冊数',
                         borderColor: '#32FF00',
-                        data: [6,3,8,1,4]
+                        data: [6,3,8,1,4],
+                        lineTension:0
                     }
                 ]
             }

@@ -21,7 +21,7 @@
                         <td>{{ item.id }}</td>
 
                         <td v-if="item.return_day === null">
-                            <span v-if="new Date(item.start_day) <= today" style="color:red;">未返却-期限切れ</span>
+                            <span v-if="new Date(item.start_day) <= today" style="color:red;">未返却[期限切れ]</span>
                             <span v-else style="color:blue;">貸出中</span>
                         </td>
                         <td v-else>
@@ -78,7 +78,7 @@
                             <v-col class="d-flex" cols="12" sm="6">
                                 <v-select
                                     append-icon="fas fa-caret-down"
-                                    :items="[{text:'貸出中',value:true},{text:'返却済',value:false}]"
+                                    :items="[{text:'貸出中',value:0},{text:'返却済',value:1},{text:'未返却[期限切れ]',value:2}]"
                                     v-model="searchConditions.status"
                                     label="ステータス"
                                 ></v-select>
@@ -127,7 +127,6 @@
 import RentalDialog from '../../components/Admin/RentalDialog.vue'
 import QRreader from '../../components/QRreader.vue'
 require('date-utils')
-const DateNow = new Date();
 
 export default {
     components: {
@@ -174,6 +173,7 @@ export default {
     },
     mounted: function() {
         this.requestApi()
+        const DateNow = new Date();
         this.today = DateNow.addWeeks(-2)
     },
     methods: {

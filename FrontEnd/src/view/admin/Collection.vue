@@ -276,6 +276,7 @@
         <collection-dialog
             :isCollectionDialog="isCollectionDialog"
             :collectionUuid="collectionDialogUuid"
+            @reload="getCollections"
             @close="isCollectionDialog = false"
             @Error = "Error">
         </collection-dialog>
@@ -343,8 +344,8 @@ export default {
                     v => /\d{13}/.test(v) && v.length === 13|| 'ISBNは数字13桁です'
                 ],
                 ndc:[
-                    v => !!v || 'NCDは必須です',
-                    v => /\d{3}/.test(v) || 'NCD形式に一致しません'
+                    v => !!v || 'NDCは必須です',
+                    v => /\d{3}/.test(v) || 'NDC形式に一致しません'
                 ]
             },
             isSelectSortDialog: false,
