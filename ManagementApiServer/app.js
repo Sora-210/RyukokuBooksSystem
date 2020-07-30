@@ -17,6 +17,10 @@ app.use(function(req, res, next) {
 });
 
 //Collections
+const { newsRouter } = require('./src/News.js')
+app.use('/news', newsRouter)
+
+//Collections
 const { collectionsRouter } = require('./src/Collection.js')
 app.use('/collections', collectionsRouter)
 
