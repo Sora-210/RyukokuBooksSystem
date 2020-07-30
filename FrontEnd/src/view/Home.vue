@@ -23,9 +23,7 @@
                     <h4>お知らせ</h4>
                     <div class="brackBoard_list">
                         <ul>
-                            <li><a>新しい本が4冊増えました！</a></li>
-                            <li><a>貸出を開始しました！</a></li>
-                            <li><a>RykokuBooksSystem開始しました！</a></li>
+                            <li v-for="news in newsList" :key="news.index"><a>{{news.content}}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -45,13 +43,13 @@
         <h2>新刊</h2>
         <v-row>
             <v-col
-                cols="6"
-                lg="2"
-                sm="4"
-                v-for="id in newBooksList" :key="id.index"
+                cols="12"
+                sm="3"
+                v-for="newBook in newBooksList" :key="newBook.index"
             >
                 <BookCard
-                    :id="id"
+                    :isbn="newBook.isbn"
+                    :uuid="newBook.uuid"
                     style="margin:10px;"
                 >
                 </BookCard>
@@ -73,13 +71,37 @@ export default {
         return {
             today: DateNow.toFormat('YYYY年MM月DD日'),
             returnDay: DateNow.addWeeks(2).toFormat('YYYY年MM月DD日'),
-            newBooksList:[
-                "9784844336389",
-                "9784844336778",
-                "9784844333937",
-                "9784798155302",
-                "9784535788770"
-            ]
+            newBooksList:[],
+            newsList:[]
+        }
+    },
+    mounted: function() {
+        this.getNewsRequest()
+        this.getNewCollectionRequest()
+    },
+    methods: {
+        async getNewsRequest() {
+            try {
+                const Res = await this.axios.get(this.$store.getters.apiEndpoint + "/news?limit=4")
+                this.newsList = Res.data.News
+            } catch(e) {
+                this.$emit('Error',e)
+            }
+        },
+        async getNewCollectionRequest() {
+            try {
+                const query = "?sortRow=registrationData&sortDirection=0"
+                const Res = await this.axios.get(this.$store.getters.apiEndpoint + "/collections/" + query)
+                for (let i = 0;i<4;i++) {
+                    this.newBooksList.push({
+                        isbn: Res.data.Collections[i].isbn,
+                        uuid: Res.data.Collections[i].uuid
+                    })
+                }
+                console.log(this.newBooksList)
+            } catch(e) {
+                this.$emit('Error',e)
+            }
         }
     }
 }

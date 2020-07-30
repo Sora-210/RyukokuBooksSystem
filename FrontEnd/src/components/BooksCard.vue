@@ -27,7 +27,7 @@ export default {
         }
     },
     props:[
-        'id',
+        'isbn',
         'uuid'
     ],
     computed: {
@@ -39,7 +39,7 @@ export default {
         }
     },
     mounted: function() {
-        this.axios('https://www.googleapis.com/books/v1/volumes?q=isbn:' + this.id)
+        this.axios('https://www.googleapis.com/books/v1/volumes?q=isbn:' + this.isbn)
             .then((res) => {
                 this.title = res.data.items[0].volumeInfo.title
                 this.authors = res.data.items[0].volumeInfo.authors
