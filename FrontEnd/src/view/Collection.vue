@@ -83,8 +83,8 @@
                             <td>{{ this.CollectionData.uuid }}</td>
                         </tr>
                         <tr>
-                            <td>NCD</td>
-                            <td>{{ this.CollectionData.ncd }}</td>
+                            <td>NDC</td>
+                            <td>{{ this.CollectionData.ndc }}</td>
                         </tr>
                         <tr>
                             <td>登録日</td>
@@ -308,7 +308,7 @@ export default {
                 isbn:"",
                 note:"",
                 registrationData:"",
-                ncd:""
+                ndc:""
             },
             formData: {
                 grade:0,

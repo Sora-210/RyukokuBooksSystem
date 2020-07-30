@@ -58,8 +58,8 @@
                             </v-col>
                             <v-col cols="12" sm="6">
                                 <v-text-field
-                                    label="NCD"
-                                    v-model="searchConditions.ncd"
+                                    label="NDC"
+                                    v-model="searchConditions.ndc"
                                 ></v-text-field>
                             </v-col>
                         </v-row>
@@ -171,9 +171,9 @@
                             </v-text-field>
                             <v-text-field
                                 outlined
-                                label="NCD"
-                                v-model="registerData.ncd"
-                                :rules="rules.ncd"
+                                label="NDC"
+                                v-model="registerData.ndc"
+                                :rules="rules.ndc"
                             >
                             </v-text-field>
                             <v-text-field
@@ -240,7 +240,7 @@
                                         outlined
                                         disabled
                                         label="NDC"
-                                        v-model="registeredData.collection.ncd"
+                                        v-model="registeredData.collection.ndc"
                                     >
                                     </v-text-field>
                                     <v-text-field
@@ -310,8 +310,8 @@ export default {
                     variableName:"isbn"
                 },
                 {
-                    title:"NCD",
-                    variableName:"ncd"
+                    title:"NDC",
+                    variableName:"ndc"
                 },
                 {
                     title:"登録日",
@@ -333,7 +333,7 @@ export default {
             registerData: {
                 isbn:"",
                 title:"",
-                ncd:"",
+                ndc:"",
                 note:""
             },
             registeredData:{collection:{uuid:null}},
@@ -342,7 +342,7 @@ export default {
                     v => !!v || 'ISBNは必須です',
                     v => /\d{13}/.test(v) && v.length === 13|| 'ISBNは数字13桁です'
                 ],
-                ncd:[
+                ndc:[
                     v => !!v || 'NCDは必須です',
                     v => /\d{3}/.test(v) || 'NCD形式に一致しません'
                 ]
@@ -355,7 +355,7 @@ export default {
                 sortRow:"uuid",
                 sortDirection:0,
                 uuid:"",
-                ncd:"",
+                ndc:"",
                 note:"",
                 page:1
             },
@@ -368,7 +368,7 @@ export default {
     },
     methods: {
         getCollections() {
-            const query = "?sortRow=" + this.searchConditions.sortRow + "&sortDirection=" + this.searchConditions.sortDirection + "&ncd=" + this.searchConditions.ncd + "&note=" + this.searchConditions.note + "&uuid=" + this.searchConditions.uuid + "&page=" + this.searchConditions.page
+            const query = "?sortRow=" + this.searchConditions.sortRow + "&sortDirection=" + this.searchConditions.sortDirection + "&ndc=" + this.searchConditions.ndc + "&note=" + this.searchConditions.note + "&uuid=" + this.searchConditions.uuid + "&page=" + this.searchConditions.page
             const options = {
                 headers: {
                     token: this.$store.getters.token
@@ -382,7 +382,7 @@ export default {
                         this.collectionItems.push({
                             uuid: el.uuid,
                             isbn: el.isbn,
-                            ncd: el.ncd,
+                            ndc: el.ndc,
                             registrationData: el.registrationData,
                             note: el.note,
                             edit: {
@@ -402,7 +402,7 @@ export default {
             this.registerDialog = false
             this.registerDialogTurn = 1
             this.registerDialogMessage = ""
-            this.registerData = {isbn:"",title:"",ncd:"",note:""}
+            this.registerData = {isbn:"",title:"",ndc:"",note:""}
         },
         registerFirst() {
             this.registerDialogTurn = 2
@@ -464,7 +464,7 @@ export default {
             this.searchConditions = {
                 sortRow:"uuid",
                 sortDirection:0,
-                ncd:"",
+                ndc:"",
                 note:"",
                 page:1
             }

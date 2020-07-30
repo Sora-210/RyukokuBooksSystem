@@ -18,8 +18,8 @@
                         </v-col>
                         <v-col cols="12" sm="6">
                             <v-text-field
-                                label="NCD"
-                                v-model="searchConditions.ncd"
+                                label="NDC"
+                                v-model="searchConditions.ndc"
                             ></v-text-field>
                         </v-col>
                     </v-row>
@@ -27,7 +27,7 @@
                         <v-col class="d-flex" cols="12" sm="6">
                             <v-select
                                 append-icon="fas fa-caret-down"
-                                :items="[{text:'UUID',value:'uuid'},{text:'NCD',value:'ncd'},{text:'登録日',value:'registrationData'}]"
+                                :items="[{text:'UUID',value:'uuid'},{text:'NDC',value:'ndc'},{text:'登録日',value:'registrationData'}]"
                                 v-model="searchConditions.sortRow"
                                 label="並び替え"
                             ></v-select>
@@ -119,7 +119,7 @@ export default {
                 sortRow:"registrationData",
                 sortDirection:0,
                 uuid:"",
-                ncd:""
+                ndc:""
             },
             isQrDialog:false
         }
@@ -130,7 +130,7 @@ export default {
     methods: {
         getCollections() {
             let query = `?sortRow=${this.searchConditions.sortRow}&sortDirection=${this.searchConditions.sortDirection}`
-            query += `&ncd=${this.searchConditions.ncd}&uuid=${this.searchConditions.uuid}`
+            query += `&ndc=${this.searchConditions.ndc}&uuid=${this.searchConditions.uuid}`
             query += `&page=${this.page}`
             this.axios.get(this.$store.getters.apiEndpoint + '/collections' + query)
                 .then((res) => {
@@ -152,7 +152,7 @@ export default {
                 sortRow:"registrationData",
                 sortDirection:0,
                 uuid:"",
-                ncd:""
+                ndc:""
             }
         },
         QrResult: function(result) {
