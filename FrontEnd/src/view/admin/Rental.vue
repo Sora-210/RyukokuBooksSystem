@@ -39,7 +39,7 @@
                         </td>
                         
                         <td>
-                            <v-btn size="small" color="primary" text @click="detailDialog(item.id)">
+                            <v-btn size="small" color="primary" text @click="OnRentalDetailDialog(item.id)">
                                 <v-icon>fas fa-info</v-icon>
                             </v-btn>
                         </td>
@@ -112,44 +112,26 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
-        <v-dialog v-model="isRentalDeteilDialog" width="70%">
-            <v-card>
-                <v-card-title>
-                    貸出情報
-                </v-card-title>
-                <v-divider></v-divider>
-                <v-card-text>
-                    <h3>レンタルID</h3>
-                    <p>{{ this.RentalDeteilData.id }}</p>
-                    <h3>UUID</h3>
-                    <p>{{ this.RentalDeteilData.uuid }}</p>
-                    <h3>年</h3>
-                    <p>{{ this.RentalDeteilData.year }}</p>
-                    <h3>借りた人</h3>
-                    <p>{{ this.selectLists.schoolGradeList[this.RentalDeteilData.grade] }}/{{ this.selectLists.ClassList[this.RentalDeteilData.class]}}組/{{ this.RentalDeteilData.number}}番</p>
-                    <p>{{ this.RentalDeteilData.name }}</p>
-                    <h3>貸出日</h3>
-                    <p>{{ this.RentalDeteilData.start_day }}</p>
-                    <h3>返却日</h3>
-                    <p>{{ this.RentalDeteilData.return_day }}</p>
-                </v-card-text>
-                <v-divider></v-divider>
-                <v-card-actions  class="d-flex justify-end">
-                    <v-btn color="success" @click="isRentalDeteilDialog = false">閉じる</v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
+        <rental-dialog
+            :isRentalDetailDialog="isRentalDetailDialog"
+            :rentalId="rentalDetailDialogRentalid"
+            :selectLists="selectLists"
+            @close="isRentalDetailDialog = false"
+            @Error="Error">
+        </rental-dialog>
         <QRreader :isQrDialog="isQrDialog" @dataUp="QrResult" @close="isQrDialog = false" @Error="Error">
         </QRreader>
     </div>
 </template>
 <script>
+import RentalDialog from '../../components/Admin/RentalDialog.vue'
 import QRreader from '../../components/QRreader.vue'
 require('date-utils')
 const DateNow = new Date();
 
 export default {
     components: {
+        RentalDialog,
         QRreader,
     },
     data: function() {
@@ -157,8 +139,8 @@ export default {
             rentalsList:[],
             rentalsPages:1,
             isSelectSortDialog: false,
-            isRentalDeteilDialog: false,
-            RentalDeteilData: {},
+            isRentalDetailDialog: false,
+            rentalDetailDialogRentalid: "",
             isQrDialog: false,
             searchConditions: {
                 sortRow:"id",
@@ -225,19 +207,9 @@ export default {
                 page:1
             }
         },
-        detailDialog: async function(rentalId) {
-            this.isRentalDeteilDialog = true
-            const options = {
-                headers: {
-                    token: this.$store.getters.token
-                }
-            }
-            try {
-                const Res = await this.axios.get(this.$store.getters.apiEndpoint + "/rentals/" + rentalId, options)
-                this.RentalDeteilData = Res.data
-            } catch(e) {
-                this.$emit('Error', e)
-            }
+        OnRentalDetailDialog: function(rentalId) {
+            this.rentalDetailDialogRentalid = rentalId
+            this.isRentalDetailDialog = true
         },
         QrResult: function(result) {
             this.isQrDialog = false
