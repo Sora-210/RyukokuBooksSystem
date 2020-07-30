@@ -33,12 +33,18 @@ rentalRouter.get('/', async(req, res) => {
         }
         // ステータス関連処理
         if (req.query.status !== undefined && req.query.status !== "") {
-            if (req.query.status === "true") {
+            if (req.query.status === "0") {
                 options.where.return_day = null
-            } else {
+            } else if (req.query.status === "1") {
                 options.where.return_day = { [DBOP.ne]: null}
+            } else if (req.query.status === "2") {
+                const DateNow = new Date();
+                const today = DateNow.addWeeks(-2)
+                options.where.start_day = {
+                    [DBOP.lte]:today
+                }
+                options.where.return_day = null
             }
-            
         }
         const Count = await DB.Rental.count(options)
 

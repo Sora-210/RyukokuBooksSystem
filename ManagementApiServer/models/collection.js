@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     uuid: DataTypes.UUID,
     registrationData: DataTypes.DATEONLY,
     note: DataTypes.STRING,
-    ncd: DataTypes.STRING,
+    ndc: DataTypes.STRING,
     rentalStatus: DataTypes.BOOLEAN,
     rentalId:DataTypes.INTEGER
   }, {});

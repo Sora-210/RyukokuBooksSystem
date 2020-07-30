@@ -46,10 +46,10 @@ const CheckCollection = (object) => {
     }
     ReturnObject.isbn = object.isbn
     
-    if (object.ncd === undefined || object.ncd === "") {
+    if (object.ndc === undefined || object.ndc === "") {
         return false
     }
-    ReturnObject.ncd = object.ncd
+    ReturnObject.ndc = object.ndc
 
     if (object.note !== undefined || object.note !== "") {
         ReturnObject.note = object.note
@@ -100,9 +100,9 @@ collectionsRouter.get('/', async(req, res) => {
         if (req.query.uuid !== undefined && req.query.uuid !== "") {
             options.where.uuid = req.query.uuid
         }
-        // NCD関連検索
-        if (req.query.ncd !== undefined && req.query.ncd !== "") {
-            options.where.ncd = req.query.ncd
+        // ndc関連検索
+        if (req.query.ndc !== undefined && req.query.ndc !== "") {
+            options.where.ndc = req.query.ndc
         }
         // 備考関連処理
         if (req.query.note !== undefined && req.query.note !== "") {
@@ -301,6 +301,28 @@ collectionsRouter.patch('/:uuid/return', async(req, res) => {
     }
 })
 
+// [GET] /collections/new
+// collectionsRouter.get('/new', async(req, res) => {
+//     try {
+//         const options = {where:{uuid: req.params.uuid}}
+//         const DBres = await DB.Collection.findAll(options)
+//         if (DBres.length === 0) {
+//             throw new CustomError('Nothing', DBres)
+//         }
+
+//         console.log(BookData)
+//         return res.status(200).json({"NewCollections":BookData})
+//     } catch(e) {
+//         console.debug("Error:" + e.name)
+//         switch(e.name){
+//             case 'Nothing':
+//                 return res.status(404).json()
+//             case 'Unknown':
+//                 return res.status(500).json(e.message)
+//         }
+//     }
+// })
+
 
 //####################################
 //以下認証が必要
@@ -344,8 +366,9 @@ collectionsRouter.delete('/:uuid', async(req, res) => {
         switch(e.name) {
             case 'Nothing':
                 return res.status(404).json()
+            default:
+                return res.status(500).json()
         }
-        return res.status(500).json()
     }
 })
 
