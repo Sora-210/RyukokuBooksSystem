@@ -1,7 +1,8 @@
 {
     "compilerOptions": {
-        "sourceMap": true,
-        "target": "ES5",
-        "module": "ES2015"
+        "outDir": "./build/",
+        "rootDir": "./src/",
+        "target": "ES6",
+        "module":"commonjs",
     }
 }
