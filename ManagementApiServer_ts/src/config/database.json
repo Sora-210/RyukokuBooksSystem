@@ -1,0 +1,7 @@
+{
+    "host": "127.0.0.1",
+    "database": "TypescriptDB",
+    "username": "root",
+    "password": "pass",
+    "dialect": "mysql"
+}
