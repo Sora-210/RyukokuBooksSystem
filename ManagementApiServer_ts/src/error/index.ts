@@ -22,8 +22,13 @@ class NotFoundError extends ApplicationError {
     public name: string = "NotFoundError";
 };
 
+class RentalStatusError extends ApplicationError {
+    public name: string = "RentalStatusError";
+};
+
 export {
     ApplicationError,
     RequestError,
     NotFoundError,
+    RentalStatusError,
 };
