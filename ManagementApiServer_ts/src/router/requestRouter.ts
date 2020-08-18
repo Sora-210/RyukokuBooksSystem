@@ -7,12 +7,14 @@ POST /
 [AUTH] DELETE /;id
 ################################
 */
+//####################################################################
+//Import
 import { Router } from 'express';
 import validator from 'validator';
 const requestRouter: Router = Router();
 import { DB } from '../database/index';
 import { RequestError, NotFoundError } from '../error/index';
-
+//####################################################################
 const isCheckRequest = (object):boolean => {
     if (!validator.isInt(object.genre) || object.genre === undefined || object.genre === "") {
         return false
@@ -22,7 +24,6 @@ const isCheckRequest = (object):boolean => {
     }
     return true
 }
-
 //####################################################################
 requestRouter.post('/', async (req, res) => {
     const createT = await DB.Sequelize.transaction();
@@ -96,13 +97,13 @@ requestRouter.get('/:requestId', async (req, res) => {
             throw new NotFoundError('DataNotFound');
         };
         await getT.commit();
-        const responseObject = {
+        const sendObject = {
             count: 1,
             data: [
                 getResponse
             ]
         };
-        res.status(200).json(responseObject);
+        res.status(200).json(sendObject);
     } catch (e) {
         await getT.rollback();
         if (e instanceof NotFoundError) {
