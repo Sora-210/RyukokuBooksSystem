@@ -16,7 +16,7 @@ import { DB } from '../database/index';
 import { RequestError, NotFoundError } from '../error/index';
 //####################################################################
 const isCheckRequest = (object):boolean => {
-    if (!validator.isInt(object.genre) || object.genre === undefined || object.genre === "") {
+    if (object.genre === undefined || object.genre === "") {
         return false
     }
     if (!validator.isLength(object.content, { min: 1 }) || object.content === undefined || object.content === "") {
