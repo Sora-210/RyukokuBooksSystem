@@ -12,7 +12,8 @@ DELETE /:uuid
 //####################################################################
 import { Router } from 'express';
 const collectionRouter = Router();
-import { Collections, DB } from '../database/index';
+import { DB } from '../database/index';
+import { createQrcode } from '../function/qrcode';
 import { getToday,getYear } from '../function/date';
 import { collectionQuery } from '../function/query';
 import { NotFoundError, RentalStatusError, RequestError } from '../error';
@@ -282,6 +283,7 @@ collectionRouter.post('/', async (req, res) => {
     try {
         const createObject = createCollectionObject(req.body)
         const createResponse = await DB.Collections.create(createObject, { transaction: createT });
+        createQrcode(createResponse.uuid)
         await createT.commit();
         res.status(201).json(createResponse);
     } catch (e) {
