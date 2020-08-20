@@ -20,8 +20,8 @@
                     <tr class="tableItem" v-for="item in this.rentalsList" :key="item.index">
                         <td>{{ item.id }}</td>
 
-                        <td v-if="item.return_day === null">
-                            <span v-if="new Date(item.start_day) <= today" style="color:red;">未返却[期限切れ]</span>
+                        <td v-if="item.returnDay === null">
+                            <span v-if="new Date(item.startDay) <= today" style="color:red;">未返却[期限切れ]</span>
                             <span v-else style="color:blue;">貸出中</span>
                         </td>
                         <td v-else>
@@ -29,13 +29,13 @@
                         </td>
 
                         <td><router-link :to="`/collection/` + item.uuid">{{ item.uuid}}</router-link></td>
-                        <td>{{ item.start_day }}</td>
+                        <td>{{ item.startDay }}</td>
 
-                        <td v-if="item.return_day === null">
+                        <td v-if="item.returnDay === null">
                             -
                         </td>
                         <td v-else>
-                            {{ item.return_day}}
+                            {{ item.returnDay}}
                         </td>
                         
                         <td>
@@ -89,7 +89,7 @@
                             <v-col class="d-flex" cols="12" sm="6">
                                 <v-select
                                     append-icon="fas fa-caret-down"
-                                    :items="[{text:'レンタルID',value:'id'},{text:'貸出日',value:'start_day'},{text:'返却日',value:'return_day'}]"
+                                    :items="[{text:'レンタルID',value:'id'},{text:'貸出日',value:'startDay'},{text:'返却日',value:'returnDay'}]"
                                     v-model="searchConditions.sortRow"
                                     label="並び替え"
                                 ></v-select>
@@ -97,7 +97,7 @@
                             <v-col class="d-flex" cols="12" sm="6">
                                 <v-select
                                     append-icon="fas fa-caret-down"
-                                    :items="[{text:'降順',value:0},{text:'昇順',value:1}]"
+                                    :items="[{text:'降順',value:'DESC'},{text:'昇順',value:'ASC'}]"
                                     v-model="searchConditions.sortDirection"
                                     label="順番"
                                 ></v-select>
@@ -143,7 +143,7 @@ export default {
             isQrDialog: false,
             searchConditions: {
                 sortRow:"id",
-                sortDirection:0,
+                sortDirection:'DESC',
                 uuid:"",
                 status:"",
                 page:1
@@ -184,13 +184,20 @@ export default {
                     token: this.$store.getters.token
                 }
             }
-            this.axios.get(this.$store.getters.apiEndpoint + '/rentals' + query, options)
+            this.axios.get(`${this.$store.getters.apiEndpoint}/rentals${query}`, options)
                 .then((res) => {
+                    console.log(res)
                     this.rentalsList = res.data.Rentals
                     this.rentalsPages = Math.ceil(res.data.count / 20)
+                    this.rentalsList = res.data.data
                 })
                 .catch((e) => {
-                    this.$emit('Error',e)
+                    if (e.response.status === 404) {
+                        this.$emit('Error',"貸出データが見つかりませんでした")
+                    } else {
+                        console.error(e)
+                        this.$router.push('/500')
+                    }
                 })
         },
         search: function() {
@@ -201,7 +208,7 @@ export default {
         searchReset: function() {
             this.searchConditions = {
                 sortRow:"id",
-                sortDirection:0,
+                sortDirection: 'DESC',
                 uuid:"",
                 status:"",
                 page:1

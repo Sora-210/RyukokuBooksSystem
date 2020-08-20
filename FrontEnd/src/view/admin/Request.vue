@@ -103,8 +103,8 @@ export default {
             ],
             requestLists:[],
             requestGenre:{
-                1:'図書リクエスト',
-                2:'その他',
+                0:'図書リクエスト',
+                1:'その他',
             },
             isSelectSortDialog:false,
             requestPages: 1,
@@ -121,35 +121,37 @@ export default {
     },
     methods: {
         deleteRequest: function(id) {
-            if (window.confirm('RequestId:' + id + 'を削除してよろしいですか?')) {
+            if (window.confirm(`RequestId:${id}を削除してよろしいですか?`)) {
                 const options = {
                     headers: {
                         token: this.$store.getters.token
                     }
                 }
-                this.axios.delete(this.$store.getters.apiEndpoint + '/requests/' + id, options)
-                    .then((res) => {
-                        console.log(res)
+                this.axios.delete(`${this.$store.getters.apiEndpoint}/requests/${id}`, options)
+                    .then(() => {
                         this.getRequests()
-                        alert('削除しました')
+                        this.$emit('Success', '削除しました')
                     })
                     .catch((e) => {
-                        this.$emit('Error',e)
+                        if (e.response.status === 500) {
+                            console.error(e)
+                            this.$router.push('/500')
+                        }
                     })
             }
         },
         getRequests: function() {
-            const query = "?sortRow=" + this.searchConditions.sortRow + "&sortDirection=" + this.searchConditions.sortDirection + "&genre=" + this.searchConditions.genre + "&page=" + this.searchConditions.page
             this.requestLists = []
+            const query = "?sortRow=" + this.searchConditions.sortRow + "&sortDirection=" + this.searchConditions.sortDirection + "&genre=" + this.searchConditions.genre + "&page=" + this.searchConditions.page
             const options = {
                 headers: {
                     token: this.$store.getters.token
                 }
             }
-            this.axios.get(this.$store.getters.apiEndpoint + '/requests' + query, options)
+            this.axios.get(`${this.$store.getters.apiEndpoint}/requests${query}`, options)
                 .then((res) => {
                     this.requestPages = Math.ceil(res.data.count / 20)
-                    res.data.Requests.forEach(el => {
+                    res.data.data.forEach(el => {
                         this.requestLists.push({
                             id:el.id,
                             genre:this.requestGenre[el.genre],
@@ -163,7 +165,12 @@ export default {
                     });
                 })
                 .catch((e) => {
-                    this.$emit('Error',e)
+                    if (e.response.status === 404) {
+                        this.$emit('Error',"現在リクエストはありません");
+                    } else {
+                        console.error(e)
+                        this.$router.push('/500');
+                    }
                 })
         },
         // 検索系関数
@@ -188,32 +195,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-.sp-row-scroll {
-    display: block;
-    overflow-x: scroll;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-}
-table {
-    border-collapse: collapse;
-    width:100%;
-}
-th,
-td {
-    padding: 7px 20px 7px 20px;
-}
-.tableTitle {
-    background-color:#e9e9e9;
-    border-top: solid 1px#000000;
-    border-bottom: solid 1px#000000;
-}
-.tableItem {
-    text-align: left;
-    border-bottom: solid 0.5px #e6e6e6;
-}
-.tableItem:hover {
-    background-color:#f1f1f1;
-}
-</style>
