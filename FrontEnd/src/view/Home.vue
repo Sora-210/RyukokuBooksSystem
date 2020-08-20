@@ -90,12 +90,13 @@ export default {
         },
         async getNewCollectionRequest() {
             try {
-                const query = "?sortRow=registrationData&sortDirection=0"
-                const Res = await this.axios.get(this.$store.getters.apiEndpoint + "/collections/" + query)
+                // const query = "?sortRow=registrationDate&sortDirection=DESC"
+                const Res = await this.axios.get(`${this.$store.getters.apiEndpoint}/collections`)
+                console.log(Res)
                 for (let i = 0;i<4;i++) {
                     this.newBooksList.push({
-                        isbn: Res.data.Collections[i].isbn,
-                        uuid: Res.data.Collections[i].uuid
+                        isbn: Res.data.data[i].isbn,
+                        uuid: Res.data.data[i].uuid
                     })
                 }
                 console.log(this.newBooksList)
