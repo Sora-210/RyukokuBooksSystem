@@ -10,19 +10,18 @@ import { queryCollectionTable } from './migrations/createCollectionTable'
 const config: object = require(__dirname + '/../config/database.json');
 //DatabaseInstance
 const dbInstance = new Sequelize(config);
+
 //Migrations
+// queryRequestTable.down(dbInstance.getQueryInterface());
+// queryNewsTable.down(dbInstance.getQueryInterface());
+// queryRentalTable.down(dbInstance.getQueryInterface());
+// queryAccountTable.down(dbInstance.getQueryInterface());
+// queryCollectionTable.down(dbInstance.getQueryInterface());
+
 queryRequestTable.up(dbInstance.getQueryInterface());
 queryNewsTable.up(dbInstance.getQueryInterface());
 queryRentalTable.up(dbInstance.getQueryInterface());
 queryAccountTable.up(dbInstance.getQueryInterface());
-queryCollectionTable.up(dbInstance.getQueryInterface())
-
-try {
-    dbInstance.authenticate()
-    console.log('Database Connect Success!')
-} catch(err) {
-    console.error(err)
-}
-
+queryCollectionTable.up(dbInstance.getQueryInterface());
 
 export {dbInstance}
