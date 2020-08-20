@@ -17,9 +17,9 @@
                     <p>{{ this.selectLists.schoolGradeList[this.RentalData.grade] }}/{{ this.selectLists.ClassList[this.RentalData.class]}}組/{{ this.RentalData.number}}番</p>
                     <p>{{ this.RentalData.name }}</p>
                     <h3>貸出日</h3>
-                    <p>{{ this.RentalData.start_day }}</p>
+                    <p>{{ this.RentalData.startDay }}</p>
                     <h3>返却日</h3>
-                    <p>{{ this.RentalData.return_day }}</p>
+                    <p>{{ this.RentalData.returnDay }}</p>
                 </v-card-text>
                 <v-divider></v-divider>
                 <v-card-actions  class="d-flex justify-end">
@@ -56,8 +56,9 @@ export default {
                 }
             }
             try {
-                const Res = await this.axios.get(this.$store.getters.apiEndpoint + "/rentals/" + rentalId, options)
-                this.RentalData = Res.data
+                const Res = await this.axios.get(`${this.$store.getters.apiEndpoint}/rentals/${rentalId}`, options)
+                console.log(Res)
+                this.RentalData = Res.data.data[0]
                 this.getStatus = true
             } catch(e) {
                 this.$emit('Error', e)

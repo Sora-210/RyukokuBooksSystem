@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import store from '../store/index'
 // view import
-import BookPage from '../view/BookPage.vue'
 import Collection from '../view/Collection.vue'
 import Home from '../view/Home.vue'
 import Search from '../view/Search.vue'
@@ -32,10 +31,6 @@ const routes = [
     {
         path:'/search',
         component: Search
-    },
-    {
-        path: '/book/:isbn',
-        component: BookPage
     },
     {
         path: '/collection/:uuid',

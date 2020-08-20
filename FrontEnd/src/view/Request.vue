@@ -2,45 +2,25 @@
 	<div
 		class="mt-5 mx-sm-12"
 	>
-		<v-alert
-			color="success"
-			v-model="alert"
-			dismissible
-			close-icon="fas fa-times"
-			icon="far fa-check-circle"
-			dark
-		>
-			送信が完了しました!
-		</v-alert>
-		<v-alert
-			color="error"
-			v-model="warningAlert"
-			dismissible
-			close-icon="fas fa-times"
-			icon="fas fa-exclamation-triangle"
-			dark
-		>
-			{{ WAmessage }}
-		</v-alert>
 		<v-select
 			:items="items"
 			label="リクエストの種類"
 			outlined
 			append-icon="fas fa-caret-down"
-			v-model="SendData.genre">
+			v-model="sendData.genre">
 		</v-select>
-		<div v-if="SendData.genre === 0">
+		<div v-if="sendData.genre === 0">
 			<v-text-field
 				outlined
 				label="タイトル名"
-				v-model="SendData.content">
+				v-model="sendData.content">
 			</v-text-field>
 		</div>
-		<div v-else-if="SendData.genre === 1">
+		<div v-else-if="sendData.genre === 1">
 			<v-textarea
 				outlined 
 				label="リクエスト内容"
-				v-model="SendData.content">
+				v-model="sendData.content">
 			</v-textarea>
 		</div>
 		<div
@@ -62,9 +42,6 @@ export default {
 	data: function() {
 		return {
 			sendStatus:false,
-			alert:false,
-			warningAlert:false,
-			WAmessage:"エラーが発生しました",
 			items: [
 				{
 					text: "図書リクエスト",
@@ -75,31 +52,31 @@ export default {
 					value: 1
 				}
 			],
-			SendData: {
+			sendData: {
 				genre: "",
 				content: ""
 			}
 		};
 	},
 	methods: {
-		SendRequest: function() {
+		async SendRequest() {
 			this.sendStatus = true
-			this.axios.post(this.$store.getters.apiEndpoint + '/requests/',this.SendData)
-				.then((res) => {
-					console.log(res)
-					if (res.status === 201) {
-						this.sendStatus = false
-						this.alert = true
-						this.SendData = {genre:"",content:""}
-						setTimeout(() => {
-							this.alert = false
-						},"4000")
-					} else {
-						this.sendStatus = false
-						this.warningAlert = true
-						this.WAmessage = res.data.message
-					}
-				})
+			try {
+				const apiResponse = await this.axios.post(`${this.$store.getters.apiEndpoint}/requests`,this.sendData)
+				if (apiResponse.status === 201) {
+					this.$emit('Success',"送信に成功しました")
+					this.sendStatus = false
+					this.sendData = {genre:"",content:""}
+				}
+			} catch(e) {
+				if (e.response.status === 400) {
+					this.$emit('Error',"送信に失敗しました<空白があります>")
+					this.sendStatus = false
+				} else {
+					this.sendStatus = false
+                        this.$router.push('/500')
+				}
+			}
 		}
 	}
 };

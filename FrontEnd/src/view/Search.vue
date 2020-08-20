@@ -27,7 +27,7 @@
                         <v-col class="d-flex" cols="12" sm="6">
                             <v-select
                                 append-icon="fas fa-caret-down"
-                                :items="[{text:'UUID',value:'uuid'},{text:'NDC',value:'ndc'},{text:'登録日',value:'registrationData'}]"
+                                :items="[{text:'UUID',value:'uuid'},{text:'NDC',value:'ndc'},{text:'登録日',value:'registrationDate'}]"
                                 v-model="searchConditions.sortRow"
                                 label="並び替え"
                             ></v-select>
@@ -35,7 +35,7 @@
                         <v-col class="d-flex" cols="12" sm="6">
                             <v-select
                                 append-icon="fas fa-caret-down"
-                                :items="[{text:'降順',value:0},{text:'昇順',value:1}]"
+                                :items="[{text:'降順',value:'DESC'},{text:'昇順',value:'ASC'}]"
                                 v-model="searchConditions.sortDirection"
                                 label="順番"
                             ></v-select>
@@ -52,25 +52,10 @@
                 検索結果: {{ targetCollectionCount }} 件
             </v-card-text>
             <v-container>
-                <!-- <v-row>
-                    <v-col
-                        cols="6"
-                        sm="3"
-                        v-for="Collection in Collections" :key="Collection.uuid"
-                    >
-                        <BookCard
-                            :id="Collection.isbn"
-                            :uuid="Collection.uuid"
-                            style="margin:5px;"
-                            @Error="Error"
-                        >
-                        </BookCard>
-                    </v-col>
-                </v-row> -->
                 <v-row>
                     <v-col
                         cols="12"
-                        v-for="Collection in Collections" :key="Collection.uuid"
+                        v-for="Collection in collections" :key="Collection.uuid"
                     >
                         <BooksCardRow
                             :id="Collection.isbn"
@@ -89,7 +74,7 @@
                     v-model="page"
                     next-icon="fas fa-caret-right"
                     prev-icon="fas fa-caret-left"
-                    :length="CollectionPage"
+                    :length="collectionPage"
                     ></v-pagination>
                 </div>
             </v-card-actions>
@@ -111,13 +96,13 @@ export default {
     },
     data: function() {
         return {
-            Collections:[],
+            collections:[],
             page:1,
-            CollectionPage:0,
+            collectionPage:0,
             targetCollectionCount:0,
             searchConditions: {
-                sortRow:"registrationData",
-                sortDirection:0,
+                sortRow:"registrationDate",
+                sortDirection:'DESC',
                 uuid:"",
                 ndc:""
             },
@@ -128,20 +113,24 @@ export default {
         this.getCollections()
     },
     methods: {
-        getCollections() {
-            let query = `?sortRow=${this.searchConditions.sortRow}&sortDirection=${this.searchConditions.sortDirection}`
-            query += `&ndc=${this.searchConditions.ndc}&uuid=${this.searchConditions.uuid}`
-            query += `&page=${this.page}`
-            this.axios.get(this.$store.getters.apiEndpoint + '/collections' + query)
-                .then((res) => {
-                    this.targetCollectionCount = res.data.count
-                    this.CollectionPage = Math.ceil(res.data.count / 20)
-                    this.Collections = res.data.Collections
-                    console.log(this.Collections)
-                })
-                .catch((e) => {
-                    this.$emit('Error',e)
-                })
+        async getCollections() {
+            try {
+                let query = `?sortRow=${this.searchConditions.sortRow}&sortDirection=${this.searchConditions.sortDirection}`;
+                query += `&ndc=${this.searchConditions.ndc}&uuid=${this.searchConditions.uuid}`;
+                query += `&page=${this.page}`;
+                const getResponse = await this.axios.get(`${this.$store.getters.apiEndpoint}/collections${query}`);
+                this.targetCollectionCount = getResponse.data.count
+                this.collectionPage = Math.ceil(getResponse.data.count / 20)
+                this.collections = getResponse.data.data
+            } catch(e) {
+                if (e.response.status === 404) {
+					this.$emit('Error',"コンテンツが見つかりません")
+					this.sendStatus = false
+				} else {
+                    this.sendStatus = false
+                    this.$router.push('/500')
+				}
+            }
         },
         search: function() {
             this.page = 1
@@ -149,8 +138,8 @@ export default {
         },
         searchReset: function() {
             this.searchConditions = {
-                sortRow:"registrationData",
-                sortDirection:0,
+                sortRow:"registrationDate",
+                sortDirection:'DESC',
                 uuid:"",
                 ndc:""
             }

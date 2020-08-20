@@ -68,7 +68,7 @@
                             <v-col class="d-flex" cols="12" sm="6">
                                 <v-select
                                     append-icon="fas fa-caret-down"
-                                    :items="[{text:'UUID',value:'uuid'},{text:'登録日',value:'registrationData'}]"
+                                    :items="[{text:'UUID',value:'uuid'},{text:'登録日',value:'registrationDate'}]"
                                     v-model="searchConditions.sortRow"
                                     label="並び替え"
                                 ></v-select>
@@ -76,7 +76,7 @@
                             <v-col class="d-flex" cols="12" sm="6">
                                 <v-select
                                     append-icon="fas fa-caret-down"
-                                    :items="[{text:'降順',value:0},{text:'昇順',value:1}]"
+                                    :items="[{text:'降順',value:'DESC'},{text:'昇順',value:'ASC'}]"
                                     v-model="searchConditions.sortDirection"
                                     label="順番"
                                 ></v-select>
@@ -111,15 +111,6 @@
                         class="pt-2 mb-4"
                     >
                         <div>
-                            <v-alert
-                                v-if="this.registerDialogMessage !== ''"
-                                icon="fas fa-exclamation-triangle"
-                                dense
-                                outlined
-                                type="error"
-                            >
-                                {{ registerDialogMessage }}
-                            </v-alert>
                             <v-text-field
                                 outlined
                                 label="ISBN"
@@ -219,41 +210,41 @@
                                         outlined
                                         disabled
                                         label="登録日"
-                                        v-model="registeredData.collection.registrationData"
+                                        v-model="registeredData.registrationDate"
                                     >
                                     </v-text-field>
                                     <v-text-field
                                         outlined
                                         disabled
                                         label="UUID"
-                                        v-model="registeredData.collection.uuid"
+                                        v-model="registeredData.uuid"
                                     >
                                     </v-text-field>
                                     <v-text-field
                                         outlined
                                         disabled
                                         label="ISBN"
-                                        v-model="registeredData.collection.isbn"
+                                        v-model="registeredData.isbn"
                                     >
                                     </v-text-field>
                                     <v-text-field
                                         outlined
                                         disabled
                                         label="NDC"
-                                        v-model="registeredData.collection.ndc"
+                                        v-model="registeredData.ndc"
                                     >
                                     </v-text-field>
                                     <v-text-field
                                         outlined
                                         disabled
                                         label="備考"
-                                        v-model="registeredData.collection.note"
+                                        v-model="registeredData.note"
                                     >
                                     </v-text-field>
                                 </v-col>
                                 <v-col cols=12 sm=4>
                                     <v-img
-                                        :src="this.$store.getters.fileEndpoint + '/' + this.registeredData.collection.uuid + '.png'"
+                                        :src="this.$store.getters.fileEndpoint + '/' + this.registeredData.uuid + '.png'"
                                     >
                                     </v-img>
                                 </v-col>
@@ -316,7 +307,7 @@ export default {
                 },
                 {
                     title:"登録日",
-                    variableName:"registrationData"
+                    variableName:"registrationDate"
                 },
                 {
                     title:"備考",
@@ -329,7 +320,6 @@ export default {
             ],
             collectionItems:[],
             registerDialog:false,
-            registerDialogMessage:"",
             registerDialogTurn : 1,
             registerData: {
                 isbn:"",
@@ -337,7 +327,7 @@ export default {
                 ndc:"",
                 note:""
             },
-            registeredData:{collection:{uuid:null}},
+            registeredData:{},
             rules: {
                 isbn:[
                     v => !!v || 'ISBNは必須です',
@@ -354,7 +344,7 @@ export default {
             collectionPages:1,
             searchConditions: {
                 sortRow:"uuid",
-                sortDirection:0,
+                sortDirection:"DESC",
                 uuid:"",
                 ndc:"",
                 note:"",
@@ -368,49 +358,53 @@ export default {
         this.getCollections()
     },
     methods: {
-        getCollections() {
-            const query = "?sortRow=" + this.searchConditions.sortRow + "&sortDirection=" + this.searchConditions.sortDirection + "&ndc=" + this.searchConditions.ndc + "&note=" + this.searchConditions.note + "&uuid=" + this.searchConditions.uuid + "&page=" + this.searchConditions.page
-            const options = {
-                headers: {
-                    token: this.$store.getters.token
+        async getCollections() {
+            try {
+                const query = "?sortRow=" + this.searchConditions.sortRow + "&sortDirection=" + this.searchConditions.sortDirection + "&ndc=" + this.searchConditions.ndc + "&note=" + this.searchConditions.note + "&uuid=" + this.searchConditions.uuid + "&page=" + this.searchConditions.page+ "&limit=20"
+                const options = {
+                    headers: {
+                        token: this.$store.getters.token
+                    }
                 }
+                this.collectionItems = []
+                const getResponse = await this.axios.get(`${this.$store.getters.apiEndpoint}/collections${query}`, options)
+                this.collectionPages = Math.ceil(getResponse.data.count / 20)
+                getResponse.data.data.forEach(el => {
+                    this.collectionItems.push({
+                        uuid: el.uuid,
+                        isbn: el.isbn,
+                        ndc: el.ndc,
+                        registrationDate: el.registrationDate,
+                        note: el.note,
+                        edit: {
+                            text:"編集",
+                            emitName:"Edit",
+                            emitVariable:el.uuid
+                        }
+                    })
+                });
+            } catch(e) {
+                if (e.response.status === 404) {
+					this.$emit('Error',"データが見つかりません")
+					this.sendStatus = false
+				} else {
+                    console.error(e)
+                    this.sendStatus = false
+					this.$router.push('/500')
+				}
             }
-            this.collectionItems = []
-            this.axios.get(this.$store.getters.apiEndpoint + '/collections' + query, options)
-                .then((res) => {
-                    this.collectionPages = Math.ceil(res.data.count / 20)
-                    res.data.Collections.forEach(el => {
-                        this.collectionItems.push({
-                            uuid: el.uuid,
-                            isbn: el.isbn,
-                            ndc: el.ndc,
-                            registrationData: el.registrationData,
-                            note: el.note,
-                            edit: {
-                                text:"編集",
-                                emitName:"Edit",
-                                emitVariable:el.uuid
-                            }
-                        })
-                    });
-                    console.log(this.collectionItems)
-                })
-                .catch((e) => {
-                    this.$emit('Error',e)
-                })
         },
         reset() {
             this.registerDialog = false
             this.registerDialogTurn = 1
-            this.registerDialogMessage = ""
             this.registerData = {isbn:"",title:"",ndc:"",note:""}
         },
         registerFirst() {
             this.registerDialogTurn = 2
-            this.axios.get('https://www.googleapis.com/books/v1/volumes?q=isbn:' + this.registerData.isbn)
+            this.axios.get(`https://www.googleapis.com/books/v1/volumes?q=isbn:${this.registerData.isbn}`)
                 .then((res) => {
                     if (res.data.items.length === 0) {
-                        this.registerDialogMessage = "このISBNは存在しないか登録できない書籍です"
+                        this.$emit('Error','このISBNは存在しないか登録できない書籍です')
                         this.registerDialogTurn = 1
                     } else {
                         setTimeout(()=>{
@@ -419,38 +413,41 @@ export default {
                         },2500)
                     }
                 })
-                .catch(() => {
-                    this.registerDialogMessage = "想定外のエラーが発生しました"
+                .catch((e) => {
                     this.registerDialogTurn = 1
-                })
-        },
-        registerSecond() {
-            this.registerDialogTurn = 4
-            const options = {
-                headers: {
-                    token: this.$store.getters.token
-                }
-            }
-            this.axios.post(this.$store.getters.apiEndpoint + '/collections', this.registerData, options)
-                .then((res) => {
-                    if (res.data.status === "error") {
-                        this.registerDialogMessage = "登録に失敗しました"
-                        this.registerDialogTurn = 1
-                    } else {
-                        this.getCollections()
-                        setTimeout(()=>{
-                            console.log(res)
-                            console.log(res.data)
-                            this.registeredData = res.data
-                            this.registerDialogTurn = 5
-                        },2500)
+                    if (e.response.status === 500) {
+                        console.error(e)
+                        this.$router.push('/500')
                     }
                 })
-                .catch((e) => {
-                    this.$emit('Error',e)
-                    this.registerDialogMessage = "想定外のエラーが発生しました"
-                    this.registerDialogTurn = 1
-                })
+        },
+        async registerSecond() {
+            try {
+                this.registerDialogTurn = 4
+                const options = {
+                    headers: {
+                        token: this.$store.getters.token
+                    }
+                }
+                const postResponse = await this.axios.post(`${this.$store.getters.apiEndpoint}/collections`, this.registerData, options)
+                this.getCollections()
+                console.log(postResponse.data)
+                setTimeout(()=>{
+                    this.registeredData = postResponse.data
+                    this.registerDialogTurn = 5
+                },2500)
+            } catch(e) {
+                this.registerDialogTurn = 1
+                if (e.response.status === 400) {
+					this.$emit('Error',"登録に失敗しました")
+					this.sendStatus = false
+				} else {
+                    this.sendStatus = false
+                    console.error(e)
+					this.$router.push('/500')
+				}
+            }
+            
         },
         edit(uuid) {
             this.collectionDialogUuid = uuid
@@ -464,7 +461,8 @@ export default {
         searchReset: function() {
             this.searchConditions = {
                 sortRow:"uuid",
-                sortDirection:0,
+                sortDirection:"DESC",
+                uuid:"",
                 ndc:"",
                 note:"",
                 page:1

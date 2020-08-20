@@ -14,7 +14,7 @@
                 sm=3
             >
                 <v-img
-                    :src=this.BookData.imgUrl
+                    :src=this.bookData.imgUrl
                 >
                 </v-img>
             </v-col>
@@ -28,11 +28,11 @@
                 sm=8
             >
                 <h1>
-                    {{ this.BookData.title }}
+                    {{ this.bookData.title }}
                 </h1>
                 <h2>
                     |
-                    <span v-for="author in this.BookData.authors" :key="author.index">
+                    <span v-for="author in this.bookData.authors" :key="author.index">
                         {{ author }} |
                     </span>
                 </h2>
@@ -80,19 +80,19 @@
                     <tbody>
                         <tr>
                             <td>UUID</td>
-                            <td>{{ this.CollectionData.uuid }}</td>
+                            <td>{{ this.collectionData.uuid }}</td>
                         </tr>
                         <tr>
                             <td>NDC</td>
-                            <td>{{ this.CollectionData.ndc }}</td>
+                            <td>{{ this.collectionData.ndc }}</td>
                         </tr>
                         <tr>
                             <td>登録日</td>
-                            <td>{{ this.CollectionData.registrationData }}</td>
+                            <td>{{ this.collectionData.registrationDate }}</td>
                         </tr>
                         <tr>
                             <td>備考</td>
-                            <td>{{ this.CollectionData.note }}</td>
+                            <td>{{ this.collectionData.note }}</td>
                         </tr>
                     </tbody>
                 </v-simple-table>
@@ -107,28 +107,28 @@
                     <tbody>
                         <tr>
                             <td>タイトル</td>
-                            <td>{{ this.BookData.title }}</td>
+                            <td>{{ this.bookData.title }}</td>
                         </tr>
                         <tr>
                             <td>著作</td>
                             <td>
                                 |
-                                <span v-for="author in this.BookData.authors" :key="author.index">
+                                <span v-for="author in this.bookData.authors" :key="author.index">
                                     {{ author }} |
                                 </span>
                             </td>
                         </tr>
                         <tr>
                             <td>ISBN</td>
-                            <td>{{ this.CollectionData.isbn }}</td>
+                            <td>{{ this.collectionData.isbn }}</td>
                         </tr>
                         <tr>
                             <td>出版社</td>
-                            <td>{{ this.CollectionData.publisher }}</td>
+                            <td>{{ this.collectionData.publisher }}</td>
                         </tr>
                         <tr>
                             <td>発売日時</td>
-                            <td>{{ this.CollectionData.publishedDate }}</td>
+                            <td>{{ this.collectionData.publishedDate }}</td>
                         </tr>
                     </tbody>
                 </v-simple-table>
@@ -157,7 +157,7 @@
                                 v-model="formData.grade"
                             ></v-select>
                             <v-select
-                                :items="selectLists.ClassList"
+                                :items="selectLists.classList"
                                 append-icon="fas fa-caret-down"
                                 label="クラス"
                                 outlined
@@ -296,18 +296,18 @@ export default {
                 status:false,
                 turn:1
             },
-            BookData:{
+            bookData:{
                 title:"",
                 authors:"",
                 imgUrl:"",
                 publisher:"",
                 publishedDate:"",
             },
-            CollectionData: {
+            collectionData: {
                 uuid:"",
                 isbn:"",
                 note:"",
-                registrationData:"",
+                registrationDate:"",
                 ndc:""
             },
             formData: {
@@ -325,7 +325,7 @@ export default {
                     {text:"高等部 2年",value:22},
                     {text:"高等部 3年",value:23},
                 ],
-                ClassList:[
+                classList:[
                     {text:"A",value:1},
                     {text:"B",value:2},
                     {text:"C",value:3},
@@ -344,12 +344,11 @@ export default {
     methods: {
         getBookData: async function() {
             try {
-                this.BookData.uuid = this.$route.params.uuid
-                const apiRes = await this.axios.get(this.$store.getters.apiEndpoint + '/collections/' + this.BookData.uuid)
-                console.log(apiRes)
-                this.BookData = apiRes.data.BookData
-                this.CollectionData = apiRes.data.CollectionData
-                this.rentalStatus = apiRes.data.CollectionData.rentalStatus
+                this.bookData.uuid = this.$route.params.uuid
+                const getResponse = await this.axios.get(`${this.$store.getters.apiEndpoint}/collections/${this.bookData.uuid}`)
+                this.bookData = getResponse.data.data[0].bookResponse
+                this.collectionData = getResponse.data.data[0].getResponse
+                this.rentalStatus = getResponse.data.data[0].getResponse.rentalStatus
                 this.isLoading = false
             } catch(e) {
                 switch(e.response.status) {
@@ -357,7 +356,6 @@ export default {
                         this.$router.push('/404')
                         break;
                     case 500:
-                        this.$emit("Error",e)
                         this.$router.push('/500')
                         break;
                     default:
@@ -367,22 +365,23 @@ export default {
             }
         },
         rentalRequest: function() {
-            console.log('rentalRequest')
             this.rentalDialog.turn = 2
-            let sendObject = this.formData
-            console.log(sendObject)
-            this.axios.patch(this.$store.getters.apiEndpoint + '/collections/' + this.$route.params.uuid + '/rental',sendObject)
-                .then((response) => {
-                    console.log(response)
+            const sendObject = this.formData
+            this.axios.patch(`${this.$store.getters.apiEndpoint}/collections/${this.$route.params.uuid}/rental`, sendObject)
+                .then(() => {
                     this.getBookData()
                     this.rentalDialog.returnDate = DateNow.addWeeks(2).toFormat('YYYY年MM月DD日')
                     setTimeout(()=>{
                         this.rentalDialog.turn = 3
                     },2500)
                 })
-                .catch((err) => {
-                    alert('Error:'+err)
+                .catch((e) => {
                     this.rentalReset()
+                    if (e.response.status === 409) {
+                        this.$emit('Error', '既に借りられています')
+                    } else if (e.response.status === 500) {
+                        this.$router.push('/500')
+                    }
                 })
             
         },
@@ -391,19 +390,22 @@ export default {
             this.formData = {grade:0,class:"",number:"",name:""}
         },
         returnRequest: function() {
-            console.log('returnRequest')
             this.returnDialog.turn = 2
-            this.axios.patch(this.$store.getters.apiEndpoint + '/collections/' + this.$route.params.uuid + '/return')
-                .then((res) => {
+            this.axios.patch(`${this.$store.getters.apiEndpoint}/collections/${this.$route.params.uuid}/return`)
+                .then(() => {
                     this.getBookData()
-                    console.log(res)
                     setTimeout(()=>{
                         this.returnDialog.turn = 3
                     },2500)
                 })
-                .catch((err) => {
-                    alert("Error:" + err)
+                .catch((e) => {
                     this.returnReset()
+                    if (e.response.status === 409) {
+                        this.$emit('Error', '借りられていません')
+                    } else if (e.response.status === 500) {
+                        console.error(e)
+                        this.$router.push('/500')
+                    }
                 })
         },
         returnReset: function() {
