@@ -4,7 +4,18 @@ import { getRemovePeriodDay } from '../function/date';
 //####################################################################
 //TypeDefinition
 type sortRow = 'DESC' | 'ASC';
-
+interface collectionWhere {
+    uuid?: string;
+    ndc?: string;
+    note?: string;
+};
+interface collectionOption {
+    limit?: number;
+    offset?: number;
+    order?: [[string, sortRow]];
+    where?: collectionWhere;
+    transaction?: Transaction;
+};
 
 interface rentalWhere {
     uuid?: string;
@@ -19,7 +30,59 @@ interface rentalOption {
     transaction?: Transaction;
 }
 //####################################################################
+class collectionQuery {
+    private sortRow: string | null;
+    private sortDirection: sortRow;
 
+    private limit: number | null;
+    private page: number | null;
+
+    private uuid: string | null;
+    private ndc: string | null;
+    private note: string | null;
+
+    constructor(query) {
+        this.sortRow = query.sortRow || null;
+        this.sortDirection = query.sortDirection || 'DESC';
+
+        this.limit = query.limit || null;
+        this.page = query.page || null;
+
+        this.uuid = query.uuid || null;
+        this.ndc = query.ndc || null;
+        this.note = query.note || null;
+    };
+
+    getWhereOption():object {
+        const where: collectionWhere = {};
+        if (this.uuid !== null) {
+            where.uuid = this.uuid
+        };
+        if (this.ndc !== null) {
+            where.ndc = this.ndc
+        };
+        if (this.note !== null) {
+            where.note = this.note
+        };
+        return where;
+    };
+
+    getOption(transaction:Transaction):object {
+        const options: collectionOption = {};
+        options.where = this.getWhereOption();
+        if (this.sortRow !== null) {
+            options.order = [[this.sortRow,this.sortDirection]]
+        }
+        options.limit = (this.limit === null ? 20 : Number(this.limit));
+        if (this.page === null && this.page <= 0) {
+            options.offset = 1
+        } else {
+            options.offset = (this.page - 1) * options.limit
+        }
+        options.transaction = transaction;
+        return options;
+    };
+};
 class rentalQuery {
     private sortRow: string | null;
     private sortDirection: sortRow;
@@ -79,5 +142,6 @@ class rentalQuery {
 };
 //####################################################################
 export {
+    collectionQuery,
     rentalQuery
 }

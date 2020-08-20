@@ -2,9 +2,13 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/ja';
 const rentalConfig = require(__dirname + '/../config/rental')
 
-function getToday() {
+function getToday():Date {
     const today = new Date();
-    return dayjs(today).locale('ja').format('YYYY/MM/DD')
+    return today
+};
+function getYear() {
+    const today = new Date();
+    return dayjs(today).locale('ja').format('YYYY')
 };
 function getRemovePeriodDay() {
     const day = new Date();
@@ -14,5 +18,6 @@ function getRemovePeriodDay() {
 
 export {
     getToday,
-    getRemovePeriodDay
+    getRemovePeriodDay,
+    getYear
 };
