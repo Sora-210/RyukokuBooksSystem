@@ -3,9 +3,10 @@ const queryCollectionTable = {
     up: (QueryInterface: QueryInterface) => {
         return QueryInterface.createTable('Collections', {
             id: {
-                type: DataTypes.INTEGER,
-                primaryKey: true,
                 allowNull: false,
+                autoIncrement: true,
+                primaryKey: true,
+                type: DataTypes.INTEGER,
             },
             isbn: {
                 type: DataTypes.BIGINT,

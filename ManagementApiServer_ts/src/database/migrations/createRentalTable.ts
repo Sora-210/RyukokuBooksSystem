@@ -7,6 +7,7 @@ const queryRentalTable = {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 allowNull: false,
+                autoIncrement: true,
             },
             uuid: {
                 type: DataTypes.UUID,
