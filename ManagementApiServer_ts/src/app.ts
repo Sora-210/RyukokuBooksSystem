@@ -27,6 +27,7 @@ app.get('/version',(req, res) => {
 app.use('/collections', collectionRouter);
 app.use('/rentals', rentalRouter);
 app.use('/requests', requestRouter);
+app.use('/login', loginRouter);
 //#################################
 app.listen(PORT, () => {
     console.log('Lisnig Started!!')
