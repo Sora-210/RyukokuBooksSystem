@@ -79,8 +79,7 @@
         </v-dialog>
         <rental-dialog
             :isRentalDetailDialog="isRentalDetailDialog"
-            :rentalId="rentalDetailDialogRentalid"
-            :selectLists="selectLists"
+            :rentalId="Number(rentalDetailDialogRentalid)"
             @close="isRentalDetailDialog = false"
             @error="error">
         </rental-dialog>
@@ -114,7 +113,7 @@ export default {
                 status:"",
                 page:1
             },
-            selectLists: {
+            selectList: {
                 schoolGradeList:{
                     11:"中等部 1年",
                     12:"中等部 2年",
