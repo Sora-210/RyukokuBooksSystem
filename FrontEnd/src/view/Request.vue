@@ -65,10 +65,10 @@ export default {
 				await this.managerApi.post('/requests', this.sendData)
 					.then(() => {
 						Object.assign(this.$data.sendData, this.$options.data().sendData)
-						this.$emit('Success',"送信に成功しました")
+						this.$emit('success',"送信に成功しました")
 					})
 					.catch(() => {
-						this.$emit('Error',"送信に失敗しました")
+						this.$emit('error',"送信に失敗しました")
 					})
 				this.isSending = false
 			}

@@ -69,7 +69,7 @@
 
     <v-main>
       <v-container>
-        <router-view @Error="onErrorDialog" @Success="onSuccessDialog"></router-view>
+        <router-view @error="onErrorDialog" @success="onSuccessDialog"></router-view>
       </v-container>
     </v-main>
 
