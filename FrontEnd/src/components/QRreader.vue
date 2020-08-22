@@ -36,11 +36,11 @@ export default {
                 await promise
             } catch (error) {
                 if (error.name === 'NotAllowedError') {
-                    this.$emit('Error', "SYSTEM-ERROR: カメラへのアクセス権限が必用です")
+                    this.$emit('error', "SYSTEM-ERROR: カメラへのアクセス権限が必用です")
                 } else if (error.name === 'InsecureContextError') {
-                    this.$emit('Error', "SYSTEM-ERROR: 暗号化された通信(HTTPS)が必用です")
+                    this.$emit('error', "SYSTEM-ERROR: 暗号化された通信(HTTPS)が必用です")
                 } else {
-                    this.$emit('Error', `SYSTEM-ERROR: ${error}`)
+                    this.$emit('error', `SYSTEM-ERROR: ${error}`)
                 }
             }
         },

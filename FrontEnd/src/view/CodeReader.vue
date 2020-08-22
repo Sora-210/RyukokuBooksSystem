@@ -1,6 +1,6 @@
 <template>
     <div>
-        <QRreader :isDialog="isQrDialog" @dataUp="catchQrResult" @close="closeQrDialog" @Error="emitError">
+        <QRreader :isDialog="isQrDialog" @dataUp="catchQrResult" @close="closeQrDialog" @error="emitError">
         </QRreader>
         <v-overlay :value="isLoading" color="white" opacity=0.7>
             <img src="../assets/book.gif">
@@ -30,13 +30,13 @@ export default {
                     await this.axios.get(`/collections/${result}`)
                     this.$router.push('/collection/' + result)
                 } catch(e) {
+                    this.isQrDialog = true
+                    this.isLoading = false
                     if (e.response.status === 404) {
-                        this.$emit('Error',"登録されていないUUIDです")
+                        this.$emit('error',"登録されていないUUIDです")
                     } else {
                         this.$router.push('/500')
                     }
-                    this.isQrDialog = true
-                    this.isLoading = false
                 }
             }
         },
@@ -44,7 +44,7 @@ export default {
             this.$router.push('/')
         },
         emitError(message) {
-            this.$emit('Error', message)
+            this.$emit('error', message)
         }
     }
 }
