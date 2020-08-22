@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="isQrDialog" fullscreen hide-overlay transition="dialog-bottom-transition">
+    <v-dialog v-model="isDialog" fullscreen hide-overlay transition="dialog-bottom-transition">
         <v-card>
             <v-toolbar dark color="primary">
                 <v-btn icon dark @click="close">
@@ -15,20 +15,21 @@
         </v-card>
     </v-dialog>
 </template>
-
 <script>
 import { QrcodeStream } from 'vue-qrcode-reader'
-
 export default {
     components: {
         QrcodeStream
     },
-    props: [
-        'isQrDialog'
-    ],
+    props: {
+        isDialog: {
+            type: Boolean,
+            default: false
+        }
+    },
     methods: {
         async onDecode (resultUuid) {
-            this.$emit('dataUp',resultUuid)
+            this.$emit('dataUp', resultUuid)
         },
         async onInit (promise) {
             try {
@@ -44,7 +45,7 @@ export default {
             }
         },
         close() {
-            this.$emit('close'," ")
+            this.$emit('close')
         }
     }
 }

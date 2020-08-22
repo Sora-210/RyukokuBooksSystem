@@ -1,6 +1,6 @@
 <template>
     <div>
-        <QRreader :isQrDialog="isQrDialog" @dataUp="catchQrResult" @close="closeQrDialog" @Error="emitError">
+        <QRreader :isDialog="isQrDialog" @dataUp="catchQrResult" @close="closeQrDialog" @Error="emitError">
         </QRreader>
         <v-overlay :value="isLoading" color="white" opacity=0.7>
             <img src="../assets/book.gif">
