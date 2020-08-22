@@ -117,9 +117,8 @@ export default {
                 })
                 .catch((e) => {
                     if (e.response.status === 404) {
-                        this.$emit('Error',"現在リクエストはありません");
+                        this.$emit('error',"現在リクエストはありません");
                     } else {
-                        console.error(e)
                         this.$router.push('/500');
                     }
                 })
@@ -134,7 +133,7 @@ export default {
                 this.managerApi.delete(`/requests/${id}`, options)
                     .then(() => {
                         this.getRequests()
-                        this.$emit('Success', '削除しました')
+                        this.$emit('success', '削除しました')
                     })
                     .catch(() => {
                         this.$router.push('/500')
