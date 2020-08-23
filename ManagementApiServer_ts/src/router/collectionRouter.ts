@@ -130,18 +130,16 @@ collectionRouter.get('/:uuid', async (req, res) => {
             transaction: getT
         };
         const getResponse = await DB.Collections.findOne(options);
-        const bookResponse = await getBook(getResponse.isbn);
         if (getResponse === null) {
             throw new NotFoundError('DataNotFound');
         };
+        const getBookResponse = await getBook(getResponse.isbn);
+        const collection = Object.assign(getResponse.get(), getBookResponse);
         await getT.commit();
         const sendObject = {
             count: 1,
             data: [
-                {
-                    getResponse,
-                    bookResponse
-                }
+                collection 
             ]
         };
         res.status(200).json(sendObject);
@@ -304,7 +302,7 @@ collectionRouter.delete('/:uuid', async (req, res) => {
     try {
         const options = {
             where: {
-                id: req.params.uuid
+                uuid: req.params.uuid
             },
             transaction: deleteT
         };

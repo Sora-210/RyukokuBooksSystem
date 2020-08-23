@@ -4,7 +4,6 @@ IP="172.0.1.3"
 PORT="3306"
 WAITSET="2"
 
-
 sleep 10
 nc -vz ${IP} ${PORT} >> /dev/null
 while :
@@ -19,7 +18,6 @@ do
         nc -vz ${IP} ${PORT}  >> /dev/null
     fi
 done
-
 
 echo "Start Application"
 npm run start
