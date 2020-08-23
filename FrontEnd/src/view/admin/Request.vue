@@ -74,8 +74,7 @@
     </div>
 </template>
 <script>
-import RequestTable from '../../components/Admin/RequestTable'
-
+import RequestTable from '../../components/admin/request/RequestTable'
 export default {
     components: {
         RequestTable
@@ -140,7 +139,6 @@ export default {
                     })
             }
         },
-        // 検索系関数
         search() {
             this.searchConditions.page = 1
             this.isSelectSortDialog = false
