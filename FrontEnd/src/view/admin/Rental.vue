@@ -88,10 +88,9 @@
     </div>
 </template>
 <script>
-import RentalDialog from '../../components/Admin/RentalDialog.vue'
-import QRreader from '../../components/QRreader.vue'
-import RentalTable from '../../components/Admin/RentalTable'
-
+import RentalDialog from '../../components/admin/rental/RentalDialog'
+import RentalTable from '../../components/admin/rental/RentalTable'
+import QRreader from '../../components/QRreader'
 export default {
     components: {
         RentalDialog,

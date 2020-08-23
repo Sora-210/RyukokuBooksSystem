@@ -5,21 +5,47 @@
                 貸出情報
             </v-card-title>
             <v-divider></v-divider>
-            <div v-if="getStatus">
+            <div v-if="!isLoading">
                 <v-card-text>
-                    <h3>レンタルID</h3>
-                    <p>{{ this.rentalData.id }}</p>
-                    <h3>UUID</h3>
-                    <p>{{ this.rentalData.uuid }}</p>
-                    <h3>年</h3>
-                    <p>{{ this.rentalData.year }}</p>
-                    <h3>借りた人</h3>
-                    <p>{{ this.selectList.schoolGradeList[this.rentalData.grade] }}/{{ this.selectList.ClassList[this.rentalData.class]}}組/{{ this.rentalData.number}}番</p>
-                    <p>{{ this.rentalData.name }}</p>
-                    <h3>貸出日</h3>
-                    <p>{{ this.rentalData.startDay }}</p>
-                    <h3>返却日</h3>
-                    <p>{{ this.rentalData.returnDay }}</p>
+                    <v-container>
+                        <v-row>
+                            <v-col cols="12">
+                                <v-text-field
+                                    label="レンタルID"
+                                    v-model="rentalData.id"
+                                    disabled>
+                                </v-text-field>
+                            </v-col>
+                            <v-col cols="12">
+                                <v-text-field
+                                    label="UUID"
+                                    v-model="rentalData.uuid"
+                                    disabled>
+                                </v-text-field>
+                            </v-col>
+                            <v-col cols="12">
+                                <v-text-field
+                                    label="借りた人"
+                                    v-model="rentalUser"
+                                    disabled>
+                                </v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6">
+                                <v-text-field
+                                    label="貸出日"
+                                    v-model="rentalData.startDay"
+                                    disabled>
+                                </v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6">
+                                <v-text-field
+                                    label="返却日"
+                                    v-model="rentalData.returnDay"
+                                    disabled>
+                                </v-text-field>
+                            </v-col>
+                        </v-row>
+                    </v-container>
                 </v-card-text>
                 <v-divider></v-divider>
                 <v-card-actions  class="d-flex justify-end">
@@ -27,7 +53,7 @@
                 </v-card-actions>
             </div>
             <div v-else>
-                <v-img style="width:70px;margin:20px auto;padding:20px" src="../../assets/book.gif"></v-img>
+                <v-img style="width:70px;margin:20px auto;padding:20px" src="../../../assets/book.gif"></v-img>
                 <p style="text-align:center;margin:0;padding:10px">Now Loading</p>
             </div>
         </v-card>
@@ -47,7 +73,7 @@ export default {
     },
     data: function() {
         return {
-            getStatus:false,
+            isLoading:false,
             isDialog:false,
             rentalData:{},
             selectList: {
@@ -72,6 +98,11 @@ export default {
             }
         }
     },
+    computed: {
+        rentalUser: function() {
+            return `(${this.rentalData.year}年) [${this.selectList.schoolGradeList[this.rentalData.grade]}/${this.selectList.ClassList[this.rentalData.class]}組/${this.rentalData.number}番] - ${this.rentalData.name}`
+        }
+    },
     watch: {
         isRentalDetailDialog: function() {
             if (this.isRentalDetailDialog) {
@@ -84,6 +115,7 @@ export default {
     },
     methods: {
         async getRentalDetail(rentalId) {
+            this.isLoading = true
             const options = {
                 headers: {
                     token: this.$store.getters.token
@@ -92,7 +124,7 @@ export default {
             await this.managerApi.get(`/rentals/${rentalId}`, options)
                 .then((getRes) => {
                     this.rentalData = getRes.data.data[0]
-                    this.getStatus = true
+                    this.isLoading = false
                 })
                 .catch(() => {
                     this.$router.push('/500')
