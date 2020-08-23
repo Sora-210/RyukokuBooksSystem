@@ -184,11 +184,6 @@ export default {
         icon:"fas fa-envelope-open-text"
       },
       {
-        name:"統計",
-        url:"/admin/statistics",
-        icon:"fas fa-chart-pie"
-      },
-      {
         name:"設定",
         url:"/admin/setting",
         icon:"fas fa-cog"
