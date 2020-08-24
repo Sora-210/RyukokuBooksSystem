@@ -14,8 +14,10 @@ COPY ./ /home/ManagementAPI/
 WORKDIR /home/ManagementAPI/
 
 RUN npm update -g &&\
-    npm install -g sequelize-cli node-pre-gyp &&\
+    npm install -g node-pre-gyp &&\
     npm install &&\
+    npm run build &&\
+    cp -r /home/ManagementAPI/src/config /home/ManagementAPI/build/ &&\
     apk del .buildtools
 
 ENTRYPOINT sh Start.sh
