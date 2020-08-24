@@ -33,7 +33,7 @@ services:
             RyukokuBooksSystem:
                 ipv4_address: 172.0.1.4
     management-api:
-        build: ./ManagementApiServer_ts/.
+        build: ./ManagementApiServer/.
         volumes:
             - ./Data/Qrcode:/home/ManagementAPI/Qrcode
         networks:
