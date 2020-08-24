@@ -35,8 +35,8 @@ export default {
     data: function() {
         return {
             requestGenre:{
-                0:'図書リクエスト',
-                1:'その他',
+                1:'図書リクエスト',
+                2:'その他',
             }
         }
     }

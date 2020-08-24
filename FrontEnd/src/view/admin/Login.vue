@@ -26,7 +26,7 @@ export default {
     },
     methods: {
         Login: function() {
-            this.axios.post(this.$store.getters.apiEndpoint + '/login',{name:this.name,password:this.password})
+            this.axios.post('/login',{name:this.name,password:this.password})
                 .then((res) => {
                     this.$store.commit('setToken',res.data.token)
                     console.log(res.data.token)

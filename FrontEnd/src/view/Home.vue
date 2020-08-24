@@ -23,7 +23,10 @@
                     <h4>お知らせ</h4>
                     <div class="brackBoard_list">
                         <ul>
-                            <li v-for="news in newsList" :key="news.index"><a>{{news.content}}</a></li>
+                            <!-- <li v-for="news in newsList" :key="news.index"><a>{{news.content}}</a></li> -->
+                            <li><a>夏休みは5冊借りられます!</a></li>
+                            <li><a>8月の新刊が追加されました</a></li>
+                            <li><a>今週一週間は読書期間です！</a></li>
                         </ul>
                     </div>
                 </div>

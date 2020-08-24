@@ -44,7 +44,7 @@
                                 <v-select
                                     label="ステータス"
                                     v-model="searchConditions.status"
-                                    :items="[{text:'貸出中',value:0},{text:'返却済',value:1},{text:'未返却[期限切れ]',value:2}]"
+                                    :items="[{text:'貸出中',value:1},{text:'返却済',value:2},{text:'未返却[期限切れ]',value:3}]"
                                     append-icon="fas fa-caret-down">
                                 </v-select>
                             </v-col>
