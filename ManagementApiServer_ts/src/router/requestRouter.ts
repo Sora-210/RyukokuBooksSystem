@@ -14,6 +14,7 @@ import validator from 'validator';
 const requestRouter: Router = Router();
 import { DB } from '../database/index';
 import { RequestError, NotFoundError } from '../error/index';
+import { requestQuery } from '../function/query';
 //####################################################################
 const isCheckRequest = (object):boolean => {
     if (object.genre === undefined || object.genre === "") {
@@ -57,13 +58,20 @@ requestRouter.post('/', async (req, res) => {
 requestRouter.get('/', async (req, res) => {
     const getT = await DB.Sequelize.transaction();
     try {
-        const options = {
+        const query = new requestQuery(req.query);
+        //NarrowDownConfiguration
+        const countOption: object = {
+            where: query.getWhereOption(),
             transaction: getT
-        };
-        const getResponse = await DB.Request.findAll(options);
-        if (getResponse.length === 0) {
+        }
+        const dataCount = await DB.Request.count(countOption);
+        if (dataCount === 0) {
             throw new NotFoundError('DataNotFound');
         };
+        //SortConfiguration
+        const getOption = query.getOption(getT);
+        const getResponse = await DB.Request.findAll(getOption);
+        //TransactionCommit & ResponseJsonSetting
         await getT.commit();
         const sendObject = {
             count: getResponse.length,
