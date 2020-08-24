@@ -53,7 +53,7 @@
                                 <v-select
                                     label="順番"
                                     v-model="searchConditions.sortDirection"
-                                    :items="[{text:'降順',value:0},{text:'昇順',value:1}]"
+                                    :items="[{text:'降順',value:'DESC'},{text:'昇順',value:'ASC'}]"
                                     append-icon="fas fa-caret-down">
                                 </v-select>
                             </v-col>
@@ -86,7 +86,7 @@ export default {
             requestPages: 1,
             searchConditions: {
                 sortRow:"id",
-                sortDirection:0,
+                sortDirection:'DESC',
                 genre:"",
                 page:1
             }

@@ -8,7 +8,7 @@
 			outlined
 			append-icon="fas fa-caret-down">
 		</v-select>
-		<div v-if="sendData.genre === 0">
+		<div v-if="sendData.genre === 1">
 			<v-text-field
 				label="タイトル名"
 				v-model="sendData.content"
@@ -16,7 +16,7 @@
 				outlined>
 			</v-text-field>
 		</div>
-		<div v-else-if="sendData.genre === 1">
+		<div v-else-if="sendData.genre === 2">
 			<v-textarea
 				label="リクエスト内容"
 				v-model="sendData.content"
@@ -43,11 +43,11 @@ export default {
 			items: [
 				{
 					text: "図書リクエスト",
-					value: 0
+					value: 1
 				},
 				{
 					text: "その他",
-					value: 1
+					value: 2
 				}
 			],
 			sendData: {
