@@ -43,13 +43,18 @@ const createCollectionObject = (object): collectionObject => {
         throw new RequestError('DefectiveRequestBody')
     }
     collectionObject.ndc = object.ndc;
-    if (object.note === undefined || object.note === "") {
-        throw new RequestError('DefectiveRequestBody')
-    }
     collectionObject.note = object.note
-    console.log(collectionObject)
     return collectionObject;
 }
+const updateCollectionObject = (object): collectionObject => {
+    const collectionObject: collectionObject = {};
+    if (object.ndc === undefined || object.ndc === "") {
+        throw new RequestError('DefectiveRequestBody')
+    }
+    collectionObject.ndc = object.ndc;
+    collectionObject.note = object.note
+    return collectionObject;
+};
 
 interface rentalObject {
     year?: string
@@ -189,13 +194,9 @@ collectionRouter.patch('/:uuid/rental', async (req, res) => {
             },
             transaction: rentalT
         };
-        const updataResponse = await DB.Collections.update(updateData, updateOptions);
+        await DB.Collections.update(updateData, updateOptions);
         await rentalT.commit();
-        const sendObject = {
-            count: 1,
-            data: updataResponse[1]
-        };
-        res.status(201).json(sendObject);
+        res.status(201).json();
     } catch (e) {
         await rentalT.rollback();
         if (e instanceof NotFoundError) {
@@ -250,13 +251,9 @@ collectionRouter.patch('/:uuid/return', async (req, res) => {
             },
             transactions: returnT
         };
-        const updateRentalResponse = await DB.Rentals.update(updateRentalData, updateRentalOptions);
+        await DB.Rentals.update(updateRentalData, updateRentalOptions);
         await returnT.commit();
-        const sendObject = {
-            count: 1,
-            data: updateRentalResponse[1]
-        }
-        res.status(201).json(sendObject);
+        res.status(201).json();
     } catch (e) {
         console.log(e)
         await returnT.rollback();
@@ -276,7 +273,6 @@ collectionRouter.patch('/:uuid/return', async (req, res) => {
 //loadAuthFunctoin
 
 collectionRouter.post('/', async (req, res) => {
-    console.log("POST")
     const createT = await DB.Sequelize.transaction();
     try {
         const createObject = createCollectionObject(req.body)
@@ -285,7 +281,6 @@ collectionRouter.post('/', async (req, res) => {
         await createT.commit();
         res.status(201).json(createResponse);
     } catch (e) {
-        console.log(e)
         await createT.rollback();
         if (e instanceof RequestError) {
             res.status(400).json(e.toString());
@@ -297,6 +292,35 @@ collectionRouter.post('/', async (req, res) => {
         }
     }
 });
+collectionRouter.patch('/:uuid', async (req, res) => {
+    const updateT = await DB.Sequelize.transaction()
+    try {
+        const createObject = updateCollectionObject(req.body)
+        const options = {
+            where: {
+                uuid: req.params.uuid
+            },
+            transaction: updateT
+        };
+        const getResponse = await DB.Collections.findOne(options);
+        if (getResponse === null) {
+            throw new NotFoundError('DataNotFound');
+        };
+        await DB.Collections.update(createObject, options);
+        res.status(201).json();
+        updateT.commit();
+    } catch (e) {
+        await updateT.rollback();
+        if (e instanceof NotFoundError) {
+            res.status(404).json(e.toString());
+        } else {
+            const ErrorMessage = {
+                message: "UnknownError"
+            };
+            res.status(500).json(ErrorMessage);
+        }
+    }
+})
 collectionRouter.delete('/:uuid', async (req, res) => {
     const deleteT = await DB.Sequelize.transaction();
     try {

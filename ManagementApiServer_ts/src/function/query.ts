@@ -17,10 +17,21 @@ interface collectionOption {
     transaction?: Transaction;
 };
 
+interface requestWhere {
+    genre?: number;
+};
+interface requestOption {
+    limit?: number;
+    offset?: number;
+    order?: [[string, sortRow]];
+    where?: rentalWhere;
+    transaction?: Transaction;
+}
+
 interface rentalWhere {
     uuid?: string;
-    start_day?: string | {};
-    return_day?: string | {};
+    startDay?: string | {};
+    returnDay?: string | {};
 };
 interface rentalOption {
     limit?: number;
@@ -109,16 +120,16 @@ class rentalQuery {
         if (this.uuid !== null) {
             where.uuid = this.uuid
         };
-        switch (this.status) {
-            case 0:
-                where.return_day = null;
-                break;
+        switch (Number(this.status)) {
             case 1:
-                where.return_day = { [Op.ne]: null };
+                where.returnDay = null;
                 break;
             case 2:
-                where.start_day = { [Op.lte]: getRemovePeriodDay()}
-                where.return_day = null;
+                where.returnDay = { [Op.ne]: null };
+                break;
+            case 3:
+                where.startDay = { [Op.lte]: getRemovePeriodDay()}
+                where.returnDay = null;
                 break;
         };
         return where;
@@ -130,7 +141,50 @@ class rentalQuery {
         if (this.sortRow !== null) {
             options.order = [[this.sortRow,this.sortDirection]]
         }
-        options.limit = (this.limit === null ? 20 : this.limit);
+        options.limit = (this.limit === null ? 20 : Number(this.limit));
+        if (this.page === null && this.page <= 0) {
+            options.offset = 1
+        } else {
+            options.offset = (this.page - 1) * options.limit
+        }
+        options.transaction = transaction;
+        return options;
+    };
+};
+class requestQuery {
+    private sortRow: string | null;
+    private sortDirection: sortRow;
+
+    private limit: number | null;
+    private page: number | null;
+
+    private genre: number | null;
+
+    constructor(query) {
+        this.sortRow = query.sortRow || null;
+        this.sortDirection = query.sortDirection || 'DESC';
+
+        this.limit = query.limit || null;
+        this.page = query.page || null;
+
+        this.genre = query.genre || null;
+    };
+
+    getWhereOption():object {
+        const where: requestWhere = {};
+        if (this.genre !== null) {
+            where.genre = Number(this.genre)
+        };
+        return where;
+    };
+
+    getOption(transaction:Transaction):object {
+        const options: requestOption = {};
+        options.where = this.getWhereOption();
+        if (this.sortRow !== null) {
+            options.order = [[this.sortRow,this.sortDirection]]
+        }
+        options.limit = (this.limit === null ? 20 : Number(this.limit));
         if (this.page === null && this.page <= 0) {
             options.offset = 1
         } else {
@@ -143,5 +197,6 @@ class rentalQuery {
 //####################################################################
 export {
     collectionQuery,
-    rentalQuery
+    rentalQuery,
+    requestQuery
 }
