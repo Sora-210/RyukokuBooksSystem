@@ -60,7 +60,8 @@
 <script>
 import BookCard from '../components/BooksCard.vue'
 require('date-utils')
-const DateNow = new Date();
+const today = new Date();
+const returnDay = (new Date()).addWeeks(2);
 
 export default {
     name: "Home",
@@ -69,8 +70,8 @@ export default {
     },
     data: function() {
         return {
-            today: DateNow.toFormat('YYYY年MM月DD日'),
-            returnDay: DateNow.addWeeks(2).toFormat('YYYY年MM月DD日'),
+            today: today.toFormat('YYYY年MM月DD日'),
+            returnDay: returnDay.toFormat('YYYY年MM月DD日'),
             newBooksList:[],
             newsList:[]
         }
@@ -82,7 +83,7 @@ export default {
     methods: {
         async getNewsRequest() {
             try {
-                const Res = await this.axios.get(this.$store.getters.apiEndpoint + "/news?limit=4")
+                const Res = await this.axios.get(`/news?limit=4`)
                 this.newsList = Res.data.News
             } catch(e) {
                 this.$emit('Error',e)
@@ -91,7 +92,7 @@ export default {
         async getNewCollectionRequest() {
             try {
                 // const query = "?sortRow=registrationDate&sortDirection=DESC"
-                const Res = await this.axios.get(`${this.$store.getters.apiEndpoint}/collections`)
+                const Res = await this.axios.get(`/collections`)
                 console.log(Res)
                 for (let i = 0;i<4;i++) {
                     this.newBooksList.push({

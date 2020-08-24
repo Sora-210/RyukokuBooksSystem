@@ -14,8 +14,6 @@ import AdminRental from '../view/admin/Rental.vue'
 import AdminCollection from '../view/admin/Collection.vue'
 import AdminRequest from '../view/admin/Request.vue'
 
-//Admin Statistics View Components
-import Statistics from '../view/admin/Statistics.vue'
 
 //Error View Components
 import Error404 from '../view/error/404.vue'
@@ -62,11 +60,6 @@ const routes = [
     {
         path: '/admin/requests',
         component: AdminRequest,
-        meta: {requiresAuth:true}
-    },
-    {
-        path: '/admin/statistics',
-        component: Statistics,
         meta: {requiresAuth:true}
     },
     // {

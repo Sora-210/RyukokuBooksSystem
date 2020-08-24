@@ -30,11 +30,11 @@ export default {
                 .then((res) => {
                     this.$store.commit('setToken',res.data.token)
                     console.log(res.data.token)
-                    this.$emit('Success','ログインしました')
+                    this.$emit('success','ログインしました')
                     this.$router.push('/')
                 })
                 .catch((e) => {
-                    this.$emit('Error',e)
+                    this.$emit('error',e)
                 })
         }
     }

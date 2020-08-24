@@ -69,7 +69,7 @@
 
     <v-main>
       <v-container>
-        <router-view @Error="onErrorDialog" @Success="onSuccessDialog"></router-view>
+        <router-view @error="onErrorDialog" @success="onSuccessDialog"></router-view>
       </v-container>
     </v-main>
 
@@ -182,11 +182,6 @@ export default {
         name:"リクエスト管理",
         url:"/admin/requests",
         icon:"fas fa-envelope-open-text"
-      },
-      {
-        name:"統計",
-        url:"/admin/statistics",
-        icon:"fas fa-chart-pie"
       },
       {
         name:"設定",

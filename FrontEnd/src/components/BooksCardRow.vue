@@ -40,9 +40,6 @@ export default {
     computed: {
         bookImgUrl: function() {
             return "https://books.google.com/books/content/images/frontcover/" + this.imgId + "?fife=w800-h1200"
-        },
-        bookUrl: function() {
-            return '/collection/' + "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
         }
     },
     mounted: function() {
@@ -53,7 +50,7 @@ export default {
                 this.imgId = res.data.items[0].id
             })
             .catch((err) => {
-                this.$emit('Error','書籍データ取得に失敗しました')
+                this.$emit('error','書籍データ取得に失敗しました')
                 console.log(err)
             })
     },
