@@ -76,7 +76,7 @@
                 <v-card-actions  class="d-flex justify-end">
                     <v-btn color="warning" @click="close">閉じる</v-btn>
                     <v-btn color="error" @click="deleteCollection">削除</v-btn>
-                    <v-btn color="success" @click="update" disabled>更新</v-btn>
+                    <v-btn color="success" @click="update">更新</v-btn>
                 </v-card-actions>
             </div>
             <div v-else>
@@ -139,11 +139,24 @@ export default {
             }
             this.isLoading = true
         },
-        update() {
-            this.$ref.form.validate()
-            if (this.isValid) {
-                console.log('update')
+        async update() {
+            const options = {
+                headers: {
+                    token: this.$store.getters.token
+                }
             }
+            const updateObject = {
+                ndc: this.collectionData.ndc,
+                note: this.collectionData.note
+            }
+            await this.managerApi.patch(`/collections/${this.uuid}`, updateObject ,options)
+                .then(() => {
+                    this.$emit('success', '更新しました')
+                    this.getCollection()
+                })
+                .catch((e)  => {
+                    this.$emit('error', e)
+                })
         },
         async deleteCollection() {
             const options = {
