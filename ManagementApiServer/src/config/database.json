@@ -2,6 +2,6 @@
     "username": "root",
     "password": "pass",
     "database": "booksystem",
-    "host": "management-api",
+    "host": "management-db",
     "dialect": "mysql"
 }

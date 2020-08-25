@@ -4,7 +4,7 @@ IP="172.0.1.3"
 PORT="3306"
 WAITSET="2"
 
-sleep 10
+sleep 20
 nc -vz ${IP} ${PORT} >> /dev/null
 while :
 do
