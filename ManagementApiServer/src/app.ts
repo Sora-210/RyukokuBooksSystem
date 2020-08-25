@@ -8,6 +8,7 @@ import { requestRouter } from './router/requestRouter'
 import { rentalRouter } from './router/rentalRouter';
 import { collectionRouter } from './router/collectionRouter';
 import { loginRouter } from './router/login';
+import { newsRouter } from './router/newsRouter';
 //#################################
 //MagicNumber
 const PORT:Number = 80
@@ -27,6 +28,7 @@ app.get('/version',(req, res) => {
 app.use('/collections', collectionRouter);
 app.use('/rentals', rentalRouter);
 app.use('/requests', requestRouter);
+app.use('/news', newsRouter);
 app.use('/login', loginRouter);
 //#################################
 app.listen(PORT, () => {

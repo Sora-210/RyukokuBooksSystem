@@ -39,7 +39,15 @@ interface rentalOption {
     order?: [[string, sortRow]];
     where?: rentalWhere;
     transaction?: Transaction;
-}
+};
+
+interface newsOption {
+    limit?: number;
+    offset?: number;
+    order?: [[string, sortRow]];
+    where?: rentalWhere;
+    transaction?: Transaction;
+};
 //####################################################################
 class collectionQuery {
     private sortRow: string | null;
@@ -86,7 +94,7 @@ class collectionQuery {
         }
         options.limit = (this.limit === null ? 20 : Number(this.limit));
         if (this.page === null && this.page <= 0) {
-            options.offset = 1
+            options.offset = 0
         } else {
             options.offset = (this.page - 1) * options.limit
         }
@@ -143,7 +151,7 @@ class rentalQuery {
         }
         options.limit = (this.limit === null ? 20 : Number(this.limit));
         if (this.page === null && this.page <= 0) {
-            options.offset = 1
+            options.offset = 0
         } else {
             options.offset = (this.page - 1) * options.limit
         }
@@ -186,7 +194,36 @@ class requestQuery {
         }
         options.limit = (this.limit === null ? 20 : Number(this.limit));
         if (this.page === null && this.page <= 0) {
-            options.offset = 1
+            options.offset = 0
+        } else {
+            options.offset = (this.page - 1) * options.limit
+        }
+        options.transaction = transaction;
+        return options;
+    };
+};
+class newsQuery {
+    private sortDirection: sortRow;
+
+    private limit: number | null;
+    private page: number | null;
+
+    constructor(query) {
+        this.sortRow = query.sortRow || null;
+        this.sortDirection = query.sortDirection || 'DESC';
+
+        this.limit = query.limit || null;
+        this.page = query.page || null;
+    };
+
+    getOption(transaction:Transaction):object {
+        const options: newsOption = {};
+        if (this.sortDirection !== null) {
+            options.order = [['id',this.sortDirection]]
+        }
+        options.limit = (this.limit === null ? 4 : Number(this.limit));
+        if (this.page === null && this.page <= 0) {
+            options.offset = 0
         } else {
             options.offset = (this.page - 1) * options.limit
         }
@@ -198,5 +235,6 @@ class requestQuery {
 export {
     collectionQuery,
     rentalQuery,
-    requestQuery
+    requestQuery,
+    newsQuery
 }
