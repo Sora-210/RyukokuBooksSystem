@@ -209,7 +209,6 @@ class newsQuery {
     private page: number | null;
 
     constructor(query) {
-        this.sortRow = query.sortRow || null;
         this.sortDirection = query.sortDirection || 'DESC';
 
         this.limit = query.limit || null;
