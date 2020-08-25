@@ -49,7 +49,7 @@ async function createToken(name: string, password_hash: string) {
             name: name
         };
         const token = await sign(payload, KEY, signOptions);
-        return {token:token};
+        return token;
     } catch (e) {
         if (e instanceof LoginError) {
             throw new LoginError('WrongNameOrPassword');
