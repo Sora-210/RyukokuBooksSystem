@@ -5,16 +5,11 @@
 全システムはDocker上に構築します。
 Linux系OSなどからネットワークに公開する場合必要なファイルを配置して、port(80/tcp,443/tcp)を開放してください。
 - BooksSystem-Docker
-- - proxy
-Front,API,Fileへのルーティングssl対応を行います
-- - file
-QRコード画像の配信用ファイルサーバー
-- - management-db
-情報保存用データベース
-- - frontend
-WebApllication
-- - management-api
-管理API
+- - proxy : Front,API,Fileへのルーティングssl対応を行います
+- - file : QRコード画像の配信用ファイルサーバー
+- - management-db : 情報保存用データベース
+- - frontend : WebApllication
+- - management-api : 管理API
 
 # 起動方法
 1. バックアップデータがある場合Dataフォルダに上書き
