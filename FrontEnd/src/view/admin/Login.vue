@@ -29,12 +29,15 @@ export default {
             this.axios.post('/login',{name:this.name,password:this.password})
                 .then((res) => {
                     this.$store.commit('setToken',res.data.token)
-                    console.log(res.data.token)
                     this.$emit('success','ログインしました')
                     this.$router.push('/')
                 })
                 .catch((e) => {
-                    this.$emit('error',e)
+                    if (e.response.status === 403) {
+                        this.$emit('error', 'NameもしくはPasswordが間違っています')
+                    } else {
+                        this.$router.push('/500')
+                    }
                 })
         }
     }

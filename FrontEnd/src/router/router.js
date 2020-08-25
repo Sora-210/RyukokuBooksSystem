@@ -91,17 +91,13 @@ const router = new Router({
 // ログインチェック
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (store.getters.token === "") {
+        if (store.getters.token === null) {
             next({
                 path: '/login'
             })
-        } else {
-            next()
         }
-        next()
-    } else {
-        next()
     }
+    next()
 })
 
 export default router
