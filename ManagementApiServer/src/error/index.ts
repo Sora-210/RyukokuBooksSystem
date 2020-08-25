@@ -30,10 +30,15 @@ class LoginError extends ApplicationError {
     public name: string = "LoginError";
 };
 
+class UnkownError extends ApplicationError {
+    public name: string = "UnkownError";
+};
+
 export {
     ApplicationError,
     RequestError,
     NotFoundError,
     RentalStatusError,
-    LoginError
+    LoginError,
+    UnkownError
 };

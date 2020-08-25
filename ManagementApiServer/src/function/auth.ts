@@ -1,6 +1,6 @@
 import { verify, VerifyOptions, sign ,SignOptions } from 'jsonwebtoken';
 import { DB } from '../database/index';
-import { LoginError } from '../error/index';
+import { LoginError, UnkownError } from '../error/index';
 import { readFileSync } from 'fs';
 import { Router } from 'express';
 const checkAuthRouter = Router();
@@ -52,12 +52,9 @@ async function createToken(name: string, password_hash: string) {
         return {token:token};
     } catch (e) {
         if (e instanceof LoginError) {
-            return e.toString
+            throw new LoginError('WrongNameOrPassword');
         } else {
-            const errorMessage = {
-                message: "UnknownError"
-            };
-            return errorMessage;
+            throw new UnkownError('');
         };
     };
 };
