@@ -1,8 +1,7 @@
 {
     "username": "root",
     "password": "pass",
-    "database": "Management",
-    "host": "management-db",
-    "dialect": "mysql",
-    "operatorsAliases": false
+    "database": "booksystem",
+    "host": "management-api",
+    "dialect": "mysql"
 }
