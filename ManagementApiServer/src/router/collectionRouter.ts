@@ -17,7 +17,7 @@ import { createQrcode } from '../function/qrcode';
 import { getToday,getYear } from '../function/date';
 import { collectionQuery } from '../function/query';
 import { NotFoundError, RentalStatusError, RequestError } from '../error';
-
+import { checkAuthRouter } from '../function/auth';
 import { v4 as uuid } from 'uuid';
 import { getBook } from '../function/getBook';
 //####################################################################
@@ -271,7 +271,7 @@ collectionRouter.patch('/:uuid/return', async (req, res) => {
 });
 //NeedAuthFromHere
 //loadAuthFunctoin
-
+collectionRouter.use(checkAuthRouter);
 collectionRouter.post('/', async (req, res) => {
     const createT = await DB.Sequelize.transaction();
     try {

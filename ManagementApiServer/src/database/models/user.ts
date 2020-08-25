@@ -3,7 +3,7 @@ import { Model, DataTypes } from 'sequelize';
 import {dbInstance} from '../instance'
 
 
-class User extends Model {
+class Users extends Model {
     public readonly id: number;
     public name: number;
     public password_hash: string
@@ -11,7 +11,7 @@ class User extends Model {
     public readonly updatedAt: Date;
 }
 
-User.init({
+Users.init({
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -38,4 +38,4 @@ User.init({
     sequelize: dbInstance,
     timestamps: true,
 })
-export {User};
+export {Users};

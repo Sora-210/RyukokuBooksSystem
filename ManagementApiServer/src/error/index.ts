@@ -26,9 +26,14 @@ class RentalStatusError extends ApplicationError {
     public name: string = "RentalStatusError";
 };
 
+class LoginError extends ApplicationError {
+    public name: string = "LoginError";
+};
+
 export {
     ApplicationError,
     RequestError,
     NotFoundError,
     RentalStatusError,
+    LoginError
 };

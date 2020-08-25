@@ -15,6 +15,7 @@ const requestRouter: Router = Router();
 import { DB } from '../database/index';
 import { RequestError, NotFoundError } from '../error/index';
 import { requestQuery } from '../function/query';
+import { checkAuthRouter } from '../function/auth';
 //####################################################################
 const isCheckRequest = (object):boolean => {
     if (object.genre === undefined || object.genre === "") {
@@ -54,7 +55,7 @@ requestRouter.post('/', async (req, res) => {
 })
 //以下認証が必要
 //loadAuthFunction
-
+requestRouter.use(checkAuthRouter);
 requestRouter.get('/', async (req, res) => {
     const getT = await DB.Sequelize.transaction();
     try {

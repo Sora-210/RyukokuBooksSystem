@@ -12,10 +12,11 @@ const rentalRouter = Router();
 import { DB } from '../database/index';
 import { NotFoundError } from '../error';
 import { rentalQuery } from '../function/query';
+import { checkAuthRouter } from '../function/auth';
 //####################################################################
 //以下認証が必要
 //LoadAuthFunction
-
+rentalRouter.use(checkAuthRouter);
 rentalRouter.get('/', async (req, res) => {
     const getT = await DB.Sequelize.transaction();
     try {

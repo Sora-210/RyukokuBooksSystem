@@ -12,6 +12,7 @@ const newsRouter: Router = Router();
 import { DB } from '../database/index';
 import { RequestError, NotFoundError } from '../error/index';
 import { newsQuery } from '../function/query';
+import { checkAuthRouter } from '../function/auth';
 //####################################################################
 newsRouter.get('/', async (req, res) => {
     const getT = await DB.Sequelize.transaction();
@@ -45,7 +46,7 @@ newsRouter.get('/', async (req, res) => {
 });
 //以下認証が必要
 //loadAuthFunction
-
+newsRouter.use(checkAuthRouter);
 newsRouter.post('/', async (req, res) => {
     const createT = await DB.Sequelize.transaction();
     try {
