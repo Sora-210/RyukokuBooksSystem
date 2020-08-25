@@ -8,6 +8,7 @@ import { Collections } from './models/collections'
 import { Rentals } from './models/rental';
 import { Request } from './models/request';
 import { News } from './models/news';
+import { User } from './models/user';
 //################################
 const DB = {
     Sequelize: dbInstance,
@@ -16,6 +17,7 @@ const DB = {
     Rentals: Rentals,
     Request: Request,
     News: News,
+    User: User,
 };
 
 export {
@@ -25,4 +27,5 @@ export {
     Rentals,
     Request,
     News,
+    User,
 };

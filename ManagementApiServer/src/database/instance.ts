@@ -6,6 +6,7 @@ import { queryNewsTable } from './migrations/createNewsTable';
 import { queryRentalTable } from './migrations/createRentalTable';
 import { queryAccountTable } from './migrations/createAccountTable';
 import { queryCollectionTable } from './migrations/createCollectionTable'
+import { queryUserTable } from './migrations/createUserTable';
 //loadConfig
 const config: object = require(__dirname + '/../config/database.json');
 //DatabaseInstance
@@ -23,5 +24,6 @@ queryNewsTable.up(dbInstance.getQueryInterface());
 queryRentalTable.up(dbInstance.getQueryInterface());
 queryAccountTable.up(dbInstance.getQueryInterface());
 queryCollectionTable.up(dbInstance.getQueryInterface());
+queryUserTable.up(dbInstance.getQueryInterface());
 
 export {dbInstance}
