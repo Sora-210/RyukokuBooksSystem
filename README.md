@@ -11,12 +11,23 @@ Linux系OSなどからネットワークに公開する場合必要なファイ�
 - - frontend : WebApllication
 - - management-api : 管理API
 
-# 起動方法
+# 起動方法<localhost>
 1. バックアップデータがある場合Dataフォルダに上書き
 2. PKCS1方式の鍵ペア(api_rsa・api_rsa.pub)を/ManagementApiServer/src/config/に配置してください。
 3. dockerImageをビルド
 ```docker-compose build```
 4. dockerComposeを起動
+```docker-compose up -d```
+
+# 起動方法<独自ドメイン>>
+1. バックアップデータがある場合Dataフォルダに上書き
+2. PKCS1方式の鍵ペア(api_rsa・api_rsa.pub)を/ManagementApiServer/src/config/に配置してください。
+3. SSL用鍵ペア(fullchain.pem・privkey.pem)を/Proxy/に配置してください。
+4. /Proxy/proxy.conf 24-50行目のコメントを解除し、4,27行目の”localhost”を利用するドメインに変更してください。
+5. /FrontEnd/.env.production の”localhost”を利用するドメインに変更してください。
+6. dockerImageをビルド
+```docker-compose build```
+7. dockerComposeを起動
 ```docker-compose up -d```
 
 # 停止方法
