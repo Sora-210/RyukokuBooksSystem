@@ -8,13 +8,11 @@ import Search from '../view/Search.vue'
 import Request from '../view/Request.vue'
 import CodeReader from '../view/CodeReader.vue'
 import Login from '../view/admin/Login.vue'
-
 //Admin View Components
 import AdminRental from '../view/admin/Rental.vue'
 import AdminCollection from '../view/admin/Collection.vue'
 import AdminRequest from '../view/admin/Request.vue'
-
-
+import AdminConfig from '../view/admin/Config.vue'
 //Error View Components
 import Error404 from '../view/error/404.vue'
 import Error500 from '../view/error/500.vue'
@@ -62,10 +60,10 @@ const routes = [
         component: AdminRequest,
         meta: {requiresAuth:true}
     },
-    // {
-    //     path: '/admin/setting',
-    //     component: AdminRequest
-    // },
+    {
+        path: '/admin/setting',
+        component: AdminConfig
+    },
     //Error Routing
     {
         path: '/404',

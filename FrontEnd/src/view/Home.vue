@@ -1,11 +1,7 @@
 <template>
     <div>
-        <v-parallax
-            dark
-            src="../assets/topImage.jpg">
-            <v-row
-                align="center"
-                justify="center">
+        <v-parallax dark src="../assets/topImage.jpg">
+            <v-row align="center" justify="center">
                 <v-col
                     class="text-center"
                     cols="12">
@@ -15,26 +11,17 @@
         </v-parallax>
         <v-row
             id="brackBoard">
-            <v-col
-                sm="6"
-                cols="12"
-            >
+            <v-col sm="6" cols="12">
                 <div class="brackBoard_notice">
                     <h4>お知らせ</h4>
                     <div class="brackBoard_list">
                         <ul>
-                            <!-- <li v-for="news in newsList" :key="news.index"><a>{{news.content}}</a></li> -->
-                            <li><a>夏休みは5冊借りられます!</a></li>
-                            <li><a>8月の新刊が追加されました</a></li>
-                            <li><a>今週一週間は読書期間です！</a></li>
+                            <li v-for="news in newsList" :key="news.index"><a>{{news.content}}</a></li>
                         </ul>
                     </div>
                 </div>
             </v-col>
-            <v-col
-                sm="6"
-                cols="12"
-            >
+            <v-col sm="6" cols="12">
                 <div class="brackBoard_day">
                     <h4 class="today">本日</h4>
                     <span>{{ today }}</span>
@@ -45,16 +32,8 @@
         </v-row>
         <h2>新刊</h2>
         <v-row>
-            <v-col
-                cols="12"
-                sm="3"
-                v-for="newBook in newBooksList" :key="newBook.index"
-            >
-                <BookCard
-                    :isbn="newBook.isbn"
-                    :uuid="newBook.uuid"
-                    style="margin:10px;"
-                >
+            <v-col cols="12" sm="3" v-for="newBook in newBooksList" :key="newBook.index">
+                <BookCard :isbn="newBook.isbn" :uuid="newBook.uuid" style="margin:10px;">
                 </BookCard>
             </v-col>
         </v-row>
@@ -85,17 +64,15 @@ export default {
     },
     methods: {
         async getNewsRequest() {
-            try {
-                const Res = await this.axios.get(`/news?limit=4`)
-                this.newsList = Res.data.News
-            } catch(e) {
-                this.$emit('Error',e)
-            }
+            this.managerApi.get(`/news?limit=4`)
+                .then((getRes) => {
+                    this.newsList = getRes.data.data
+                })
         },
         async getNewCollectionRequest() {
             try {
-                // const query = "?sortRow=registrationDate&sortDirection=DESC"
-                const Res = await this.axios.get(`/collections`)
+                const query = "?sortRow=registrationDate&sortDirection=DESC&limit=4"
+                const Res = await this.managerApi.get(`/collections` + query)
                 console.log(Res)
                 for (let i = 0;i<4;i++) {
                     this.newBooksList.push({
