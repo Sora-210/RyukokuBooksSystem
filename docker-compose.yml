@@ -16,10 +16,11 @@ services:
             RyukokuBooksSystem:
                 ipv4_address: 172.0.1.7
     management-db:
-        image: mysql:8.0.20
+        image: mysql:8.0.21
         environment:
             MYSQL_ROOT_PASSWORD: pass
-            MYSQL_DATABASE: Management
+            MYSQL_DATABASE: booksystem
+            MYSQL_ROOT_Host: management-api
         volumes:
             - ./Data/DB:/var/lib/mysql
         networks:

@@ -1,0 +1,7 @@
+{
+    "username": "root",
+    "password": "pass",
+    "database": "booksystem",
+    "host": "management-db",
+    "dialect": "mysql"
+}

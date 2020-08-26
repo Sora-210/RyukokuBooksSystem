@@ -8,53 +8,18 @@
                 <v-btn text color="purple darken-3" class="ml-1 mb-3" @click="isSelectSortDialog = !isSelectSortDialog">
                     絞り込み | 並べ替え
                 </v-btn>
-                <table>
-                    <tr class="tableTitle">
-                        <th>レンタルID</th>
-                        <th>ステータス</th>
-                        <th>UUID</th>
-                        <th>貸出日</th>
-                        <th>返却日</th>
-                        <th></th>
-                    </tr>
-                    <tr class="tableItem" v-for="item in this.rentalsList" :key="item.index">
-                        <td>{{ item.id }}</td>
-
-                        <td v-if="item.return_day === null">
-                            <span v-if="new Date(item.start_day) <= today" style="color:red;">未返却[期限切れ]</span>
-                            <span v-else style="color:blue;">貸出中</span>
-                        </td>
-                        <td v-else>
-                            <span style="color:green;">返却済</span>
-                        </td>
-
-                        <td><router-link :to="`/collection/` + item.uuid">{{ item.uuid}}</router-link></td>
-                        <td>{{ item.start_day }}</td>
-
-                        <td v-if="item.return_day === null">
-                            -
-                        </td>
-                        <td v-else>
-                            {{ item.return_day}}
-                        </td>
-                        
-                        <td>
-                            <v-btn size="small" color="primary" text @click="OnRentalDetailDialog(item.id)">
-                                <v-icon>fas fa-info</v-icon>
-                            </v-btn>
-                        </td>
-                    </tr>
-                </table>
+                <RentalTable :rentalsList=rentalsList @on-rental-detail-dialog="onRentalDetailDialog">
+                </RentalTable>
             </div>
             <v-divider></v-divider>
             <v-card-actions>
                 <div class="text-right">
                     <v-pagination
-                    v-model="searchConditions.page"
-                    next-icon="fas fa-caret-right"
-                    prev-icon="fas fa-caret-left"
-                    :length="rentalsPages"
-                    ></v-pagination>
+                        v-model="searchConditions.page"
+                        :length="rentalsPages"
+                        next-icon="fas fa-caret-right"
+                        prev-icon="fas fa-caret-left">
+                    </v-pagination>
                 </div>
             </v-card-actions>
         </v-card>
@@ -70,68 +35,67 @@
                             <v-col cols="12" sm="6">
                                 <v-text-field
                                     label="UUID"
-                                    append-icon="fas fa-qrcode"
-                                    @click:append="isQrDialog = true"
                                     v-model="searchConditions.uuid"
-                                ></v-text-field>
+                                    @click:append="isQrDialog = true"
+                                    append-icon="fas fa-qrcode">
+                                </v-text-field>
                             </v-col>
                             <v-col class="d-flex" cols="12" sm="6">
                                 <v-select
-                                    append-icon="fas fa-caret-down"
-                                    :items="[{text:'貸出中',value:0},{text:'返却済',value:1},{text:'未返却[期限切れ]',value:2}]"
-                                    v-model="searchConditions.status"
                                     label="ステータス"
-                                ></v-select>
+                                    v-model="searchConditions.status"
+                                    :items="[{text:'貸出中',value:1},{text:'返却済',value:2},{text:'未返却[期限切れ]',value:3}]"
+                                    append-icon="fas fa-caret-down">
+                                </v-select>
                             </v-col>
                         </v-row>
                         <v-divider></v-divider>
                         <v-row>
                             <v-col class="d-flex" cols="12" sm="6">
                                 <v-select
-                                    append-icon="fas fa-caret-down"
-                                    :items="[{text:'レンタルID',value:'id'},{text:'貸出日',value:'start_day'},{text:'返却日',value:'return_day'}]"
-                                    v-model="searchConditions.sortRow"
                                     label="並び替え"
-                                ></v-select>
+                                    v-model="searchConditions.sortRow"
+                                    :items="[{text:'レンタルID',value:'id'},{text:'貸出日',value:'startDay'},{text:'返却日',value:'returnDay'}]"
+                                    append-icon="fas fa-caret-down">
+                                </v-select>
                             </v-col>
                             <v-col class="d-flex" cols="12" sm="6">
                                 <v-select
-                                    append-icon="fas fa-caret-down"
-                                    :items="[{text:'降順',value:0},{text:'昇順',value:1}]"
-                                    v-model="searchConditions.sortDirection"
                                     label="順番"
-                                ></v-select>
+                                    v-model="searchConditions.sortDirection"
+                                    :items="[{text:'降順',value:'DESC'},{text:'昇順',value:'ASC'}]"
+                                    append-icon="fas fa-caret-down">
+                                </v-select>
                             </v-col>
                         </v-row>
                     </v-container>
                 </v-card-text>
                 <v-divider></v-divider>
                 <v-card-actions class="d-flex justify-end">
-                        <v-btn color="warning" @click="searchReset">リセット</v-btn>
-                        <v-btn color="success" @click="search">検索</v-btn>
+                    <v-btn color="warning" @click="Object.assign($data.searchConditions, $options.data().searchConditions)">リセット</v-btn>
+                    <v-btn color="success" @click="search">検索</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
         <rental-dialog
             :isRentalDetailDialog="isRentalDetailDialog"
-            :rentalId="rentalDetailDialogRentalid"
-            :selectLists="selectLists"
+            :rentalId="Number(rentalDetailDialogRentalid)"
             @close="isRentalDetailDialog = false"
-            @Error="Error">
+            @error="error">
         </rental-dialog>
-        <QRreader :isQrDialog="isQrDialog" @dataUp="QrResult" @close="isQrDialog = false" @Error="Error">
+        <QRreader :isDialog="isQrDialog" @dataUp="resultQr" @close="isQrDialog = false" @error="error">
         </QRreader>
     </div>
 </template>
 <script>
-import RentalDialog from '../../components/Admin/RentalDialog.vue'
-import QRreader from '../../components/QRreader.vue'
-require('date-utils')
-
+import RentalDialog from '../../components/admin/rental/RentalDialog'
+import RentalTable from '../../components/admin/rental/RentalTable'
+import QRreader from '../../components/QRreader'
 export default {
     components: {
         RentalDialog,
         QRreader,
+        RentalTable
     },
     data: function() {
         return {
@@ -143,12 +107,12 @@ export default {
             isQrDialog: false,
             searchConditions: {
                 sortRow:"id",
-                sortDirection:0,
+                sortDirection:'DESC',
                 uuid:"",
                 status:"",
                 page:1
             },
-            selectLists: {
+            selectList: {
                 schoolGradeList:{
                     11:"中等部 1年",
                     12:"中等部 2年",
@@ -168,94 +132,58 @@ export default {
                     8:"Z・V・S",
                 }
             },
-            today:null
         }
     },
     mounted: function() {
         this.requestApi()
-        const DateNow = new Date();
-        this.today = DateNow.addWeeks(-2)
+    },
+    watch: {
+        'searchConditions.page' : function() {
+            this.requestApi()
+        }
     },
     methods: {
-        requestApi: function() {
+        requestApi() {
             const query = "?sortRow=" + this.searchConditions.sortRow + "&sortDirection=" + this.searchConditions.sortDirection + "&uuid=" + this.searchConditions.uuid + "&status=" + this.searchConditions.status + "&page=" + this.searchConditions.page
             const options = {
                 headers: {
                     token: this.$store.getters.token
                 }
             }
-            this.axios.get(this.$store.getters.apiEndpoint + '/rentals' + query, options)
-                .then((res) => {
-                    this.rentalsList = res.data.Rentals
-                    this.rentalsPages = Math.ceil(res.data.count / 20)
+            this.managerApi.get(`/rentals${query}`, options)
+                .then((getRes) => {
+                    this.rentalsList = getRes.data.Rentals
+                    this.rentalsPages = Math.ceil(getRes.data.count / 20)
+                    this.rentalsList = getRes.data.data
                 })
                 .catch((e) => {
-                    this.$emit('Error',e)
+                    if (e.response.status === 404) {
+                        this.$emit('error', "貸出データが見つかりませんでした")
+                    } else {
+                        this.$router.push('/500')
+                    }
                 })
         },
-        search: function() {
+        search() {
             this.searchConditions.page = 1
             this.isSelectSortDialog = false
             this.requestApi()
         },
-        searchReset: function() {
-            this.searchConditions = {
-                sortRow:"id",
-                sortDirection:0,
-                uuid:"",
-                status:"",
-                page:1
-            }
-        },
-        OnRentalDetailDialog: function(rentalId) {
+        onRentalDetailDialog(rentalId) {
             this.rentalDetailDialogRentalid = rentalId
             this.isRentalDetailDialog = true
         },
-        QrResult: function(result) {
+        resultQr(result) {
             this.isQrDialog = false
             this.searchConditions.uuid = result
         },
-        Error: function(message) {
-            this.$emit('Error', message)
+        error(message) {
+            this.$emit('error', message)
         }
     },
-    watch: {
-        'searchConditions.page' : function() {
-            this.requestApi()
-        }
-    }
 }
 </script>
-
 <style scoped>
-.sp-row-scroll {
-    display: block;
-    overflow-x: scroll;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-}
-table {
-    border-collapse: collapse;
-    width:100%;
-}
-th,
-td {
-    padding: 7px 20px 7px 20px;
-}
-.tableTitle {
-    background-color:#e9e9e9;
-    border-top: solid 1px#000000;
-    border-bottom: solid 1px#000000;
-}
-.tableItem {
-    text-align: left;
-    border-bottom: solid 0.5px #e6e6e6;
-}
-.tableItem:hover {
-    background-color:#f1f1f1;
-}
-
-
 .dialog {
     width:70%;
 }

@@ -1,105 +1,77 @@
 <template>
-	<div
-		class="mt-5 mx-sm-12"
-	>
-		<v-alert
-			color="success"
-			v-model="alert"
-			dismissible
-			close-icon="fas fa-times"
-			icon="far fa-check-circle"
-			dark
-		>
-			送信が完了しました!
-		</v-alert>
-		<v-alert
-			color="error"
-			v-model="warningAlert"
-			dismissible
-			close-icon="fas fa-times"
-			icon="fas fa-exclamation-triangle"
-			dark
-		>
-			{{ WAmessage }}
-		</v-alert>
+	<v-form class="mt-5 mx-sm-12" ref="form" v-model="isValid">
 		<v-select
-			:items="items"
 			label="リクエストの種類"
+			:items="items"
+			v-model="sendData.genre"
+			:rules="[v => !!v || 'リクエストのジャンルの選択は必須です']"
 			outlined
-			append-icon="fas fa-caret-down"
-			v-model="SendData.genre">
+			append-icon="fas fa-caret-down">
 		</v-select>
-		<div v-if="SendData.genre === 0">
+		<div v-if="sendData.genre === 1">
 			<v-text-field
-				outlined
 				label="タイトル名"
-				v-model="SendData.content">
+				v-model="sendData.content"
+				:rules="[v => !!v || 'タイトル名は必須です']"
+				outlined>
 			</v-text-field>
 		</div>
-		<div v-else-if="SendData.genre === 1">
+		<div v-else-if="sendData.genre === 2">
 			<v-textarea
-				outlined 
 				label="リクエスト内容"
-				v-model="SendData.content">
+				v-model="sendData.content"
+				:rules="[v => !!v || 'リクエスト内容は必須です']"
+				outlined>
 			</v-textarea>
 		</div>
-		<div
-			class="d-flex justify-end"
-		>
+		<div class="d-flex justify-end">
 			<v-btn
+				:loading="isSending"
+				@click="sendRequest"
 				color="success"
-				class="px-6 py-2"
-				@click="SendRequest"
-				:loading="sendStatus"
-			>
+				class="px-6 py-2">
 				送信
 			</v-btn>
 		</div>
-	</div>
+	</v-form>
 </template>
 <script>
 export default {
 	data: function() {
 		return {
-			sendStatus:false,
-			alert:false,
-			warningAlert:false,
-			WAmessage:"エラーが発生しました",
+			isSending: false,
 			items: [
 				{
 					text: "図書リクエスト",
-					value: 0
+					value: 1
 				},
 				{
 					text: "その他",
-					value: 1
+					value: 2
 				}
 			],
-			SendData: {
+			sendData: {
 				genre: "",
 				content: ""
-			}
+			},
+			isValid: true
 		};
 	},
 	methods: {
-		SendRequest: function() {
-			this.sendStatus = true
-			this.axios.post(this.$store.getters.apiEndpoint + '/requests/',this.SendData)
-				.then((res) => {
-					console.log(res)
-					if (res.status === 201) {
-						this.sendStatus = false
-						this.alert = true
-						this.SendData = {genre:"",content:""}
-						setTimeout(() => {
-							this.alert = false
-						},"4000")
-					} else {
-						this.sendStatus = false
-						this.warningAlert = true
-						this.WAmessage = res.data.message
-					}
-				})
+		async sendRequest() {
+			this.$refs.form.validate()
+			if (this.isValid) {
+				this.isSending = true
+				await this.managerApi.post('/requests', this.sendData)
+					.then(() => {
+						Object.assign(this.$data.sendData, this.$options.data().sendData)
+						this.$emit('success',"送信に成功しました")
+					})
+					.catch(() => {
+						this.$emit('error',"送信に失敗しました")
+					})
+				this.isSending = false
+			}
 		}
 	}
 };

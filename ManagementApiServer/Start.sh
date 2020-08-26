@@ -4,8 +4,7 @@ IP="172.0.1.3"
 PORT="3306"
 WAITSET="2"
 
-
-sleep 10
+sleep 20
 nc -vz ${IP} ${PORT} >> /dev/null
 while :
 do
@@ -20,10 +19,5 @@ do
     fi
 done
 
-echo "Connection"
-sequelize db:create
-echo "Migration"
-sequelize db:migrate
-
 echo "Start Application"
-npm start
+npm run start

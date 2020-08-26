@@ -11,73 +11,54 @@
                         <v-col cols="12" sm="6">
                             <v-text-field
                                 label="UUID"
-                                append-icon="fas fa-qrcode"
-                                @click:append="isQrDialog = true"
                                 v-model="searchConditions.uuid"
-                            ></v-text-field>
+                                @click:append="isQrDialog = true"
+                                append-icon="fas fa-qrcode">
+                            </v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6">
                             <v-text-field
                                 label="NDC"
-                                v-model="searchConditions.ndc"
-                            ></v-text-field>
+                                v-model="searchConditions.ndc">
+                            </v-text-field>
                         </v-col>
                     </v-row>
                     <v-row>
                         <v-col class="d-flex" cols="12" sm="6">
                             <v-select
-                                append-icon="fas fa-caret-down"
-                                :items="[{text:'UUID',value:'uuid'},{text:'NDC',value:'ndc'},{text:'登録日',value:'registrationData'}]"
-                                v-model="searchConditions.sortRow"
                                 label="並び替え"
-                            ></v-select>
+                                v-model="searchConditions.sortRow"
+                                :items="[{text:'UUID',value:'uuid'},{text:'NDC',value:'ndc'},{text:'登録日',value:'registrationDate'}]"
+                                append-icon="fas fa-caret-down">
+                            </v-select>
                         </v-col>
                         <v-col class="d-flex" cols="12" sm="6">
                             <v-select
-                                append-icon="fas fa-caret-down"
-                                :items="[{text:'降順',value:0},{text:'昇順',value:1}]"
-                                v-model="searchConditions.sortDirection"
                                 label="順番"
-                            ></v-select>
+                                v-model="searchConditions.sortDirection"
+                                :items="[{text:'降順',value:'DESC'},{text:'昇順',value:'ASC'}]"
+                                append-icon="fas fa-caret-down">
+                            </v-select>
                         </v-col>
                     </v-row>
                 </v-container>
             </v-card-actions>
             <v-card-actions class="d-flex justify-end">
-                <v-btn color="warning" @click="searchReset">リセット</v-btn>
+                <v-btn color="warning" @click="Object.assign($data.searchConditions, $options.data().searchConditions)">リセット</v-btn>
                 <v-btn color="success" @click="search">検索</v-btn>
             </v-card-actions>
             <v-divider></v-divider>
             <v-card-text>
-                検索結果: {{ targetCollectionCount }} 件
+                検索結果: {{ collectionCount }} 件
             </v-card-text>
             <v-container>
-                <!-- <v-row>
-                    <v-col
-                        cols="6"
-                        sm="3"
-                        v-for="Collection in Collections" :key="Collection.uuid"
-                    >
-                        <BookCard
-                            :id="Collection.isbn"
-                            :uuid="Collection.uuid"
-                            style="margin:5px;"
-                            @Error="Error"
-                        >
-                        </BookCard>
-                    </v-col>
-                </v-row> -->
                 <v-row>
-                    <v-col
-                        cols="12"
-                        v-for="Collection in Collections" :key="Collection.uuid"
-                    >
+                    <v-col cols="12" v-for="collection in collections" :key="collection.uuid">
                         <BooksCardRow
-                            :id="Collection.isbn"
-                            :uuid="Collection.uuid"
+                            :id="collection.isbn"
+                            :uuid="collection.uuid"
                             style="margin:5px;"
-                            @Error="Error"
-                        >
+                            @error="emitError">
                         </BooksCardRow>
                     </v-col>
                 </v-row>
@@ -86,86 +67,79 @@
             <v-card-actions>
                 <div class="text-right">
                     <v-pagination
-                    v-model="page"
-                    next-icon="fas fa-caret-right"
-                    prev-icon="fas fa-caret-left"
-                    :length="CollectionPage"
-                    ></v-pagination>
+                        v-model="page"
+                        :length="collectionPage"
+                        next-icon="fas fa-caret-right"
+                        prev-icon="fas fa-caret-left">
+                    </v-pagination>
                 </div>
             </v-card-actions>
         </v-card>
-        <QRreader :isQrDialog="isQrDialog" @dataUp="QrResult" @close="isQrDialog = false" @Error="Error">
+        <QRreader :isDialog="isQrDialog" @dataUp="resultQr" @close="isQrDialog = false" @error="emitError">
         </QRreader>
     </div>
 </template>
 <script>
-// import BookCard from '../components/BooksCard.vue'
 import BooksCardRow from '../components/BooksCardRow.vue'
 import QRreader from '../components/QRreader.vue'
-
 export default {
     components: {
-        // BookCard,
         QRreader,
         BooksCardRow
     },
     data: function() {
         return {
-            Collections:[],
-            page:1,
-            CollectionPage:0,
-            targetCollectionCount:0,
+            collections: [],
+            page: 1,
+            collectionPage: 0,
+            collectionCount: 0,
             searchConditions: {
-                sortRow:"registrationData",
-                sortDirection:0,
-                uuid:"",
-                ndc:""
+                sortRow: 'registrationDate',
+                sortDirection: 'DESC',
+                uuid: '',
+                ndc: ''
             },
-            isQrDialog:false
+            isQrDialog: false
         }
     },
     mounted: function() {
         this.getCollections()
     },
+    watch: {
+        page : function() {
+            this.getCollections()
+        }
+    },
     methods: {
-        getCollections() {
-            let query = `?sortRow=${this.searchConditions.sortRow}&sortDirection=${this.searchConditions.sortDirection}`
-            query += `&ndc=${this.searchConditions.ndc}&uuid=${this.searchConditions.uuid}`
-            query += `&page=${this.page}`
-            this.axios.get(this.$store.getters.apiEndpoint + '/collections' + query)
-                .then((res) => {
-                    this.targetCollectionCount = res.data.count
-                    this.CollectionPage = Math.ceil(res.data.count / 20)
-                    this.Collections = res.data.Collections
-                    console.log(this.Collections)
+        async getCollections() {
+            let query = `?sortRow=${this.searchConditions.sortRow}&sortDirection=${this.searchConditions.sortDirection}`;
+            query += `&ndc=${this.searchConditions.ndc}&uuid=${this.searchConditions.uuid}`;
+            query += `&page=${this.page}`;
+            await this.managerApi.get(`/collections${query}`)
+                .then((getRes) => {
+                    this.collectionCount = getRes.data.count
+                    this.collectionPage = Math.ceil(getRes.data.count / 20)
+                    this.collections = getRes.data.data
                 })
                 .catch((e) => {
-                    this.$emit('Error',e)
+                    this.sendStatus = false
+                    if (e.response.status === 404) {
+                        this.$emit('error',"コンテンツが見つかりません")
+                    } else {
+                        this.$router.push('/500')
+                    }
                 })
         },
         search: function() {
             this.page = 1
             this.getCollections()
         },
-        searchReset: function() {
-            this.searchConditions = {
-                sortRow:"registrationData",
-                sortDirection:0,
-                uuid:"",
-                ndc:""
-            }
-        },
-        QrResult: function(result) {
+        resultQr(result) {
             this.isQrDialog = false
             this.searchConditions.uuid = result
         },
-        Error: function(message) {
-            this.$emit('Error',message)
-        }
-    },
-    watch: {
-        page : function() {
-            this.getCollections()
+        emitError: function(message) {
+            this.$emit('error', message)
         }
     }
 }

@@ -2,22 +2,17 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import store from '../store/index'
 // view import
-import BookPage from '../view/BookPage.vue'
 import Collection from '../view/Collection.vue'
 import Home from '../view/Home.vue'
 import Search from '../view/Search.vue'
 import Request from '../view/Request.vue'
 import CodeReader from '../view/CodeReader.vue'
 import Login from '../view/admin/Login.vue'
-
 //Admin View Components
 import AdminRental from '../view/admin/Rental.vue'
 import AdminCollection from '../view/admin/Collection.vue'
 import AdminRequest from '../view/admin/Request.vue'
-
-//Admin Statistics View Components
-import Statistics from '../view/admin/Statistics.vue'
-
+import AdminConfig from '../view/admin/Config.vue'
 //Error View Components
 import Error404 from '../view/error/404.vue'
 import Error500 from '../view/error/500.vue'
@@ -32,10 +27,6 @@ const routes = [
     {
         path:'/search',
         component: Search
-    },
-    {
-        path: '/book/:isbn',
-        component: BookPage
     },
     {
         path: '/collection/:uuid',
@@ -70,14 +61,9 @@ const routes = [
         meta: {requiresAuth:true}
     },
     {
-        path: '/admin/statistics',
-        component: Statistics,
-        meta: {requiresAuth:true}
+        path: '/admin/setting',
+        component: AdminConfig
     },
-    // {
-    //     path: '/admin/setting',
-    //     component: AdminRequest
-    // },
     //Error Routing
     {
         path: '/404',
@@ -103,17 +89,13 @@ const router = new Router({
 // ログインチェック
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (store.getters.token === "") {
+        if (store.getters.token === null) {
             next({
                 path: '/login'
             })
-        } else {
-            next()
         }
-        next()
-    } else {
-        next()
     }
+    next()
 })
 
 export default router

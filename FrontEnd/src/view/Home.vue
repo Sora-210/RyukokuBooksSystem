@@ -1,11 +1,7 @@
 <template>
     <div>
-        <v-parallax
-            dark
-            src="../assets/topImage.jpg">
-            <v-row
-                align="center"
-                justify="center">
+        <v-parallax dark src="../assets/topImage.jpg">
+            <v-row align="center" justify="center">
                 <v-col
                     class="text-center"
                     cols="12">
@@ -15,10 +11,7 @@
         </v-parallax>
         <v-row
             id="brackBoard">
-            <v-col
-                sm="6"
-                cols="12"
-            >
+            <v-col sm="6" cols="12">
                 <div class="brackBoard_notice">
                     <h4>お知らせ</h4>
                     <div class="brackBoard_list">
@@ -28,10 +21,7 @@
                     </div>
                 </div>
             </v-col>
-            <v-col
-                sm="6"
-                cols="12"
-            >
+            <v-col sm="6" cols="12">
                 <div class="brackBoard_day">
                     <h4 class="today">本日</h4>
                     <span>{{ today }}</span>
@@ -42,16 +32,8 @@
         </v-row>
         <h2>新刊</h2>
         <v-row>
-            <v-col
-                cols="12"
-                sm="3"
-                v-for="newBook in newBooksList" :key="newBook.index"
-            >
-                <BookCard
-                    :isbn="newBook.isbn"
-                    :uuid="newBook.uuid"
-                    style="margin:10px;"
-                >
+            <v-col cols="12" sm="3" v-for="newBook in newBooksList" :key="newBook.index">
+                <BookCard :isbn="newBook.isbn" :uuid="newBook.uuid" style="margin:10px;">
                 </BookCard>
             </v-col>
         </v-row>
@@ -60,7 +42,8 @@
 <script>
 import BookCard from '../components/BooksCard.vue'
 require('date-utils')
-const DateNow = new Date();
+const today = new Date();
+const returnDay = (new Date()).addWeeks(2);
 
 export default {
     name: "Home",
@@ -69,8 +52,8 @@ export default {
     },
     data: function() {
         return {
-            today: DateNow.toFormat('YYYY年MM月DD日'),
-            returnDay: DateNow.addWeeks(2).toFormat('YYYY年MM月DD日'),
+            today: today.toFormat('YYYY年MM月DD日'),
+            returnDay: returnDay.toFormat('YYYY年MM月DD日'),
             newBooksList:[],
             newsList:[]
         }
@@ -81,21 +64,20 @@ export default {
     },
     methods: {
         async getNewsRequest() {
-            try {
-                const Res = await this.axios.get(this.$store.getters.apiEndpoint + "/news?limit=4")
-                this.newsList = Res.data.News
-            } catch(e) {
-                this.$emit('Error',e)
-            }
+            this.managerApi.get(`/news?limit=4`)
+                .then((getRes) => {
+                    this.newsList = getRes.data.data
+                })
         },
         async getNewCollectionRequest() {
             try {
-                const query = "?sortRow=registrationData&sortDirection=0"
-                const Res = await this.axios.get(this.$store.getters.apiEndpoint + "/collections/" + query)
+                const query = "?sortRow=registrationDate&sortDirection=DESC&limit=4"
+                const Res = await this.managerApi.get(`/collections` + query)
+                console.log(Res)
                 for (let i = 0;i<4;i++) {
                     this.newBooksList.push({
-                        isbn: Res.data.Collections[i].isbn,
-                        uuid: Res.data.Collections[i].uuid
+                        isbn: Res.data.data[i].isbn,
+                        uuid: Res.data.data[i].uuid
                     })
                 }
                 console.log(this.newBooksList)
