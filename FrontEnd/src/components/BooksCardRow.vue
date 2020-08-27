@@ -1,12 +1,9 @@
 <template>
     <div>
-        <v-card @click="Link" class="d-flex .justify-start">
+        <v-card @click="link" class="d-flex .justify-start">
             <v-row>
                 <v-col cols=5 sm=4 md=2>
-                    <v-img
-                        :src="bookImgUrl"
-                        class="ma-2"
-                    ></v-img>
+                    <v-img :src=bookImgUrl class="ma-2"></v-img>
                 </v-col>
                 <v-col cols=7 sm=8 md=10>
                     <v-card-title class="title">
@@ -22,10 +19,8 @@
         </v-card>
     </div>
 </template>
-
 <script>
 export default {
-    name:'BooksCardRow',
     data: function() {
         return {
             "title":"",
@@ -33,29 +28,34 @@ export default {
             "imgId":""
         }
     },
-    props:[
-        'id',
-        'uuid'
-    ],
+    props: {
+        isbn: {
+            type: Number,
+            default: 0
+        },
+        uuid: {
+            type: String,
+            default: ''
+        }
+    },
     computed: {
         bookImgUrl: function() {
-            return "https://books.google.com/books/content/images/frontcover/" + this.imgId + "?fife=w800-h1200"
+            return `https://books.google.com/books/content/images/frontcover/${this.imgId}?fife=w800-h1200`
         }
     },
     mounted: function() {
-        this.axios('https://www.googleapis.com/books/v1/volumes?q=isbn:' + this.id)
-            .then((res) => {
-                this.title = res.data.items[0].volumeInfo.title
-                this.authors = res.data.items[0].volumeInfo.authors
-                this.imgId = res.data.items[0].id
+        this.axios(`https://www.googleapis.com/books/v1/volumes?q=isbn:${this.id}`)
+            .then((getRes) => {
+                this.title = getRes.data.items[0].volumeInfo.title
+                this.authors = getRes.data.items[0].volumeInfo.authors
+                this.imgId = getRes.data.items[0].id
             })
-            .catch((err) => {
-                this.$emit('error','書籍データ取得に失敗しました')
-                console.log(err)
+            .catch(() => {
+                this.$emit('error', '書籍データ取得に失敗しました')
             })
     },
     methods: {
-        Link() {
+        link() {
             this.$router.push('/collection/' + this.uuid)
         }
     }

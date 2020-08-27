@@ -48,17 +48,11 @@
                 <v-btn color="success" @click="search">検索</v-btn>
             </v-card-actions>
             <v-divider></v-divider>
-            <v-card-text>
-                検索結果: {{ collectionCount }} 件
-            </v-card-text>
+            <v-card-text>検索結果: {{ collectionTotalCount }} 件</v-card-text>
             <v-container>
                 <v-row>
-                    <v-col cols="12" v-for="collection in collections" :key="collection.uuid">
-                        <BooksCardRow
-                            :id="collection.isbn"
-                            :uuid="collection.uuid"
-                            style="margin:5px;"
-                            @error="emitError">
+                    <v-col cols="12" v-for="collectionItem in collectionList" :key="collectionItem.uuid">
+                        <BooksCardRow :isbn="collectionItem.isbn" :uuid="collectionItem.uuid" style="margin:5px;" @error="emitError">
                         </BooksCardRow>
                     </v-col>
                 </v-row>
@@ -68,7 +62,7 @@
                 <div class="text-right">
                     <v-pagination
                         v-model="page"
-                        :length="collectionPage"
+                        :length="totalPage"
                         next-icon="fas fa-caret-right"
                         prev-icon="fas fa-caret-left">
                     </v-pagination>
@@ -89,10 +83,10 @@ export default {
     },
     data: function() {
         return {
-            collections: [],
+            collectionList: [],
             page: 1,
-            collectionPage: 0,
-            collectionCount: 0,
+            totalPage: 1,
+            collectionTotalCount: 0,
             searchConditions: {
                 sortRow: 'registrationDate',
                 sortDirection: 'DESC',
@@ -112,19 +106,17 @@ export default {
     },
     methods: {
         async getCollections() {
-            let query = `?sortRow=${this.searchConditions.sortRow}&sortDirection=${this.searchConditions.sortDirection}`;
-            query += `&ndc=${this.searchConditions.ndc}&uuid=${this.searchConditions.uuid}`;
-            query += `&page=${this.page}`;
-            await this.managerApi.get(`/collections${query}`)
+            const query = `?sortRow=${this.searchConditions.sortRow}&sortDirection=${this.searchConditions.sortDirection}&ndc=${this.searchConditions.ndc}&uuid=${this.searchConditions.uuid}&page=${this.page}`;
+            this.managerApi.get(`/collectionList${query}`)
                 .then((getRes) => {
-                    this.collectionCount = getRes.data.count
-                    this.collectionPage = Math.ceil(getRes.data.count / 20)
-                    this.collections = getRes.data.data
+                    this.collectionTotalCount = getRes.data.count
+                    this.totalPage = Math.cell(getRes.data.count / 20)
+                    this.collectionList = getRes.data.data
                 })
                 .catch((e) => {
                     this.sendStatus = false
                     if (e.response.status === 404) {
-                        this.$emit('error',"コンテンツが見つかりません")
+                        this.$emit('error', 'コンテンツが見つかりません')
                     } else {
                         this.$router.push('/500')
                     }

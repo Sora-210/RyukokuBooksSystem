@@ -4,22 +4,22 @@
             <v-card-title>
                 リクエスト一覧
             </v-card-title>
-            <v-btn text color="purple darken-3" class="ml-1 mb-3" @click="isSelectSortDialog = !isSelectSortDialog">
+            <v-btn text color="purple darken-3" class="ml-1 mb-3" @click="isSelectSortDialog = true">
                 絞り込み | 並べ替え
             </v-btn>
             <RequestTable :requestList=requestList @on-delete="deleteRequest">
             </RequestTable>
             <v-divider></v-divider>
-                <v-card-actions>
-                    <div class="text-right">
-                        <v-pagination
-                            v-model="searchConditions.page"
-                            :length="requestPages"
-                            next-icon="fas fa-caret-right"
-                            prev-icon="fas fa-caret-left">
-                        </v-pagination>
-                    </div>
-                </v-card-actions>
+            <v-card-actions>
+                <div class="text-right">
+                    <v-pagination
+                        v-model="searchConditions.page"
+                        :length="requestTotalPage"
+                        next-icon="fas fa-caret-right"
+                        prev-icon="fas fa-caret-left">
+                    </v-pagination>
+                </div>
+            </v-card-actions>
         </v-card>
         <v-dialog v-model="isSelectSortDialog" width="70%">
             <v-card>
@@ -83,7 +83,7 @@ export default {
         return {
             requestList:[],
             isSelectSortDialog:false,
-            requestPages: 1,
+            requestTotalPage: 1,
             searchConditions: {
                 sortRow:"id",
                 sortDirection:'DESC',
@@ -103,15 +103,15 @@ export default {
     methods: {
         getRequests() {
             this.requestList = []
-            const query = "?sortRow=" + this.searchConditions.sortRow + "&sortDirection=" + this.searchConditions.sortDirection + "&genre=" + this.searchConditions.genre + "&page=" + this.searchConditions.page
+            const query = `?sortRow=${this.searchConditions.sortRow}&sortDirection=${this.searchConditions.sortDirection}&genre=${this.searchConditions.genre}&page=${this.searchConditions.page}`
             const options = {
                 headers: {
                     token: this.$store.getters.token
                 }
             }
-            this.axios.get(`/requests${query}`, options)
+            this.managerApi.get(`/requests${query}`, options)
                 .then((getRes) => {
-                    this.requestPages = Math.ceil(getRes.data.count / 20)
+                    this.requestTotalPage = Math.ceil(getRes.data.count / 20)
                     this.requestList = getRes.data.data
                 })
                 .catch((e) => {

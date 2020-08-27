@@ -1,28 +1,28 @@
 <template>
-    <table>
-        <tr class="tableTitle">
-            <th>リクエストID</th>
-            <th>ジャンル</th>
-            <th>内容</th>
-            <th></th>
-        </tr>
-        <tr class="tableItem" v-for="item in requestList" :key="item.index">
-            <td>
-                {{ item.id }}
-            </td>
-            <td>
-                {{ requestGenre[item.genre] }}
-            </td>
-            <td>
-                {{ item.content }}
-            </td>
-            <td>
-                <v-btn size="small" color="red" text @click="$emit('on-delete', item.id)">
-                    <v-icon>far fa-trash-alt</v-icon>
-                </v-btn>
-            </td>
-        </tr>
-    </table>
+    <div class="tableBox">
+        <table>
+            <tr class="tableTitle">
+                <th>リクエストID</th>
+                <th>ジャンル</th>
+                <th>内容</th>
+                <th></th>
+            </tr>
+            <tr class="tableRow" v-for="requestItem in requestList" :key="requestItem.id">
+                <!--リクエストID-->
+                <td>{{ requestItem.id }}</td>
+                <!--ジャンル-->
+                <td>{{ requestGenre[requestItem.genre] }}</td>
+                <!--内容-->
+                <td>{{ requestItem.content }}</td>
+                <!--[削除アイコン]-->
+                <td>
+                    <v-btn @click="$emit('on-delete', item.id)" size="small" color="red" text>
+                        <v-icon>far fa-trash-alt</v-icon>
+                    </v-btn>
+                </td>
+            </tr>
+        </table>
+    </div>
 </template>
 <script>
 export default {
@@ -42,30 +42,6 @@ export default {
     }
 }
 </script>
-<style scoped>
-.sp-row-scroll {
-    display: block;
-    overflow-x: scroll;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-}
-table {
-    border-collapse: collapse;
-    width:100%;
-}
-th, td {
-    padding: 7px 20px 7px 20px;
-}
-.tableTitle {
-    background-color:#e9e9e9;
-    border-top: solid 1px#000000;
-    border-bottom: solid 1px#000000;
-}
-.tableItem {
-    text-align: left;
-    border-bottom: solid 0.5px #e6e6e6;
-}
-.tableItem:hover {
-    background-color:#f1f1f1;
-}
+<style>
+@import url("../../../assets/css/table.css");
 </style>

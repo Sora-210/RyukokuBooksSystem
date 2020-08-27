@@ -1,12 +1,12 @@
 <template>
     <v-dialog v-model="isDialog" width="70%" persistent>
-        <v-stepper v-model="page">
+        <v-stepper v-model="stepperPage">
             <v-stepper-header>
-                <v-stepper-step step="1" :complete="page >= 2" complete-icon="fas fa-check-circle">情報の入力</v-stepper-step>
+                <v-stepper-step step="1" :complete="stepperPage >= 2" complete-icon="fas fa-check-circle">情報の入力</v-stepper-step>
                 <v-divider></v-divider>
-                <v-stepper-step step="2" :complete="page >= 3" complete-icon="fas fa-check-circle"></v-stepper-step>
+                <v-stepper-step step="2" :complete="stepperPage >= 3" complete-icon="fas fa-check-circle"></v-stepper-step>
                 <v-divider></v-divider>
-                <v-stepper-step step="3" :complete="page >= 4" complete-icon="fas fa-check-circle">完了</v-stepper-step>
+                <v-stepper-step step="3" :complete="stepperPage >= 4" complete-icon="fas fa-check-circle">完了</v-stepper-step>
             </v-stepper-header>
             <v-stepper-items>
                 <v-stepper-content step="1">
@@ -89,7 +89,7 @@ export default {
     },
     data: function() {
         return {
-            page: 1,
+            stepperPage: 1,
             returnDate: '',
             formData: {
                 grade:0,
@@ -124,13 +124,13 @@ export default {
         requestRental() {
             this.$refs.form.validate()
             if (this.isValid) {
-                this.page = 2
+                this.stepperPage = 2
                 this.managerApi.patch(`/collections/${this.uuid}/rental`, this.formData)
                     .then(() => {
                         this.$emit('reload')
                         this.returnDate = DateNow.addWeeks(2).toFormat('YYYY年MM月DD日')
                         setTimeout(()=>{
-                            this.page = 3
+                            this.stepperPage = 3
                         },2500)
                     })
                     .catch((e) => {

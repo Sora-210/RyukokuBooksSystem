@@ -79,14 +79,12 @@ const routes = [
     }
 ]
 
-
-
 const router = new Router({
     mode: 'history',
     routes
 })
 
-// ログインチェック
+// checkLogin
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
         if (store.getters.token === null) {

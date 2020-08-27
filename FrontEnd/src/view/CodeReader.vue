@@ -26,18 +26,19 @@ export default {
             this.isLoading = true
             if (this.historyUuid !== result) {
                 this.historyUuid = result
-                try {
-                    await this.axios.get(`/collections/${result}`)
-                    this.$router.push('/collection/' + result)
-                } catch(e) {
-                    this.isQrDialog = true
-                    this.isLoading = false
-                    if (e.response.status === 404) {
-                        this.$emit('error',"登録されていないUUIDです")
-                    } else {
-                        this.$router.push('/500')
-                    }
-                }
+                this.managerApi.get(`/collections/${result}`)
+                    .then(() => {
+                        this.$router.push(`/collection/${result}`)
+                    })
+                    .catch((e) => {
+                        this.isQrDialog = true
+                        this.isLoading = false
+                        if (e.response.status === 404) {
+                            this.$emit('error', '登録されていないUUIDです')
+                        } else {
+                            this.$router.push('/500')
+                        }
+                    })
             }
         },
         closeQrDialog() {
