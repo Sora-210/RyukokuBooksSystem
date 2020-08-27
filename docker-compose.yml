@@ -35,6 +35,8 @@ services:
                 ipv4_address: 172.0.1.4
     management-api:
         build: ./ManagementApiServer/.
+        environment: 
+            API_ROOT_PASSWORD: pass
         volumes:
             - ./Data/Qrcode:/home/ManagementAPI/Qrcode
         networks:

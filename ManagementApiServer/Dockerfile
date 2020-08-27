@@ -1,5 +1,7 @@
 FROM node:10.12.0-alpine
 
+ARG API_ROOT_PASSWORD=pass
+
 RUN NODE_ENV=production &&\
     export NODE_ENV &&\
     apk update &&\

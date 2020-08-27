@@ -2,9 +2,10 @@
 
 IP="172.0.1.3"
 PORT="3306"
-WAITSET="2"
+WAITSET="10"
 
-sleep 20
+echo "Waiting 30 seconds..."
+sleep 30
 nc -vz ${IP} ${PORT} >> /dev/null
 while :
 do
