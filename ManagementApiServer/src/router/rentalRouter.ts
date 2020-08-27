@@ -1,12 +1,4 @@
-/*
-################################
-Rental処理
-[AUTH] GET /
-[AUTH] GET /:id
-################################
-*/
 //####################################################################
-import { count } from 'console';
 import { Router } from 'express';
 const rentalRouter = Router();
 import { DB } from '../database/index';

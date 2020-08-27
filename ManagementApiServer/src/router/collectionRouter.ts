@@ -1,14 +1,3 @@
-/*
-################################
-Collection処理
-GET /
-GET /:uuid
-POST /
-PATCH /:uuid/rental
-PATCH /:uuid/return
-DELETE /:uuid
-################################
-*/
 //####################################################################
 import { Router } from 'express';
 const collectionRouter = Router();
