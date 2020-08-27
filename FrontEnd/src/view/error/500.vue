@@ -1,5 +1,5 @@
 <template>
-    <div class="mt-10">
+    <div class="mt-10 errorBox">
         <v-icon size="100">
             fas fa-exclamation-triangle
         </v-icon>

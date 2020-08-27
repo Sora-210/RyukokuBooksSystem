@@ -44,6 +44,6 @@ export default {
     }
 }
 </script>
-<style>
+<style scoped>
 @import url("../../../assets/css/table.css");
 </style>

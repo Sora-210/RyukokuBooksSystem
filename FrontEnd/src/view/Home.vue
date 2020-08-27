@@ -88,7 +88,6 @@ export default {
     }
 }
 </script>
-
 <style scoped>
 @media screen and (max-width: 430px){
     #title {
