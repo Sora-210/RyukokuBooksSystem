@@ -5,10 +5,10 @@
                 貸出一覧
             </v-card-title>
             <div class="table mt-7 mx-1 sp-row-scroll">
-                <v-btn text color="purple darken-3" class="ml-1 mb-3" @click="isSelectSortDialog = !isSelectSortDialog">
+                <v-btn text color="purple darken-3" class="ml-1 mb-3" @click="isSelectSortDialog = true">
                     絞り込み | 並べ替え
                 </v-btn>
-                <RentalTable :rentalsList=rentalsList @on-rental-detail-dialog="onRentalDetailDialog">
+                <RentalTable :rentalList=rentalList @on-rental-detail-dialog="openRentalDetailDialog">
                 </RentalTable>
             </div>
             <v-divider></v-divider>
@@ -16,7 +16,7 @@
                 <div class="text-right">
                     <v-pagination
                         v-model="searchConditions.page"
-                        :length="rentalsPages"
+                        :length="totalPage"
                         next-icon="fas fa-caret-right"
                         prev-icon="fas fa-caret-left">
                     </v-pagination>
@@ -99,8 +99,8 @@ export default {
     },
     data: function() {
         return {
-            rentalsList:[],
-            rentalsPages:1,
+            rentalList:[],
+            totalPage:1,
             isSelectSortDialog: false,
             isRentalDetailDialog: false,
             rentalDetailDialogRentalid: "",
@@ -135,16 +135,16 @@ export default {
         }
     },
     mounted: function() {
-        this.requestApi()
+        this.getRequests()
     },
     watch: {
         'searchConditions.page' : function() {
-            this.requestApi()
+            this.getRequests()
         }
     },
     methods: {
-        requestApi() {
-            const query = "?sortRow=" + this.searchConditions.sortRow + "&sortDirection=" + this.searchConditions.sortDirection + "&uuid=" + this.searchConditions.uuid + "&status=" + this.searchConditions.status + "&page=" + this.searchConditions.page
+        getRequests() {
+            const query = `?sortRow=${this.searchConditions.sortRow}&sortDirection=${this.searchConditions.sortDirection}&uuid=${this.searchConditions.uuid}&status=${this.searchConditions.status}&page=${this.searchConditions.page}`
             const options = {
                 headers: {
                     token: this.$store.getters.token
@@ -152,13 +152,12 @@ export default {
             }
             this.managerApi.get(`/rentals${query}`, options)
                 .then((getRes) => {
-                    this.rentalsList = getRes.data.Rentals
-                    this.rentalsPages = Math.ceil(getRes.data.count / 20)
-                    this.rentalsList = getRes.data.data
+                    this.totalPage = Math.ceil(getRes.data.count / 20)
+                    this.rentalList = getRes.data.data
                 })
                 .catch((e) => {
                     if (e.response.status === 404) {
-                        this.$emit('error', "貸出データが見つかりませんでした")
+                        this.$emit('error', '貸出データが見つかりませんでした')
                     } else {
                         this.$router.push('/500')
                     }
@@ -167,9 +166,9 @@ export default {
         search() {
             this.searchConditions.page = 1
             this.isSelectSortDialog = false
-            this.requestApi()
+            this.getRequests()
         },
-        onRentalDetailDialog(rentalId) {
+        openRentalDetailDialog(rentalId) {
             this.rentalDetailDialogRentalid = rentalId
             this.isRentalDetailDialog = true
         },

@@ -9,11 +9,19 @@ import { rentalRouter } from './router/rentalRouter';
 import { collectionRouter } from './router/collectionRouter';
 import { loginRouter } from './router/loginRouter';
 import { newsRouter } from './router/newsRouter';
+import { DB } from './database';
+import { createUser } from './function/auth'
 //#################################
 //MagicNumber
 const PORT:Number = 80
 //################################
-
+DB.Users.count()
+    .then((res) => {
+        if (res === 0) {
+            //Userが0の場合初期アカウントの追加
+            createUser('root', process.env.API_ROOT_PASSWORD)
+        }
+    })
 //#################################
 const app = express()
 app.use(BodyParserJson())

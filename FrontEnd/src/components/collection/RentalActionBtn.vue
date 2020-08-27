@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-btn v-if="rentalStatus" @click="$emit('rental')" large color="success">
+        <v-btn v-if="isRentalStatus" @click="$emit('rental')" large color="success">
             借りる
         </v-btn>
         <v-btn v-else @click="$emit('return')" dark large color="red">
@@ -11,7 +11,7 @@
 <script>
 export default {
     props: {
-        rentalStatus: {
+        isRentalStatus: {
             type: Boolean,
             default: false
         }

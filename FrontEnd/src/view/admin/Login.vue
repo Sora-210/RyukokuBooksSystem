@@ -1,23 +1,14 @@
 <template>
     <div>
-        <v-text-field
-            label="Name"
-            outlined
-            v-model="name"
-        ></v-text-field>
-        <v-text-field
-            label="Password"
-            outlined
-            v-model="password"
-        ></v-text-field>
-        <v-btn @click="Login">
+        <v-text-field label="Name" v-model="name" outlined></v-text-field>
+        <v-text-field label="Password" v-model="password" outlined></v-text-field>
+        <v-btn @click="login">
             Login
         </v-btn>
     </div>
 </template>
 <script>
 export default {
-    name: "Login",
     data: function() {
         return {
             name:"",
@@ -25,11 +16,11 @@ export default {
         }
     },
     methods: {
-        Login: function() {
-            this.axios.post('/login',{name:this.name,password:this.password})
-                .then((res) => {
-                    this.$store.commit('setToken',res.data.token)
-                    this.$emit('success','ログインしました')
+        login() {
+            this.managerApi.post('/login', {name:this.name,password:this.password})
+                .then((postRes) => {
+                    this.$store.commit('setToken', postRes.data.token)
+                    this.$emit('success', 'ログインしました')
                     this.$router.push('/')
                 })
                 .catch((e) => {

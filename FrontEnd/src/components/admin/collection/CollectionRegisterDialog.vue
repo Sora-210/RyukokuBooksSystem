@@ -1,18 +1,17 @@
 <template>
     <v-dialog v-model="isDialog" width="70%" persistent>
-        <v-stepper v-model="dialogPage">
+        <v-stepper v-model="stepperPage">
             <v-stepper-header>
-                <v-stepper-step step="1" :complete="dialogPage >= 2" complete-icon="fas fa-check-circle">"ISBN"の入力&確認</v-stepper-step>
+                <v-stepper-step step="1" :complete="stepperPage >= 2" complete-icon="fas fa-check-circle">"ISBN"の入力&確認</v-stepper-step>
                 <v-divider></v-divider>
-                <v-stepper-step step="2" :complete="dialogPage >= 3" complete-icon="fas fa-check-circle"></v-stepper-step>
+                <v-stepper-step step="2" :complete="stepperPage >= 3" complete-icon="fas fa-check-circle"></v-stepper-step>
                 <v-divider></v-divider>
-                <v-stepper-step step="3" :complete="dialogPage >= 4" complete-icon="fas fa-check-circle">登録情報の入力</v-stepper-step>
+                <v-stepper-step step="3" :complete="stepperPage >= 4" complete-icon="fas fa-check-circle">登録情報の入力</v-stepper-step>
                 <v-divider></v-divider>
-                <v-stepper-step step="4" :complete="dialogPage >= 5" complete-icon="fas fa-check-circle"></v-stepper-step>
+                <v-stepper-step step="4" :complete="stepperPage >= 5" complete-icon="fas fa-check-circle"></v-stepper-step>
                 <v-divider></v-divider>
-                <v-stepper-step :complete="dialogPage >= 6" step="5">完了</v-stepper-step>
+                <v-stepper-step :complete="stepperPage >= 6" step="5">完了</v-stepper-step>
             </v-stepper-header>
-
             <v-stepper-items>
                 <v-stepper-content step="1">
                     <div class="pt-2 mb-4">
@@ -129,6 +128,9 @@
                                 <v-col cols=12 sm=4>
                                     <v-img :src="this.$store.getters.fileEndpoint + '/' + this.registeredData.uuid + '.png'">
                                     </v-img>
+                                    <v-btn color="warning" @click="downloadQrcode">
+                                        DOWNLOAD
+                                    </v-btn>
                                 </v-col>
                             </v-row>
                         </v-container>
@@ -155,14 +157,14 @@ export default {
     },
     data: function() {
         return {
-            dialogPage : 1,
+            stepperPage : 1,
             registerData: {
                 isbn:"",
                 title:"",
                 ndc:"",
                 note:""
             },
-            registeredData:{},
+            registeredData: {},
             rules: {
                 isbn:[
                     v => !!v || 'ISBNは必須です',
@@ -181,26 +183,26 @@ export default {
             this.$emit('close')
         },
         first() {
-            this.dialogPage = 2
+            this.stepperPage = 2
             this.axios.get(`https://www.googleapis.com/books/v1/volumes?q=isbn:${this.registerData.isbn}`)
-                .then((res) => {
-                    if (res.data.items.length === 0) {
+                .then((getRes) => {
+                    if (getRes.data.items.length === 0) {
                         this.$emit('error','このISBNは存在しないか登録できない書籍です')
-                        this.dialogPage = 1
+                        this.stepperPage = 1
                     } else {
                         setTimeout(()=>{
-                            this.registerData.title = res.data.items[0].volumeInfo.title
-                            this.dialogPage = 3
+                            this.registerData.title = getRes.data.items[0].volumeInfo.title
+                            this.stepperPage = 3
                         },2500)
                     }
                 })
                 .catch(() => {
-                    this.dialogPage = 1
+                    this.stepperPage = 1
                     this.$router.push('/500')
                 })
         },
         second() {
-            this.dialogPage = 4
+            this.stepperPage = 4
             const options = {
                 headers: {
                     token: this.$store.getters.token
@@ -211,18 +213,28 @@ export default {
                     this.$emit('reload')
                     setTimeout(()=>{
                         this.registeredData = postRes.data
-                        this.dialogPage = 5
+                        this.stepperPage = 5
                     },2500)
                 })
                 .catch((e) => {
-                    this.dialogPage = 1
+                    this.stepperPage = 1
                     if (e.response.status === 400) {
-                        this.$emit('error',"登録に失敗しました")
+                        this.$emit('error', '登録に失敗しました')
                     } else {
                         this.$router.push('/500')
                     }
                 })
-        }
+        },
+        downloadQrcode() {
+            this.axios.get(this.$store.getters.fileEndpoint + '/' + this.registeredData.uuid + '.png', {responseType: 'arraybuffer'})
+                .then((res) => {
+                    const blob = new Blob([res.data], {type: 'image/png'})
+                    let link = document.createElement('a')
+                    link.href = window.URL.createObjectURL(blob)
+                    link.download = this.registeredData.uuid + '.png'
+                    link.click()
+                })
+        },
     },
 }
 </script>

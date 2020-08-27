@@ -1,11 +1,3 @@
-/*
-################################
-News処理
-GET /
-[AUTH] POST /:id
-[DELETE] DELETE /:id
-################################
-*/
 //####################################################################
 import { Router } from 'express';
 const newsRouter: Router = Router();

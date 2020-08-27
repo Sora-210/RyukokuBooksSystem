@@ -5,9 +5,7 @@
                 お知らせ設定
             </v-card-title>
             <v-card-text>
-                <p>
-                    トップページに表示されるのは1ページ目のみです
-                </p>
+                <p>トップページに表示されるのは1ページ目のみです</p>
             </v-card-text>
             <v-divider></v-divider>
             <v-card-actions>
@@ -43,7 +41,6 @@
 </template>
 <script>
 import newsTable from '../../components/admin/news/NewsTable'
-
 export default {
     components: {
         newsTable

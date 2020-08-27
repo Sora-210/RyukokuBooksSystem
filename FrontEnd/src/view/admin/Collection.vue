@@ -4,24 +4,21 @@
             <v-card-title>
                 蔵書一覧
             </v-card-title>
-            <v-btn
-                @click="isRegisterDialog = !isRegisterDialog"
-                class="ml-8 mb-5"
-                color="success">
+            <v-btn @click="isRegisterDialog = true" class="ml-8 mb-5" color="success">
                 蔵書登録
             </v-btn>
             <v-divider></v-divider>
-            <v-btn text color="purple darken-3" class="ml-1 mb-3" @click="isSelectSortDialog = !isSelectSortDialog">
+            <v-btn text color="purple darken-3" class="ml-1 mb-3" @click="isSelectSortDialog = true">
                 絞り込み | 並べ替え
             </v-btn>
-            <CollectionTable :collectionList=collectionList @on-edit="edit">
+            <CollectionTable :collectionList=collectionList @on-edit="openCollectionDialog">
             </CollectionTable>
             <v-divider></v-divider>
             <v-card-actions>
                 <div class="text-right">
                     <v-pagination
                         v-model="searchConditions.page"
-                        :length="collectionPages"
+                        :length="collectionTotalPage"
                         next-icon="fas fa-caret-right"
                         prev-icon="fas fa-caret-left">
                     </v-pagination>
@@ -113,7 +110,6 @@ import QRreader from '../../components/QRreader.vue'
 import CollectionTable from '../../components/admin/collection/CollectionTable'
 import CollectionRegisterDialog from '../../components/admin/collection/CollectionRegisterDialog'
 import CollectionDialog from '../../components/admin/collection/CollectionDialog'
-
 export default {
     components: {
         CollectionTable,
@@ -125,7 +121,6 @@ export default {
         return {
             collectionList:[],
             isSelectSortDialog: false,
-            collectionPages:1,
             searchConditions: {
                 sortRow:"uuid",
                 sortDirection:"DESC",
@@ -134,6 +129,7 @@ export default {
                 note:"",
                 page:1
             },
+            collectionTotalPage:1,
             isQrDialog: false,
             isRegisterDialog: false,
             isCollectionDialog:false,
@@ -151,16 +147,16 @@ export default {
     methods: {
         getCollections() {
             this.collectionItems = []
-            const query = "?sortRow=" + this.searchConditions.sortRow + "&sortDirection=" + this.searchConditions.sortDirection + "&ndc=" + this.searchConditions.ndc + "&note=" + this.searchConditions.note + "&uuid=" + this.searchConditions.uuid + "&page=" + this.searchConditions.page+ "&limit=20"
+            const query = `?sortRow=${this.searchConditions.sortRow}&sortDirection=${this.searchConditions.sortDirection}&ndc=${this.searchConditions.ndc}&note=${this.searchConditions.note}&uuid=${this.searchConditions.uuid}&page=${this.searchConditions.page}&limit=20`
             const options = {
                 headers: {
                     token: this.$store.getters.token
                 }
             }
             this.managerApi.get(`/collections${query}`, options)
-                .then((getResponse) => {
-                    this.collectionPages = Math.ceil(getResponse.data.count / 20)
-                    this.collectionList = getResponse.data.data
+                .then((getRes) => {
+                    this.collectionTotalPage = Math.ceil(getRes.data.count / 20)
+                    this.collectionList = getRes.data.data
                 })
                 .catch((e) => {
                     if (e.response.status === 404) {
@@ -170,7 +166,7 @@ export default {
                     }
                 })
         },
-        edit(uuid) {
+        openCollectionDialog(uuid) {
             this.collectionDialogUuid = uuid
             this.isCollectionDialog = true
         },

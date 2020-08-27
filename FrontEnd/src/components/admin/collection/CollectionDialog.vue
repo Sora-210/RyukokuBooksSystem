@@ -68,6 +68,9 @@
                             <v-col cols=12 sm=3>
                                 <v-img :src="this.$store.getters.fileEndpoint + '/' + this.collectionData.uuid + '.png'">
                                 </v-img>
+                                <v-btn color="warning" @click="downloadQrcode">
+                                    DOWNLOAD
+                                </v-btn>
                             </v-col>
                         </v-row>
                     </v-container>
@@ -124,22 +127,23 @@ export default {
         }
     },
     methods:{
-        async getCollection() {
+        getCollection() {
             this.isLoading = false
             const options = {
                 headers: {
                     token: this.$store.getters.token
                 }
             }
-            try {
-                const getRes = await this.managerApi.get(`/collections/${this.uuid}`, options)
-                this.collectionData = getRes.data.data[0]
-            } catch(e) {
-                this.$emit('error', e)
-            }
-            this.isLoading = true
+            this.managerApi.get(`/collections/${this.uuid}`, options)
+                .then((getRes) => {
+                    this.collectionData = getRes.data.data[0]
+                })
+                .catch((e) => {
+                    this.$emit('error', e)
+                })
+                this.isLoading = true
         },
-        async update() {
+        update() {
             const options = {
                 headers: {
                     token: this.$store.getters.token
@@ -149,7 +153,7 @@ export default {
                 ndc: this.collectionData.ndc,
                 note: this.collectionData.note
             }
-            await this.managerApi.patch(`/collections/${this.uuid}`, updateObject ,options)
+            this.managerApi.patch(`/collections/${this.uuid}`, updateObject ,options)
                 .then(() => {
                     this.$emit('success', '更新しました')
                     this.getCollection()
@@ -158,7 +162,7 @@ export default {
                     this.$emit('error', e)
                 })
         },
-        async deleteCollection() {
+        deleteCollection() {
             const options = {
                 headers: {
                     token: this.$store.getters.token
@@ -175,6 +179,16 @@ export default {
                         this.$emit('error', e)
                     })
             }
+        },
+        downloadQrcode() {
+            this.axios.get(this.$store.getters.fileEndpoint + '/' + this.collectionData.uuid + '.png', {responseType: 'arraybuffer'})
+                .then((res) => {
+                    const blob = new Blob([res.data], {type: 'image/png'})
+                    let link = document.createElement('a')
+                    link.href = window.URL.createObjectURL(blob)
+                    link.download = this.collectionData.uuid + '.png'
+                    link.click()
+                })
         },
         close() {
             Object.assign(this.$data.collectionData, this.$options.data().collectionData)

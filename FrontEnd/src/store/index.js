@@ -7,15 +7,11 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     token: null,
-    apiEndpoint: null,
     fileEndpoint: null
   },
   getters: {
     token: (state) => {
       return state.token
-    },
-    apiEndpoint:(state) => {
-      return state.apiEndpoint
     },
     fileEndpoint:(state) => {
       return state.fileEndpoint
@@ -28,16 +24,9 @@ export default new Vuex.Store({
     removeToken(state) {
       state.token = null
     },
-    setApiEndpoint(state, endpoint) {
-      state.apiEndpoint = endpoint
-    },
     setFileEndpoint(state, endpoint) {
       state.fileEndpoint = endpoint
     }
-  },
-  actions: {
-  },
-  modules: {
   },
   plugins: [
     createPersistedState({storage: window.sessionStorage})

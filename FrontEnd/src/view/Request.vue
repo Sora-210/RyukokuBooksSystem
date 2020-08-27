@@ -8,22 +8,24 @@
 			outlined
 			append-icon="fas fa-caret-down">
 		</v-select>
-		<div v-if="sendData.genre === 1">
-			<v-text-field
-				label="タイトル名"
-				v-model="sendData.content"
-				:rules="[v => !!v || 'タイトル名は必須です']"
-				outlined>
-			</v-text-field>
-		</div>
-		<div v-else-if="sendData.genre === 2">
-			<v-textarea
-				label="リクエスト内容"
-				v-model="sendData.content"
-				:rules="[v => !!v || 'リクエスト内容は必須です']"
-				outlined>
-			</v-textarea>
-		</div>
+		<template>
+			<div v-if="sendData.genre === 1">
+				<v-text-field
+					label="タイトル名"
+					v-model="sendData.content"
+					:rules="[v => !!v || 'タイトル名は必須です']"
+					outlined>
+				</v-text-field>
+			</div>
+			<div v-else-if="sendData.genre === 2">
+				<v-textarea
+					label="リクエスト内容"
+					v-model="sendData.content"
+					:rules="[v => !!v || 'リクエスト内容は必須です']"
+					outlined>
+				</v-textarea>
+			</div>
+		</template>
 		<div class="d-flex justify-end">
 			<v-btn
 				:loading="isSending"
@@ -65,10 +67,10 @@ export default {
 				await this.managerApi.post('/requests', this.sendData)
 					.then(() => {
 						Object.assign(this.$data.sendData, this.$options.data().sendData)
-						this.$emit('success',"送信に成功しました")
+						this.$emit('success', 'リクエストを送信しました')
 					})
 					.catch(() => {
-						this.$emit('error',"送信に失敗しました")
+						this.$emit('error', 'リクエストの送信に失敗しました')
 					})
 				this.isSending = false
 			}

@@ -88,7 +88,6 @@ export default {
     }
 }
 </script>
-
 <style scoped>
 @media screen and (max-width: 430px){
     #title {
@@ -101,15 +100,12 @@ export default {
     backdrop-filter: blur(5px);
     display: inline-block;
 }
-
-
 #brackBoard {
     height:400px;
     padding: 50px 0 0 70px ;
     background-image: url(../assets/black.png);
     background-size:100% 100%;
 }
-
 .brackBoard_notice h4{
     font-size: 30px;
     color:rgba(255, 255, 255, 0.87);
@@ -130,7 +126,6 @@ export default {
     margin-bottom: 4px;
     border-bottom:solid 1px deeppink;
 }
-
 .brackBoard_day h4{
     color:rgba(255, 255, 255, 0.87);
     font-size: 30px;
@@ -143,8 +138,6 @@ export default {
     color:rgba(255, 255, 255, 0.87);
     font-size: 20px;
 }
-
-
 @media screen and (max-width: 600px){
     #brackBoard {
         height:700px;

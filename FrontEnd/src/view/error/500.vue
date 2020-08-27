@@ -1,5 +1,5 @@
 <template>
-    <div class="mt-10">
+    <div class="mt-10 errorBox">
         <v-icon size="100">
             fas fa-exclamation-triangle
         </v-icon>
@@ -12,29 +12,9 @@
         </p>
     </div>
 </template>
-
 <script>
-export default {
-    name: "Error500",
-}
+export default {}
 </script>
-<style scoped>
-div {
-    text-align:center;
-    color:#757575;
-}
-.topText {
-    font-size: 63px;
-}
-.subText {
-    font-size: 23px;
-}
-@media screen and (max-width:425px) {
-    .topText {
-        font-size: 40px;
-    }
-    .subText {
-        font-size: 15px;
-    }
-}
+<style>
+@import url("../../assets/css/error.css");
 </style>

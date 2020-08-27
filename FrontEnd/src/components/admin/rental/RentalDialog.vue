@@ -114,14 +114,14 @@ export default {
         }
     },
     methods: {
-        async getRentalDetail(rentalId) {
+        getRentalDetail(rentalId) {
             this.isLoading = true
             const options = {
                 headers: {
                     token: this.$store.getters.token
                 }
             }
-            await this.managerApi.get(`/rentals/${rentalId}`, options)
+            this.managerApi.get(`/rentals/${rentalId}`, options)
                 .then((getRes) => {
                     this.rentalData = getRes.data.data[0]
                     this.isLoading = false
