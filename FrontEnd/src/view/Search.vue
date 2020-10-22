@@ -107,13 +107,14 @@ export default {
     methods: {
         async getCollections() {
             const query = `?sortRow=${this.searchConditions.sortRow}&sortDirection=${this.searchConditions.sortDirection}&ndc=${this.searchConditions.ndc}&uuid=${this.searchConditions.uuid}&page=${this.page}`;
-            this.managerApi.get(`/collectionList${query}`)
+            this.managerApi.get(`/collections${query}`)
                 .then((getRes) => {
                     this.collectionTotalCount = getRes.data.count
-                    this.totalPage = Math.cell(getRes.data.count / 20)
+                    this.totalPage = Math.ceil(getRes.data.count / 20)
                     this.collectionList = getRes.data.data
                 })
                 .catch((e) => {
+                    console.log(e)
                     this.sendStatus = false
                     if (e.response.status === 404) {
                         this.$emit('error', 'コンテンツが見つかりません')
