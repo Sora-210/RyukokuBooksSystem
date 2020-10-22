@@ -44,7 +44,7 @@ export default {
         }
     },
     mounted: function() {
-        this.axios(`https://www.googleapis.com/books/v1/volumes?q=isbn:${this.id}`)
+        this.axios(`https://www.googleapis.com/books/v1/volumes?q=isbn:${this.isbn}`)
             .then((getRes) => {
                 this.title = getRes.data.items[0].volumeInfo.title
                 this.authors = getRes.data.items[0].volumeInfo.authors
