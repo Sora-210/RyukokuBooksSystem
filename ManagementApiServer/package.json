@@ -19,7 +19,7 @@
     "@types/uuid": "^8.3.0",
     "@types/validator": "^13.1.0",
     "express": "^4.17.1",
-    "sequelize": "~5.*.*",
+    "sequelize": "~6.*.*",
     "typescript": "^3.9.7",
     "uuid": "^8.3.0",
     "validator": "^13.1.1"
